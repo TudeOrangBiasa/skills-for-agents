@@ -1,3 +1,3 @@
 oke saya akan merevisi beberapa skills
 
-@ask-matt jadi
+@ask-matt jadi /
