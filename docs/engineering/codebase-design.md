@@ -17,7 +17,7 @@ Several skills sit close to it. Which one you want depends on what the actual pr
 | The shape of one module: its interface, its seam, its depth | `codebase-design` |
 | The *words of the domain*: "account" means three things, two people mean different things by "cancellation" | [domain-modeling](https://aihero.dev/skills-domain-modeling) |
 | You don't yet know *which* module to redesign | [improve-codebase-architecture](https://aihero.dev/skills-improve-codebase-architecture) (the survey that finds candidates) |
-| You want the design argued with, not just named | [grilling](https://aihero.dev/skills-grilling) |
+| You want the design argued with, not just named | [interview](https://aihero.dev/skills-interview) |
 | There's a concrete behaviour to build and you want tests that survive a refactor | [tdd](https://aihero.dev/skills-tdd) |
 
 ## The vocabulary
