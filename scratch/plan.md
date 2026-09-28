@@ -1,3 +1,3 @@
-oke saya akan merevisi beberapa skills
+oke saya akan merubah dan menghapus beberapa skills
 
-@ask-matt jadi /
+
