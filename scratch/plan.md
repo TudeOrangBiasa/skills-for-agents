@@ -14,4 +14,4 @@ skills yang akan saya revisi :
 - i want to revised the skills directory folder structured dengan cukup user-invoked/ dimana skills yang di khususkan hanya user yang invoked model-invoked/ dimana model auto invoked skills ini ketika diperlukan / workflow digunakan.
 - saya ingin ganti grill-me dan grill-with-docs menjadi /discuss dan /discuss-with-docs dan /grilling menjadi /interview
 - saya ingin retro menjadi skills aktif yang akan digunakan dimana itu untuk get session context untuk develop meta docs / memperbarui meta docs supaya ga stale , ga context rot serta mencari pattern dalam mengerjakan projects.
-- Untuk PR b
+- Untuk PR body wajib bentuknya seperti /pr seperti di on progress tapi jika ada ui di add tables before dan afternya dengan tables
