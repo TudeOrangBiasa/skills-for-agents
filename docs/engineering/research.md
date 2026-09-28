@@ -13,16 +13,16 @@ Reach for it when the next step is *finding something out* from outside the work
 | What you need | Reach for |
 | --- | --- |
 | An external fact a decision is waiting on | `research` |
-| A decision made *with* you, by interview | [grilling](https://aihero.dev/skills-grilling) |
-| A durable architecture decision, written into `CONTEXT.md` and ADRs | [grill-with-docs](https://aihero.dev/skills-grill-with-docs) |
+| A decision made *with* you, by interview | [interview](https://aihero.dev/skills-interview) |
+| A durable architecture decision, written into `CONTEXT.md` and ADRs | [discuss-with-docs](https://aihero.dev/skills-discuss-with-docs) |
 | To find out whether an approach works in your codebase | [prototype](https://aihero.dev/skills-prototype) |
 | A plan too big to hold in one session | [wayfinder](https://aihero.dev/skills-wayfinder) |
 
-The line between `research` and `grill-with-docs` is the **shelf life of what comes back**. Research produces short-lived assets: what this library's auth mechanism does as of this week. An ADR records a decision you keep. If what you are producing is a decision rather than a fact, you are [grilling](https://www.aihero.dev/ai-coding-dictionary/grilling), not researching.
+The line between `research` and `discuss-with-docs` is the **shelf life of what comes back**. Research produces short-lived assets: what this library's auth mechanism does as of this week. An ADR records a decision you keep. If what you are producing is a decision rather than a fact, you are [interviewing](https://www.aihero.dev/ai-coding-dictionary/grilling), not researching.
 
 ## Delegated legwork
 
-The defining move is that the reading runs as a **background agent**. You keep working; it goes off, follows each claim to its primary source, writes one Markdown file, and reports back. Research is legwork you delegate, not thinking you outsource: you get a document to grill, plan, or design against, and you still make the call.
+The defining move is that the reading runs as a **background agent**. You keep working; it goes off, follows each claim to its primary source, writes one Markdown file, and reports back. Research is legwork you delegate, not thinking you outsource: you get a document to discuss, plan, or design against, and you still make the call.
 
 The delegation is unguarded, and the background agent can spawn a further background agent of its own. This is the skill's best-documented rough edge.
 
@@ -46,7 +46,7 @@ The [model](https://www.aihero.dev/ai-coding-dictionary/model) does. The skill n
 
 **Does a later session reuse what an earlier run found?**
 
-No. Nothing auto-loads a past research file; it is a document sitting in the repo until a human or a skill points at it. This was raised early as the strongest challenge to the design: "the value's the markdown becoming context the agent re-reads later, not the fetch itself. A write-once dead file is just a fancy search." The shipped skill does not solve it. In practice the file earns its keep by being fed into the next step deliberately: attach it to a spec, quote it into a grilling session, point a [ticket](https://www.aihero.dev/ai-coding-dictionary/ticket) at it.
+No. Nothing auto-loads a past research file; it is a document sitting in the repo until a human or a skill points at it. This was raised early as the strongest challenge to the design: "the value's the markdown becoming context the agent re-reads later, not the fetch itself. A write-once dead file is just a fancy search." The shipped skill does not solve it. In practice the file earns its keep by being fed into the next step deliberately: attach it to a spec, quote it into an interview session, point a [ticket](https://www.aihero.dev/ai-coding-dictionary/ticket) at it.
 
 **Why not just ask the agent to go read the docs?**
 
@@ -70,4 +70,4 @@ No, it now fires them for you. In the unreleased changes since v1.1, a charting 
 
 ## Where it fits
 
-A reach-for-it-anytime standalone that feeds the thinking skills rather than sitting in the build chain. Its file is something to take *into* the flow: [grilling](https://aihero.dev/skills-grilling) and [grill-with-docs](https://aihero.dev/skills-grill-with-docs) ask sharper questions when the facts are already on the table, and [to-spec](https://aihero.dev/skills-to-spec) can synthesise against it. [wayfinder](https://aihero.dev/skills-wayfinder) is the one skill that invokes it directly, resolving each research ticket on its map with a `/research` subagent. For the whole map, see [ask-matt](https://aihero.dev/skills-ask-matt).
+A reach-for-it-anytime standalone that feeds the thinking skills rather than sitting in the build chain. Its file is something to take *into* the flow: [interview](https://aihero.dev/skills-interview) and [discuss-with-docs](https://aihero.dev/skills-discuss-with-docs) ask sharper questions when the facts are already on the table, and [to-spec](https://aihero.dev/skills-to-spec) can synthesise against it. [wayfinder](https://aihero.dev/skills-wayfinder) is the one skill that invokes it directly, resolving each research ticket on its map with a `/research` subagent. For the whole map, see [ask-matt](https://aihero.dev/skills-ask-matt).
