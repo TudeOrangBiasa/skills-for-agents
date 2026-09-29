@@ -4,13 +4,13 @@ description: "Lost in what the agent just said or built: get it re-pitched visua
 disable-model-invocation: true
 ---
 
-The user just watched work happen and wants to know what it was: what changed, what it looks like now, and how to check it. Report the work back visually. Skip the preamble and keep prose brief. Use the user's domain language from `CONTEXT.md`.
+Fire this the moment an agent message doesn't land: jargon you don't follow, a decision whose premise you never saw, work you watched happen but can't picture. Re-pitch the confusing thing visually instead of repeating it in words. Skip the preamble and keep prose brief. Use the user's domain language from `CONTEXT.md`.
 
 ## The report
 
-Four parts, in order. Leave out any part with nothing to say.
+Four parts, in order. Leave out any part with nothing to say. For a confusing message with no work behind it, part 1 alone is the whole re-pitch.
 
-1. **What changed.** One smallest visual that makes the key point clear (pick from the catalog below). Place it next to one or two sentences of plain explanation.
+1. **What was meant.** The confusing point restated as one smallest visual (pick from the catalog below), next to one or two sentences of plain explanation. If it was work, show what changed; if it was words, show what they describe.
 2. **Before and after.** Concrete evidence the change works: the failing-then-passing test, the output diff, or a screenshot pair. For UI changes use a before/after table; sizing and upload method: [`ATTACHMENTS.md`](../model-invoked/pr/ATTACHMENTS.md).
 3. **How to verify.** The exact commands to re-run the proof (tests, typecheck, the page to open), copyable as-is.
 4. **What's next.** What is done, what is deliberately left out, and what you need from the user, if anything.
@@ -75,6 +75,7 @@ sequenceDiagram
 
 ## Rules
 
-- Answer "what did you just do", never "what could be done". Report only work that actually landed.
+- Re-pitch, don't repeat. Never restate the same confusing words louder; translate them into a visual plus plain sentences.
+- Answer "what was meant or done", never "what could be done". Report only words that were said or work that actually landed.
 - One visual per point. A report with no pushback needed is a report that shows, not tells.
 - Keep only the calls, files, props, states, and boundaries needed to answer what changed. Cut the rest.
