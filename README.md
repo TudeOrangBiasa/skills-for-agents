@@ -68,8 +68,8 @@ This is just the same in the AI age. There is a communication gap between you an
 
 **The Fix** is to use:
 
-- [`/discuss`](./skills/productivity/discuss/SKILL.md) - for non-code uses
-- [`/discuss-with-docs`](./skills/engineering/discuss-with-docs/SKILL.md) - same as [`/discuss`](./skills/productivity/discuss/SKILL.md), but adds more goodies (see below)
+- [`/discuss`](./skills/user-invoked/discuss/SKILL.md) - for non-code uses
+- [`/discuss-with-docs`](./skills/user-invoked/discuss-with-docs/SKILL.md) - same as [`/discuss`](./skills/user-invoked/discuss/SKILL.md), but adds more goodies (see below)
 
 These are my most popular skills. They help you align with the agent before you get started, and think deeply about the change you're making. Use them _every_ time you want to make a change.
 
@@ -99,7 +99,7 @@ This concision pays off session after session.
 
 </details>
 
-This is built into [`/discuss-with-docs`](./skills/engineering/discuss-with-docs/SKILL.md). It's an interview session, but that helps you build a shared language with the AI, and document hard-to-explain decisions in ADR's.
+This is built into [`/discuss-with-docs`](./skills/user-invoked/discuss-with-docs/SKILL.md). It's an interview session, but that helps you build a shared language with the AI, and document hard-to-explain decisions in ADR's.
 
 It's hard to explain how powerful this is. It might be the single coolest technique in this repo. Try it, and see.
 
