@@ -4,9 +4,9 @@ There is no separate docs tree in this repo: each `SKILL.md` plus its co-located
 
 Most skills are **user-invoked**: the agent will never fire them, so *you* are the index that has to remember they exist and when to reach for them. That memory is **cognitive load**. Clear skill content relieves it: a reader who opens the skill can hold it in their head, know when to reach for it, and see where it sits in the system. The folder `README.md` files are collectively a distributed router; each entry is a node.
 
-Act whenever a skill is added, renamed, or has its behaviour changed: update its `SKILL.md`, its folder `README.md` entry, the top-level `README.md` entry, and `ask-matt` if it is user-reachable. A rename moves the folder too (`skills/<invocation>/<old>` → `skills/<invocation>/<new>`).
+Act whenever a skill is added, renamed, or has its behaviour changed: update its `SKILL.md`, its folder `README.md` entry, the top-level `README.md` entry, and `guide` if it is user-reachable. A rename moves the folder too (`skills/<invocation>/<old>` → `skills/<invocation>/<new>`).
 
-Links between skills are repo-relative (`[ask-matt](../user-invoked/ask-matt/SKILL.md)` style). Links to outside this repo stay absolute.
+Links between skills are repo-relative (`[guide](../user-invoked/guide/SKILL.md)` style). Links to outside this repo stay absolute.
 
 ## Content structure
 
@@ -62,7 +62,7 @@ Always present. Situate the skill in the system in a sentence or two:
 
 - **Role.** Name it: a **chain step** (`discuss-with-docs → to-spec → to-tickets → implement → code-review`), a **run-once setup** (`setup-matt-pocock-skills`), **periodic maintenance** (`improve-codebase-architecture`, "every few days"), or a **reach-for-it-anytime standalone** (`diagnosing-bugs`, `prototype`, `resolving-merge-conflicts`). A standalone's map is one honest sentence, which is far better than omitting the section.
 - **Neighbours.** The one or two siblings that matter, each with a because-clause, linked repo-relatively.
-- **The map.** Point to `ask-matt`, the router over the whole set, so this skill stays a node and never has to redraw the graph.
+- **The map.** Point to `guide`, the router over the whole set, so this skill stays a node and never has to redraw the graph.
 
 </content-template>
 
@@ -81,7 +81,7 @@ Always present. Situate the skill in the system in a sentence or two:
 - `## What it does` states the defining constraint, as plain prose rather than a labelled aside.
 - The skill names no author and quotes no author: every claim stands on its own.
 - `## When to reach for it` states invocation mode and the trigger boundary.
-- `## Where it fits` names the role and links to `ask-matt`.
+- `## Where it fits` names the role and links to `guide`.
 - A prerequisite (workspace, prior setup, tooling) is stated where one exists, and the section is absent where none does.
 - The middle surfaces the leading word.
 - Every multi-way branch is a table or a list, not a paragraph the reader has to read in full.
