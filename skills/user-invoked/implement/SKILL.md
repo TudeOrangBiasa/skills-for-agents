@@ -1,15 +1,40 @@
 ---
 name: implement
-description: "Implement a piece of work based on a spec or set of tickets."
+description: "Implement a piece of work from a spec or set of tickets, test-first with before/after proof, closing with review and a PR body."
 disable-model-invocation: true
 ---
 
 Implement the work described by the user in the spec or tickets.
 
-Use /tdd where possible, at pre-agreed seams.
+## 1. Pick the work
+
+Read the spec and its tickets. Read enough to see the shape: a single slice to build directly, or a task graph with blocking edges and a frontier of tickets ready to grab. Tickets from `to-tickets` are agent-ready by construction; work them blockers-first.
+
+## 2. Build test-first
+
+Drive `/tdd` at the pre-agreed seams, one vertical slice at a time. Every slice is a before/after pair, no exceptions:
+
+- **Before:** write the failing test first and show it failing. A slice with no red proof does not exist yet.
+- **After:** write only enough code to turn it green.
+
+Do not anticipate future slices or add speculative behaviour. Agree the seams up front; a seam nobody agreed to shows up as a review finding later.
+
+## 3. Verify continuously
 
 Run typechecking regularly, single test files regularly, and the full test suite once at the end.
 
-Once done, use /code-review to review the work.
+## 4. Scale with the graph
 
-Commit your work to the current branch.
+A single slice fits one session: build it here. A ticket graph gets worked along its frontier: finish blockers first so new tickets unlock. Where the harness supports background subagents, fan implementers out across the ready frontier and merge each finished slice back before kicking off more.
+
+## 5. Review, mandatory
+
+Once the work is complete, call the Skill tool with "code-review" and fix what it finds. No slice lands unreviewed.
+
+## 6. Write the PR body
+
+Shape the closing PR with the `pr` skill (Summary visual, before/after Evidence, Merge Danger). The before/after pairs from step 2 are the evidence section almost verbatim.
+
+## 7. Commit
+
+Commit the reviewed work to the current branch.
