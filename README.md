@@ -163,8 +163,7 @@ Skills for daily work, fired by hand. Full list in [skills/user-invoked/](skills
 - **[discuss](./skills/user-invoked/discuss/SKILL.md)**: Get relentlessly interviewed about a plan or design until every branch of the design tree is resolved.
 - **[discuss-with-docs](./skills/user-invoked/discuss-with-docs/SKILL.md)**: Interview session that also builds your project's domain model, sharpening terminology and updating `GLOSSARY.md` and ADRs inline.
 - **[guide](./skills/user-invoked/guide/SKILL.md)**: Ask which skill or flow fits your situation. A router over the user-invoked skills in this repo.
-- **[implement](./skills/user-invoked/implement/SKILL.md)**: Build the work described by a spec or set of tickets, driving `/tdd` at pre-agreed seams and closing out with `/code-review` before committing.
-- **[implement-spec](./skills/user-invoked/implement-spec/SKILL.md)**: Implement a specification in code.
+- **[implement](./skills/user-invoked/implement/SKILL.md)**: Implement from a spec or tickets, test-first with before/after proof per slice, closing with mandatory review and a `pr`-shaped PR body.
 - **[improve-codebase-architecture](./skills/user-invoked/improve-codebase-architecture/SKILL.md)**: Scan a codebase for deepening opportunities, present them as a visual HTML report, then discuss through whichever one you pick.
 - **[loop-me](./skills/user-invoked/loop-me/SKILL.md)**: Interview yourself into implementable workflow specs over multiple sessions, using the current directory as a stateful workspace.
 - **[retro](./skills/user-invoked/retro/SKILL.md)**: Conduct a retrospective on a coding session.
