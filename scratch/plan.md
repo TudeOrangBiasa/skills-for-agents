@@ -8,7 +8,7 @@ skills yang di hapus
 
 skills yang akan saya revisi :
 
-[~] PARTIAL: setup matt pocock skills diganti ke setup-meta (rename folder + frontmatter + semua pointer, selesai). Sisa: DESIGN.md format Google Stitch (tunggu referensi darimu), setups husky pre-commit, PR body, commit message format, CODING_STANDARDS.md/CONTRIBUTION.md/GUIDELINES.md. Ditambah: root CONTEXT.md diganti jadi GLOSSARY.md sekalian.
+[x] DONE: setup-meta paket penuh (Section D: DESIGN.md format Stitch + lint, coding standards file, commit format, konfirmasi format pr; Section E: husky via setup-pre-commit; orkestrasi interaktif). Referensi Stitch dari https://github.com/google-labs-code/design.md.
 [x] DONE: wait-what tetap repitch saat user bingung dengan yang dibicarakan agents. Bentuk akhir: visual terkecil + potongan kode kalau ada code changes + follow-up yang diperlukan + next task satu baris. Katalog visual show-me di-pack dengan credit di CREDITS.md. Tanpa rujukan ke attachments pr.
 [ ] TODO: implement dan implement-spec saya ingin cukup 1 skills implement dimana skills implement ini bisa pick dari spec dimana flownya itu TDD dimana saat implement itu wajib ada before dan afternya, dan sehabis implement ini akan ada PR dimana ini ada formatnya dari PR body yang sudah di setup ( meta docs dari /setups ) sehabis implement wajib menjalankan skills codereview
 [x] DONE: i want to revised the skills directory folder structured dengan cukup user-invoked/ dimana skills yang di khususkan hanya user yang invoked model-invoked/ dimana model auto invoked skills ini ketika diperlukan / workflow digunakan.

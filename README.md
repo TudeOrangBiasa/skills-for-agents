@@ -168,7 +168,7 @@ Skills for daily work, fired by hand. Full list in [skills/user-invoked/](skills
 - **[improve-codebase-architecture](./skills/user-invoked/improve-codebase-architecture/SKILL.md)**: Scan a codebase for deepening opportunities, present them as a visual HTML report, then discuss through whichever one you pick.
 - **[loop-me](./skills/user-invoked/loop-me/SKILL.md)**: Interview yourself into implementable workflow specs over multiple sessions, using the current directory as a stateful workspace.
 - **[retro](./skills/user-invoked/retro/SKILL.md)**: Conduct a retrospective on a coding session.
-- **[setup-meta](./skills/user-invoked/setup-meta/SKILL.md)**: Configure this repo for the skills (issue tracker, triage labels, domain doc layout). Run once per repo before using the other skills.
+- **[setup-meta](./skills/user-invoked/setup-meta/SKILL.md)**: Configure this repo for the skills: tracker, labels, domain docs, DESIGN.md, coding standards, commit/PR formats, pre-commit tooling. Run once per repo.
 - **[setup-ts-deep-modules](./skills/user-invoked/setup-ts-deep-modules/SKILL.md)**: Wire dependency-cruiser into a TypeScript repo so each package is a deep module.
 - **[teach](./skills/user-invoked/teach/SKILL.md)**: Teach the user a new skill or concept, within this workspace.
 - **[to-spec](./skills/user-invoked/to-spec/SKILL.md)**: Turn the current conversation into a spec and publish it to the issue tracker. No interview, just synthesizes what you've already discussed.
