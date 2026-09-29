@@ -10,7 +10,7 @@ Scaffold the per-repo configuration that the engineering skills assume:
 
 - **Issue tracker**: where issues live (GitHub by default; local markdown is also supported out of the box)
 - **Triage labels**: the strings used for the five canonical triage roles
-- **Domain docs**: where `CONTEXT.md` and ADRs live, and the consumer rules for reading them
+- **Domain docs**: where `GLOSSARY.md` and ADRs live, and the consumer rules for reading them
 
 This is a prompt-driven skill, not a deterministic script. Explore, present what you found, confirm with the user, then write.
 
