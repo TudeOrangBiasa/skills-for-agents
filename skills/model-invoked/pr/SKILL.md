@@ -41,7 +41,7 @@ Use this template for writing the PR body:
 
 ## Prerequisites
 
-Visual evidence needs a capture setup. Demand the user install the `pr-screenshots` skill (https://github.com/github/awesome-copilot/blob/main/skills/pr-screenshots/SKILL.md) before relying on screenshot, video, or browser-task capture: it owns the attachment, sizing, and upload rules below. If it is not installed, do not silently ship a PR without visuals. Ask the human to capture and attach them by hand, and say which pairs are missing.
+Visual evidence needs a capture setup: [`agent-browser`](https://agent-browser.dev/) (install: `npm i -g agent-browser && agent-browser install`, then `agent-browser skills get core` for the workflows). It takes the screenshots, records the video, and drives the browser tasks and testing the evidence depends on. If it is not installed, do not silently ship a PR without visuals. Ask the human to capture and attach them by hand, and say which pairs are missing.
 ## Sections
 
 Skip all preambles and keep prose brief. Use the user's domain language from `CONTEXT.md`.
@@ -171,14 +171,9 @@ Screenshots are S-tier - when the environment is set up for it and the change is
 
 Execution-based evidence is A-tier. Test results, console output. Show the exact test that now fails and passes, using pseudocode.
 
-#### Attachment rules (from `pr-screenshots`)
+#### Attachment rules
 
-- Capture the before state BEFORE making changes. Reconstructing it later is slow and error-prone.
-- Show images visibly in the body, never wrapped in `<details>` collapse.
-- Before/after pairs must use the same viewport width and crop, or the comparison is meaningless.
-- Capture at native 1x resolution. Control display size with `<img src="url" width="600">` when an image is too large.
-- Keep each image description to a sentence or two pointing out what changed. Annotate when the difference is subtle.
-- Upload without polluting the branch: on GitHub use a `pr-assets` orphan branch with blob URLs; on Azure DevOps use PR attachments. Never commit screenshots to the working branch just for the PR.
+Capture the before state BEFORE making changes, show images visibly (never in `<details>` collapse), keep the same viewport and crop across each pair, and never commit screenshots to the working branch. Full method (pair pattern, sizing, GitHub and Azure DevOps upload, gotchas): [`ATTACHMENTS.md`](./ATTACHMENTS.md).
 ### Merge Danger
 
 Describe whether it's a one-way or two-way door. You can walk back through two-way doors, but not one-way doors. A PR that is cheap to roll back is lower risk. Changes that involve destructive actions or hard-to-reverse decisions are one-way doors.
