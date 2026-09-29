@@ -1,6 +1,6 @@
 ---
 name: setup-meta
-description: "Configure this repo for the skills: set up its issue tracker, triage label vocabulary, and domain doc layout. Run once before first use of the other skills."
+description: "Configure this repo for the skills: issue tracker, triage labels, domain docs, design system file, coding standards, commit and PR formats, and pre-commit tooling. Run once before first use of the other skills."
 disable-model-invocation: true
 ---
 
@@ -60,6 +60,15 @@ The defaults are the five canonical roles, each label string equal to its name: 
 
 Offer **multi-context** (a root `GLOSSARY-MAP.md` pointing to per-context `GLOSSARY.md` files) only when exploration found monorepo signals. Then confirm which layout they want. A repo that already carries `CONTEXT.md` / `CONTEXT-MAP.md` keeps those names (legacy); do not create `GLOSSARY.md` beside them.
 
+**Section D: Meta docs.** Ask which repo-level meta docs to scaffold. Default posture is all yes; skip any the repo genuinely does not need (a repo with no UI skips `DESIGN.md`).
+
+- **`DESIGN.md`** (Stitch format): machine-readable design tokens as YAML frontmatter (`colors`, `typography`, `rounded`, `spacing`, `components`) plus human-readable rationale in `##` sections in canonical order (Overview, Colors, Typography, Layout, Elevation & Depth, Shapes, Components, Do's and Don'ts). Full format reference: https://github.com/google-labs-code/design.md. Scaffold tokens from the existing UI (or the user's brand notes), then validate with `npx @google/design.md lint DESIGN.md` and fix errors before writing.
+- **Coding standards file**: one file, agreed name. Default `CODING_STANDARDS.md`; accept `CONTRIBUTION.md` or `GUIDELINES.md` when the repo already leans that way. Draft it from the codebase (naming, module shape, test seams, what review checks) plus the user's stated rules.
+- **Commit message format**: agree one format (default: conventional commits) and record it in the standards file.
+- **PR body format**: no new file. Confirm the repo uses the `pr` skill shape (Summary visual, before/after Evidence, Merge Danger).
+
+**Section E: Tooling.** Husky pre-commit hooks: call the Skill tool with "setup-pre-commit" (it detects the package manager, installs Husky + lint-staged + Prettier, and wires typecheck and tests). Only when the repo is a JS/TS project; skip otherwise.
+
 ### 3. Confirm and edit
 
 Show the user a draft of:
@@ -91,6 +100,10 @@ The block:
 ### Domain docs
 
 [one-line summary of layout: "single-context" or "multi-context"]. See `docs/agents/domain.md`.
+
+### Meta docs
+
+[one-line summary of what was scaffolded: DESIGN.md, standards file name, commit format]. PR body needs no line: the `pr` skill is the format.
 ```
 
 Include the `### Triage labels` sub-block, and write `docs/agents/triage-labels.md`, only when `triage` is installed and Section B ran. When it isn't, both are omitted.
