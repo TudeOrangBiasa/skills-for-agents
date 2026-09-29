@@ -161,7 +161,7 @@ These split on one axis: who can invoke them. **User-invoked** skills are reacha
 Skills for daily work, fired by hand. Full list in [skills/user-invoked/](skills/user-invoked/).
 
 - **[discuss](./skills/user-invoked/discuss/SKILL.md)**: Get relentlessly interviewed about a plan or design until every branch of the design tree is resolved.
-- **[discuss-with-docs](./skills/user-invoked/discuss-with-docs/SKILL.md)**: Interview session that also builds your project's domain model, sharpening terminology and updating `CONTEXT.md` and ADRs inline.
+- **[discuss-with-docs](./skills/user-invoked/discuss-with-docs/SKILL.md)**: Interview session that also builds your project's domain model, sharpening terminology and updating `GLOSSARY.md` and ADRs inline.
 - **[guide](./skills/user-invoked/guide/SKILL.md)**: Ask which skill or flow fits your situation. A router over the user-invoked skills in this repo.
 - **[implement](./skills/user-invoked/implement/SKILL.md)**: Build the work described by a spec or set of tickets, driving `/tdd` at pre-agreed seams and closing out with `/code-review` before committing.
 - **[implement-spec](./skills/user-invoked/implement-spec/SKILL.md)**: Implement a specification in code.
@@ -174,7 +174,7 @@ Skills for daily work, fired by hand. Full list in [skills/user-invoked/](skills
 - **[to-spec](./skills/user-invoked/to-spec/SKILL.md)**: Turn the current conversation into a spec and publish it to the issue tracker. No interview, just synthesizes what you've already discussed.
 - **[to-tickets](./skills/user-invoked/to-tickets/SKILL.md)**: Break any plan, spec, or conversation into a set of tracer-bullet tickets, each declaring its blocking edges.
 - **[triage](./skills/user-invoked/triage/SKILL.md)**: Move issues through a state machine of triage roles.
-- **[wait-what](./skills/user-invoked/wait-what/SKILL.md)**: Fire this the moment an agent message doesn't land. The agent re-pitches it visually, in plain English, using your `CONTEXT.md` vocabulary.
+- **[wait-what](./skills/user-invoked/wait-what/SKILL.md)**: Fire this the moment an agent message doesn't land. The agent re-pitches it visually, in plain English, using your `GLOSSARY.md` vocabulary.
 - **[wayfinder](./skills/user-invoked/wayfinder/SKILL.md)**: Plan a huge chunk of work, more than one agent session can hold, as a shared map of decision tickets on the issue tracker, and resolve them one at a time until the way to the destination is clear.
 
 ### Model-invoked
