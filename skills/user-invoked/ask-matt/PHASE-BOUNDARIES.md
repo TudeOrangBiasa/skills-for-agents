@@ -10,7 +10,7 @@ The **phase boundary** is the gap between two phases, and it is the only place t
 | ------------ | --------------------------------------------------------------- |
 | **Continue** | Stay in the session. No context switch at all.                    |
 | **`/clear`** | Empty the context window and start from nothing.                  |
-| **`/handoff`** | Write a portable markdown file and seed a session anywhere with it. |
+| **Portable note** | Write a markdown file by hand and seed a session anywhere with it. |
 | **Subagent** | Send the task to its own context window and get a report back.     |
 | **`/compact`** | Compress this context and seed a fresh session with the summary.  |
 
