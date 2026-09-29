@@ -116,8 +116,14 @@ Then write the docs files using the seed templates in this skill folder as a sta
 - [triage-labels.md](./triage-labels.md): label mapping (only if `triage` is installed)
 - [domain.md](./domain.md): domain doc consumer rules + layout
 
+Then write the repo-level meta docs agreed in Section D, at the repo root:
+
+- `DESIGN.md`: tokens frontmatter plus rationale sections in canonical order. Lint it with `npx @google/design.md lint DESIGN.md` and fix errors before finishing.
+- The coding standards file under its agreed name: naming, module shape, test seams, review checks, commit message format.
+
+Then run Section E: call the Skill tool with "setup-pre-commit" when the repo qualifies.
 For "other" issue trackers, write `docs/agents/issue-tracker.md` from scratch using the user's description.
 
 ### 5. Done
 
-Tell the user the setup is complete and which engineering skills will now read from these files. Mention they can edit `docs/agents/*.md` directly later; re-running this skill is only necessary if they want to switch issue trackers or restart from scratch.
+Tell the user the setup is complete: which skills will now read from these files, which meta docs were scaffolded (`DESIGN.md`, standards file, commit format), and whether pre-commit tooling was installed. Mention they can edit `docs/agents/*.md` and the meta docs directly later; re-running this skill is only necessary if they want to switch trackers, restyle, or restart from scratch.
