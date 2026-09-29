@@ -11,9 +11,9 @@ Fire this the moment an agent message doesn't land: jargon you don't follow, a d
 Four parts, in order. Leave out any part with nothing to say. For a confusing message with no work behind it, part 1 alone is the whole re-pitch.
 
 1. **What was meant.** The confusing point restated as one smallest visual (pick from the catalog below), next to one or two sentences of plain explanation. If it was work, show what changed; if it was words, show what they describe.
-2. **Before and after.** Concrete evidence the change works: the failing-then-passing test, the output diff, or a screenshot pair. For UI changes use a before/after table; sizing and upload method: [`ATTACHMENTS.md`](../model-invoked/pr/ATTACHMENTS.md).
-3. **How to verify.** The exact commands to re-run the proof (tests, typecheck, the page to open), copyable as-is.
-4. **What's next.** What is done, what is deliberately left out, and what you need from the user, if anything.
+2. **The code, if any.** When code changed, show the snippet: the before/after diff or the new block, trimmed to the lines that matter.
+3. **Follow-ups needed.** Anything required before this is truly done: tests to run, things to check, input needed from the user. Copyable commands where they apply.
+4. **Next task.** The single next step, stated as one line.
 
 ## Visual catalog
 
