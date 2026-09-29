@@ -44,7 +44,7 @@ Use this template for writing the PR body:
 Visual evidence needs a capture setup: [`agent-browser`](https://agent-browser.dev/) (install: `npm i -g agent-browser && agent-browser install`, then `agent-browser skills get core` for the workflows). It takes the screenshots, records the video, and drives the browser tasks and testing the evidence depends on. Verify it is installed before capturing anything visual. If it is not installed, do not silently ship a PR without visuals. Ask the human to capture and attach them by hand, and say which pairs are missing.
 ## Sections
 
-Skip all preambles and keep prose brief. Use the user's domain language from `CONTEXT.md`.
+Skip all preambles and keep prose brief. Use the user's domain language from `GLOSSARY.md`.
 
 ### Summary
 

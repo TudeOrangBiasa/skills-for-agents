@@ -4,7 +4,7 @@ description: "Lost in what the agent just said or built: get it re-pitched visua
 disable-model-invocation: true
 ---
 
-Fire this the moment an agent message doesn't land: jargon you don't follow, a decision whose premise you never saw, work you watched happen but can't picture. Re-pitch the confusing thing visually instead of repeating it in words. Skip the preamble and keep prose brief. Use the user's domain language from `CONTEXT.md`.
+Fire this the moment an agent message doesn't land: jargon you don't follow, a decision whose premise you never saw, work you watched happen but can't picture. Re-pitch the confusing thing visually instead of repeating it in words. Skip the preamble and keep prose brief. Use the user's domain language from `GLOSSARY.md`.
 
 ## The report
 
