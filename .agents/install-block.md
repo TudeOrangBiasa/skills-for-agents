@@ -10,7 +10,7 @@ Skills install as editable files into the project via [skills.sh](https://skills
 npx skills@latest add mattpocock/skills
 ```
 
-Pick the skills you want, and which coding agents to install them on. **The installer lets you choose which skills to take: make sure `setup-matt-pocock-skills` is one of them.**
+Pick the skills you want, and which coding agents to install them on. **The installer lets you choose which skills to take: make sure `setup-meta` is one of them.**
 
 </canonical-block>
 
