@@ -2,4 +2,4 @@
 "mattpocock-skills": minor
 ---
 
-Make `pr` the mandatory PR body shape: Summary visual, before/after Evidence (as a table when the change is visual, video when stills are not enough), Merge Danger. Adopt the attachment rules from `pr-screenshots` (capture before first, visible images, same viewport and crop, native 1x, upload via `pr-assets` branch without polluting the working branch) and add a Prerequisites section that demands the user install that skill before relying on screenshot, video, or browser-task capture.
+Make `pr` the mandatory PR body shape: Summary visual, before/after Evidence (as a table when the change is visual, video when stills are not enough), Merge Danger. Pack the attachment method into the skill as `ATTACHMENTS.md` (adapted from `pr-screenshots`: pair pattern, sizing, GitHub and Azure DevOps upload, gotchas) with credit in `CREDITS.md`, and set `agent-browser` as the capture prerequisite for screenshots, video, and browser-task testing.
