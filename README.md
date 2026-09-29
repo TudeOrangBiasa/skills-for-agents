@@ -186,7 +186,7 @@ Reusable discipline the agent reaches for on its own. Full list in [skills/model
 - **[diagnosing-bugs](./skills/model-invoked/diagnosing-bugs/SKILL.md)**: Disciplined diagnosis loop for hard bugs and performance regressions.
 - **[domain-modeling](./skills/model-invoked/domain-modeling/SKILL.md)**: Build and sharpen a project's domain model.
 - **[interview](./skills/model-invoked/interview/SKILL.md)**: Interview the user relentlessly about a plan, decision, or idea. The reusable interview primitive behind `discuss`, `discuss-with-docs`, `triage`, `wayfinder` and `improve-codebase-architecture`.
-- **[pr](./skills/model-invoked/pr/SKILL.md)**: Use when writing a PR body.
+- **[pr](./skills/model-invoked/pr/SKILL.md)**: The mandatory PR body shape: summary visual, before/after evidence with UI tables, merge danger. Demands the `pr-screenshots` capture setup for visuals.
 - **[prototype](./skills/model-invoked/prototype/SKILL.md)**: Build a throwaway prototype to answer a design question.
 - **[research](./skills/model-invoked/research/SKILL.md)**: Investigate a question against high-trust primary sources and capture the findings as a cited Markdown file in the repo.
 - **[resolving-merge-conflicts](./skills/model-invoked/resolving-merge-conflicts/SKILL.md)**: Use when you need to resolve an in-progress git merge/rebase conflict.

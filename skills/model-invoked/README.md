@@ -7,7 +7,7 @@ Skills the agent can fire on its own when the task fits, or the human can type b
 - **[diagnosing-bugs](./diagnosing-bugs/SKILL.md)**: Diagnosis loop for hard bugs and performance regressions.
 - **[domain-modeling](./domain-modeling/SKILL.md)**: Build and sharpen a project's domain model.
 - **[interview](./interview/SKILL.md)**: Interview the user relentlessly about a plan, decision, or idea. The reusable interview primitive behind `discuss`, `discuss-with-docs`, `triage`, `wayfinder` and `improve-codebase-architecture`.
-- **[pr](./pr/SKILL.md)**: Use when writing a PR body.
+- **[pr](./pr/SKILL.md)**: The mandatory PR body shape: summary visual, before/after evidence with UI tables, merge danger. Demands the `pr-screenshots` capture setup for visuals.
 - **[prototype](./prototype/SKILL.md)**: Build a throwaway prototype to answer a design question.
 - **[research](./research/SKILL.md)**: Investigate a question against high-trust primary sources and capture the findings as a cited Markdown file in the repo.
 - **[resolving-merge-conflicts](./resolving-merge-conflicts/SKILL.md)**: Use when you need to resolve an in-progress git merge/rebase conflict.
