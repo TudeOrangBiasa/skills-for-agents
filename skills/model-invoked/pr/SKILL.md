@@ -41,7 +41,7 @@ Use this template for writing the PR body:
 
 ## Prerequisites
 
-Visual evidence needs a capture setup: [`agent-browser`](https://agent-browser.dev/) (install: `npm i -g agent-browser && agent-browser install`, then `agent-browser skills get core` for the workflows). It takes the screenshots, records the video, and drives the browser tasks and testing the evidence depends on. If it is not installed, do not silently ship a PR without visuals. Ask the human to capture and attach them by hand, and say which pairs are missing.
+Visual evidence needs a capture setup: [`agent-browser`](https://agent-browser.dev/) (install: `npm i -g agent-browser && agent-browser install`, then `agent-browser skills get core` for the workflows). It takes the screenshots, records the video, and drives the browser tasks and testing the evidence depends on. Verify it is installed before capturing anything visual. If it is not installed, do not silently ship a PR without visuals. Ask the human to capture and attach them by hand, and say which pairs are missing.
 ## Sections
 
 Skip all preambles and keep prose brief. Use the user's domain language from `CONTEXT.md`.
@@ -171,9 +171,17 @@ Screenshots are S-tier - when the environment is set up for it and the change is
 
 Execution-based evidence is A-tier. Test results, console output. Show the exact test that now fails and passes, using pseudocode.
 
-#### Attachment rules
+#### Attachment rules (mandatory)
 
-Capture the before state BEFORE making changes, show images visibly (never in `<details>` collapse), keep the same viewport and crop across each pair, and never commit screenshots to the working branch. Full method (pair pattern, sizing, GitHub and Azure DevOps upload, gotchas): [`ATTACHMENTS.md`](./ATTACHMENTS.md).
+Obey every rule below on every visual PR. Method detail (pair pattern, sizing, GitHub and Azure DevOps upload, gotchas): [`ATTACHMENTS.md`](./ATTACHMENTS.md).
+
+1. Capture the before state BEFORE making changes.
+2. Show images visibly in the body, never wrapped in `<details>` collapse.
+3. Keep the same viewport width and crop across each before/after pair.
+4. Capture at native 1x resolution; control display size with `<img width>` only.
+5. Keep each image description to a sentence or two; annotate when the difference is subtle.
+6. Never commit screenshots to the working branch. Upload out of band.
+7. Never ship the PR body until every visual change has its pair (or the human has supplied it by hand).
 ### Merge Danger
 
 Describe whether it's a one-way or two-way door. You can walk back through two-way doors, but not one-way doors. A PR that is cheap to roll back is lower risk. Changes that involve destructive actions or hard-to-reverse decisions are one-way doors.
