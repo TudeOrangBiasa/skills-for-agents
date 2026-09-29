@@ -16,5 +16,5 @@ Skills that fire only when the human types their name. They orchestrate; they ne
 - **[to-spec](./to-spec/SKILL.md)**: Turn the current conversation into a spec and publish it to the project issue tracker: no interview, just synthesis of what you've already discussed.
 - **[to-tickets](./to-tickets/SKILL.md)**: Break a plan, spec, or the current conversation into a set of tracer-bullet tickets, each declaring its blocking edges.
 - **[triage](./triage/SKILL.md)**: Move issues and external PRs through a state machine of triage roles, categorise, verify, interview if needed, and write agent-ready briefs.
-- **[wait-what](./wait-what/SKILL.md)**: Stop. That last message did not land: re-pitch it.
+- **[wait-what](./wait-what/SKILL.md)**: Lost in what the agent just said or built: get it re-pitched visually.
 - **[wayfinder](./wayfinder/SKILL.md)**: Plan a huge chunk of work (more than one agent session can hold) as a shared map of decision tickets on the issue tracker, and resolve them one at a time until the way to the destination is clear.
