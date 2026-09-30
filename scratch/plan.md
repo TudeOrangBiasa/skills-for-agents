@@ -21,3 +21,5 @@ Tambahan di luar plan yang ikut DONE:
 - [x] CLAUDE.md dihapus, AGENTS.md jadi file nyata.
 - [x] .claude-plugin/ dihapus, installer tunggal skills.sh untuk universal agents (codex, pi, oh-my-pi, agy).
 - [x] docs/ duplikat dihapus (SKILL.md satu-satunya sumber, docs/ di-exclude di .okignore).
+- [x] Peta flow 28 skill disimpan di scratch/flow.md (daftar + diagram mermaid).
+- [x] Keputusan handoff: tetap dihapus, ganti portable note tulisan tangan; fork session langsung untuk context bersih.
