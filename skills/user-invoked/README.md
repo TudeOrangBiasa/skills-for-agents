@@ -8,7 +8,7 @@ Skills that fire only when the human types their name. They orchestrate; they ne
 - **[implement](./implement/SKILL.md)**: Implement from a spec or tickets, test-first with before/after proof per slice, closing with mandatory review and a `pr`-shaped PR body.
 - **[improve-codebase-architecture](./improve-codebase-architecture/SKILL.md)**: Scan a codebase for deepening opportunities, present them as a visual HTML report, then discuss through whichever one you pick.
 - **[loop-me](./loop-me/SKILL.md)**: Interview me about specs for the workflows I want to build, within this workspace.
-- **[retro](./retro/SKILL.md)**: Conduct a retrospective on a coding session.
+- **[retro](./retro/SKILL.md)**: Conduct a retrospective on a coding session: refresh meta docs, kill rot, surface patterns.
 - **[setup-meta](./setup-meta/SKILL.md)**: Configure this repo for the skills: tracker, labels, domain docs, DESIGN.md, coding standards, commit/PR formats, pre-commit tooling. Run once per repo.
 - **[setup-ts-deep-modules](./setup-ts-deep-modules/SKILL.md)**: Wire dependency-cruiser into a TypeScript repo so each package is a deep module, with implementation hidden in subfolders and reachable only through its entry-point files.
 - **[teach](./teach/SKILL.md)**: Teach the user a new skill or concept, within this workspace.

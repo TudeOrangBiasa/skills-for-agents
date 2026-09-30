@@ -1,6 +1,6 @@
 ---
 name: retro
-description: "Conduct a retrospective on a coding session."
+description: "Conduct a retrospective on a coding session: refresh meta docs, kill rot, surface patterns."
 disable-model-invocation: true
 ---
 
@@ -22,7 +22,23 @@ The user has asked for a **retrospective**. You are suggesting improvements to t
 - **No-ops**: look for instructions in steering files that don't modify the agent's behavior. _Use when_ the steering files are large and unwieldy.
 - **Information access**: look for opportunities to increase the agent's access to information. Teeing dev server logs, readonly access to third-party services. _Use when_ a crucial piece of information was not available to the agent.
 
-4. Present these candidates to the user, in order of severity.
+4. Refresh the meta docs against this session. For each of `GLOSSARY.md`, the ADRs in `docs/adr/`, `DESIGN.md`, `CODING_STANDARDS.md`, and the navigation pointers in `AGENTS.md`, compare what the session actually did against what the doc claims:
+
+- **Contradiction** (the session did X, the doc says Y): propose an update to the doc.
+- **Unused** (the doc prescribes something this session never touched and nothing else uses): flag it as stale, propose a trim or removal.
+- **Gap** (the session invented language or rules nothing records): propose where it belongs: a term goes to the glossary, a hard-to-reverse decision to an ADR, a judgement call to the standards file, a mechanical rule to a deterministic check, never prose.
+
+Write nothing yet. Collect every proposal for step 6.
+
+5. Mine patterns across sessions. Look at this session plus any prior session context available for repeats:
+
+- A mistake that keeps recurring becomes a deterministic rule or automated check proposal. Never a prose reminder where a check is possible.
+- A decision re-litigated becomes an ADR proposal.
+- Friction in the flow itself (repeated clarifications, rework loops) becomes a skill or router proposal.
+
+Each pattern names the repeats it stands on. No pattern from a single occurrence, unless the cost was severe.
+
+6. Present all candidates (environment improvements from step 3, meta-docs updates from step 4, patterns from step 5) in order of severity. Write only what the user approves, file by file.
 
 ## Reference
 
