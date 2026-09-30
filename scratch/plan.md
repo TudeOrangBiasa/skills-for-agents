@@ -13,7 +13,7 @@ skills yang akan saya revisi :
 [x] DONE: 1 skill implement (pick dari spec/tiket, TDD before/after wajib per slice, verify kontinyu, skala via frontier, code-review wajib, PR body format pr, commit). implement-spec dihapus dan dilebur.
 [x] DONE: i want to revised the skills directory folder structured dengan cukup user-invoked/ dimana skills yang di khususkan hanya user yang invoked model-invoked/ dimana model auto invoked skills ini ketika diperlukan / workflow digunakan.
 [x] DONE: saya ingin ganti grill-me dan grill-with-docs menjadi /discuss dan /discuss-with-docs dan /grilling menjadi /interview
-[~] PARTIAL: saya ingin retro menjadi skills aktif yang akan digunakan dimana itu untuk get session context untuk develop meta docs / memperbarui meta docs supaya ga stale , ga context rot serta mencari pattern dalam mengerjakan projects. (retro sudah aktif di user-invoked/ dan ter-link; peran meta-docs refresh + anti-rot + pattern mining belum dikerjakan)
+[x] DONE: retro aktif untuk get session context: bandingkan sesi vs semua meta docs (GLOSSARY, ADR, DESIGN.md, CODING_STANDARDS, AGENTS.md pointers), usulkan update untuk contradiction/unused/gap; mine pola berulang jadi usulan check/ADR/skill. Semua ditulis hanya setelah user setuju per file.
 [x] DONE: PR body wajib bentuknya seperti /pr (template Summary + Evidence + Merge Danger, tabel before/after untuk UI, video bila perlu, 7 attachment rules mandatory). Attachment method di-pack langsung jadi ATTACHMENTS.md di skill pr (adaptasi pr-screenshots + credit). Prerequisites = agent-browser untuk capture screenshot/video/browser testing.
 
 Tambahan di luar plan yang ikut DONE:
