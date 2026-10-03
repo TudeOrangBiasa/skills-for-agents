@@ -1,20 +1,20 @@
 ---
 name: wait-what
-description: "Lost in what the agent just said or built: get it re-pitched visually."
+description: "Lost in what the agent just said or built: hear your goals restated in plain words, then get it re-pitched visually."
 disable-model-invocation: true
 ---
 
-Fire this the moment an agent message doesn't land: jargon you don't follow, a decision whose premise you never saw, work you watched happen but can't picture. Re-pitch the confusing thing visually instead of repeating it in words. Skip the preamble and keep prose brief. Use the user's domain language from `GLOSSARY.md`.
+Fire this the moment an agent message does not land: jargon you do not follow, a decision whose premise you never saw, work you watched happen but cannot picture. First restate in your own words what you think the user goals are and what problem they are trying to solve, then re-pitch the confusing thing visually instead of repeating it in words. Skip the preamble and keep prose brief. Use the user domain language from `GLOSSARY.md`.
 
 ## The report
 
-Four parts, in order. Leave out any part with nothing to say. For a confusing message with no work behind it, part 1 alone is the whole re-pitch.
+Five parts, in order. Leave out any part with nothing to say. For a confusing message with no work behind it, parts 1 and 2 are the whole re-pitch.
 
-1. **What was meant.** The confusing point restated as one smallest visual (pick from the catalog below), next to one or two sentences of plain explanation. If it was work, show what changed; if it was words, show what they describe.
-2. **The code, if any.** When code changed, show the snippet: the before/after diff or the new block, trimmed to the lines that matter.
-3. **Follow-ups needed.** Anything required before this is truly done: tests to run, things to check, input needed from the user. Copyable commands where they apply.
-4. **Next task.** The single next step, stated as one line.
-
+1. **Your goals and the problem.** Restate in your own words what you think the user is trying to achieve and what problem they are trying to solve. Never copy their words back. One or two sentences, plain language. If you are unsure, say what is ambiguous before moving on.
+2. **What was meant.** The confusing point restated as one smallest visual (pick from the catalog below), next to one or two sentences of plain explanation. If it was work, show what changed; if it was words, show what they describe.
+3. **The code, if any.** When code changed, show the snippet: the before/after diff or the new block, trimmed to the lines that matter.
+4. **Follow-ups needed.** Anything required before this is truly done: tests to run, things to check, input needed from the user. Copyable commands where they apply.
+5. **Next task.** The single next step, stated as one line.
 ## Visual catalog
 
 Adapted from `show-me`; see [`CREDITS.md`](./CREDITS.md). Pick the smallest view that makes the key point clear. You may use several; it is unlikely you will use all of them.
@@ -75,7 +75,8 @@ sequenceDiagram
 
 ## Rules
 
-- Re-pitch, don't repeat. Never restate the same confusing words louder; translate them into a visual plus plain sentences.
+- Restate goals first, in your own words. Prove you understood the problem before explaining anything else.
+- Re-pitch, do not repeat. Never restate the same confusing words louder; translate them into a visual plus plain sentences.
 - Answer "what was meant or done", never "what could be done". Report only words that were said or work that actually landed.
 - One visual per point. A report with no pushback needed is a report that shows, not tells.
 - Keep only the calls, files, props, states, and boundaries needed to answer what changed. Cut the rest.
