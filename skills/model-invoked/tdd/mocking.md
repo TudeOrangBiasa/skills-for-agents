@@ -13,6 +13,10 @@ Don't mock:
 - Internal collaborators
 - Anything you control
 
+## What to assert
+
+For a mock, assert the payload it received or the state after the call, not that it was called. `toHaveBeenCalled` alone passes even when behavior is wrong.
+
 ## Designing for Mockability
 
 At system boundaries, design interfaces that are easy to mock:

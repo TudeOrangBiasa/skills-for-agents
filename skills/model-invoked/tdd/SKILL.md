@@ -25,14 +25,38 @@ Ask: "What's the public interface, and which seams should we test?"
 
 When the shape of that interface is itself in question (how deep the module is, where the seam belongs, what the interface should expose), call the Skill tool with "codebase-design" for the vocabulary. It is the shared source of the module, interface, depth, seam, adapter, leverage and locality terms, and it is a reference to consult, not a session to run.
 
+## The undefined check
+
+Before keeping a test, ask whether it would still pass if every imported function returned `undefined`. If yes, it observes no behavior and cannot fail for a defect. Rewrite the assertion or delete the test.
+
+A test that cannot fail for a defect costs CI time and review attention and catches nothing. Prefer no new test over a bad test.
+
 ## Anti-patterns
 
-- **Implementation-coupled**: mocks internal collaborators, tests private methods, or verifies through a side channel (querying the database instead of using the interface). The tell: the test breaks when you refactor but behavior hasn't changed.
-- **Tautological**: the assertion recomputes the expected value the way the code does (`expect(add(a, b)).toBe(a + b)`, a snapshot derived by hand the same way, a constant asserted equal to itself), so it passes by construction and can never disagree with the code. Expected values must come from an independent source of truth: a known-good literal, a worked example, the spec.
+- **Implementation-coupled**: mocks internal collaborators, tests private methods, or verifies through a side channel (querying the database instead of using the interface). The tell: the test breaks when you refactor but behavior has not changed.
+- **Tautological (self-referential)**: the assertion recomputes the expected value the way the code does (`expect(add(a, b)).toBe(a + b)`, `expect(parsed.url).toBe(buildUrl(...))`, `expect(f(a)).toBe(f(a))`), so it passes by construction and can never disagree with the code. Expected values must come from an independent source of truth: a known-good literal, a worked example, the spec.
+- **Weak or mock-only assertion**: no `expect`, or only `toBeDefined`, `toBeTruthy`, `not.toThrow`, `toBeInstanceOf`, `toHaveBeenCalled`, `toEqual([])`, `toHaveLength(0)`. The fix: call the subject in the body with one concrete input and assert the literal output or the observable effect.
+- **Constant pin**: the assertion restates a hand-maintained constant, config default, table row, or prompt string (`expect(LIMITS.maxTools).toBe(8)`). It fails when someone edits the constant legitimately, and catches no defect. Test the mechanism that reads the constant with one input instead. Keep only relation checks across table rows and compile-time checks in `*.test-d.ts`.
+- **Fixture asserts fixture**: the assertion reads data the test built or a value computed in `beforeEach`, and the subject never runs in the body. The fix: run the subject in the body and assert its output.
 - **Horizontal slicing**: writing all tests first, then all implementation. Bulk tests verify _imagined_ behavior: you test the _shape_ of things rather than user-facing behavior, the tests go insensitive to real changes, and you commit to test structure before understanding the implementation. Work in **vertical slices** instead: one test → one implementation → repeat, each test a **tracer bullet** that responds to what the last cycle taught you.
+
+## When to skip
+
+Do not force a test when it would be impractical. If the available test would require broad harness setup, brittle mocks, slow end-to-end infrastructure, production-only state, vague reproduction steps, or large unrelated fixture churn, skip adding a new test and use the closest useful verification instead: a targeted script, manual reproduction command, browser automation, snapshot comparison, log assertion, or focused integration check.
 
 ## Rules of the loop
 
-- **Red before green.** Write the failing test first, then only enough code to pass it. Don't anticipate future tests or add speculative features.
+- **Red before green.** Write the failing test first, then only enough code to pass it. Do not anticipate future tests or add speculative features.
+- **Confirm the red.** Run the new test before fixing. Confirm it fails for the intended reason. If it passes or fails for an unrelated reason, correct the test or reproduction before editing the implementation.
 - **One slice at a time.** One seam, one test, one minimal implementation per cycle.
+- **Do not change tests to match a wrong implementation.** Do not weaken existing assertions unless the expected behavior has genuinely changed and the reason is clear.
+- **Keep the test focused.** Avoid broad fixture churn or unrelated coverage expansion. If the bug exposes a broader class of failures, land the focused regression first, then consider sibling coverage.
 - **Refactoring is not part of the loop.** It belongs to the review stage (see the `code-review` skill), not the red → green implementation cycle.
+
+## Final response
+
+Report the evidence, not just the outcome:
+
+- Name the failing-before test and the failure it produced.
+- Name the passing-after test run and any nearby validation performed.
+- If failing-before evidence could not be demonstrated, state why and describe the closest check used instead.
