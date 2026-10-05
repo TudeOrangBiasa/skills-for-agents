@@ -197,6 +197,8 @@ Kenapa urutannya ini: diverge tanpa stress menghasilkan varian cantik yang rapuh
 
 Apa itu: skill Jakub yang me-render satu komponen di halaman sementara dalam semua state dan skenario yang bisa mencapainya. Deliverable-nya halaman itu sendiri. Skenario disimpulkan dari props dan state komponen, yang tidak cocok di-drop dengan alasan satu baris. Satu run hitungan menit, bukan sesi.
 
+Validasi eksternal: Emil Kowalski (25 Sep 2026) memakai pola yang sama, minta AI mem-break UI yang ia bangun dengan data banyak, nama panjang, email tidak biasa, label aneh, alias worst-case scenario, lalu mematangkan UI dari situ. Ini guardrail untuk UI dalam arti harfiah: bukan test merah hijau, tapi skenario konten yang harus ditahan.
+Implikasinya floor UI ada dua lapis: floor a11y (keyboard, fokus, kontras, 320px) dan floor konten (nama panjang, data kosong, data massal, string aneh). Varian yang cantik tapi jebol di floor konten sama gagalnya dengan yang jebol a11y.
 Opsi adopsi:
 
 ```text
