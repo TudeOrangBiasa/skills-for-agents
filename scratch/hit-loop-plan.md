@@ -16,7 +16,7 @@ Keputusan user yang dicatat: `wait-what` versi visual dipertahankan, usulan ramp
 File ini master plan tunggal. Detail desain di `ui-flow-design.md`, data di `references/`.
 
 Status:
-- TODO: 8 langkah eksekusi di section 7. Langkah 1 (guide) sampai 6 (code-review) DONE, lanjut langkah 7 (trial ticket).
+- DONE: langkah 1 (guide) sampai 6 (code-review). Langkah 7 (trial) dan 8 (evaluasi P2) DICORET atas permintaan user: fokus ke diagram dan cara kerja, bukan uji coba.
 - DONE: bank 87 checklist fondasi (plus 17 mixed, 25 taste), desain UI flow, distilasi aihero, Emil, Jakub, checklist-design.
 - TODO: 8 langkah eksekusi di section 7, mulai dari guide.
 - PENDING: keputusan P2 (pilot checklist vs skill break baru) dan isi craft bar (aturan Emil vs tulis ulang).
@@ -67,6 +67,22 @@ flowchart TD
 
 Aturannya satu baris per fase: Map selesai sebelum Guardrail, Guardrail selesai sebelum Walk. Kalau ragu, balik ke fase pemiliknya.
 
+## Bagaimana konteks berjalan
+
+HIT bukan cuma urutan kerja, ia juga aturan apa yang dibawa antar sesi. Map dan Guardrails adalah artefak portabel, konteks sesi sifatnya sekali pakai.
+
+```mermaid
+flowchart TD
+    S1["Sesi 1: discuss, utuh"] --> MAP["Map: GLOSSARY, ADR, spec"]
+    MAP --> G["Guardrails: must happen, must never"]
+    G --> T["Tickets: tiap bawa Map plus Guardrails"]
+    T --> F1["Sesi fresh per ticket: implement"]
+    T --> F2["Sesi fresh per ticket: implement"]
+    F1 --> DISP["Konteks dibuang, artefak tinggal"]
+    F2 --> DISP
+```
+
+Aturannya: langkah 1 sampai 3 hidup dalam satu konteks utuh (jangan compact sebelum to-tickets), tiap implement mulai segar dari ticket, dan tidak ada agent yang diasumsikan ingat sesi sebelumnya. Yang diingat hanya yang tertulis.
 ## 2. Siapa pemilik apa
 
 ```text
