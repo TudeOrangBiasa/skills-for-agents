@@ -100,7 +100,13 @@ Tidak lolos (17 mixed, 25 taste, dipakai selektif atau jadi saran produk, bukan 
 - mixed: avatar, carousel, loading, tabs, adding-to-cart, mobile dashboard, invite, onboarding, onboarding-checklist, paywall, profile, analytics, web-app onboarding, report-view, barter, website login, website sign-up, mobile-onboarding. Cara pakai: ambil item fondasinya saja per item, sisanya diskusi.
 - taste: badge, card, icon, skeleton, tokens, push-notification-opt-in, referral, splash-screen, web-app pricing, about, affiliate, blog, blog-post, careers, coming-soon, compare-page, event-page, features, landing-page, press-media, website pricing, security, team, testimonials, waitlist. Catatan: inti fungsional skeleton (mirror struktur, fade transition) sudah tercover tips di data-table.
 
-Aturan marker audit untuk semua file di atas: 🔴 di item fondasi memblokir, 🔴 di item selera jadi bahan diskusi, ⚪ butuh alasan nyata (kalau tidak bisa artikulasikan, itu missing). Total bank: 87 fondasi, 17 mixed, 25 taste, 129 tersapu semua.
+Aturan status audit untuk semua file di atas: Missing di item fondasi memblokir, Missing di item selera jadi bahan diskusi, Not needed butuh alasan nyata (kalau tidak bisa artikulasikan, itu missing). Total bank: 87 fondasi, 17 mixed, 25 taste, 129 tersapu semua.
+
+## Aturan main eksekusi
+
+- Nada straight-forward, tanpa emoticon di semua prose dan output kita. Marker audit checklist-design hanya hidup di dalam tabel audit; di luar itu pakai label teks: Present, Partially present, Missing, Not needed, Can't tell.
+- Temuan fondasi langsung di-fix. Temuan non-fondasi (selera, craft opsional, keputusan produk) wajib konfirmasi dulu sebelum diubah.
+- Standar di atas selera: floor tidak bisa ditawar, dan agent tidak boleh melonggarkan standar diam-diam.
 
 ## Perubahan file yang direncanakan
 
