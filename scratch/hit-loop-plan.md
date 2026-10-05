@@ -1,17 +1,24 @@
 ---
 title: HIT loop plan for skills repo
-description: Map Have a Map, Install Guardrails, Take a Walk onto guide main flow plus concrete revision steps.
-tags: [hit-loop, plan, guide, tdd, implement]
+description: Map Have a Map, Install Guardrails, Take a Walk onto guide main flow, plus UI sub-flow and P1 prototype upgrades.
+tags: [hit-loop, plan, guide, tdd, implement, prototype]
 ---
 
 # HIT loop plan
 
-Tujuan: pakai HIT sebagai bahasa untuk main flow yang sudah ada, lalu kunci tiga pintu itu di `guide`, `tdd`, dan `implement` tanpa menambah skill baru.
+Tujuan: pakai HIT sebagai bahasa untuk main flow yang sudah ada, lalu kunci tiga pintu itu di `guide`, `tdd`, dan `implement`. Tambahan ronde dua: sub-flow UI untuk ticket yang menyentuh interface (diverge, stress, review, promote) dari referensi Emil dan Jakub, plus upgrade P1 ke `prototype` lokal.
+
+Keputusan user yang dicatat: `wait-what` versi visual dipertahankan, usulan ramping ke tiga baris ala upstream ditolak. Alasan: pain membaca teks, diagram dan flowchart plus diff lebih enak dibaca.
 
 Sumber:
 - [Principles Coding with AI](./references/Principles%20-%20Coding%20with%20AI.md)
 - [guide](../skills/user-invoked/guide/SKILL.md)
 - [tdd revision plan](./tdd-revision-plan.md)
+- [aihero vs lokal](./references/aihero-skills-diff.md)
+- [Emil prototype distilled](./references/emil-prototype-skill.md)
+- [Emil essays distilled](./references/emil-essays.md)
+- [Jakub skills distilled](./references/jakub-skills-distilled.md)
+- [Jakub writings distilled](./references/jakub-writings-distilled.md)
 
 ## 1. Overlay: HIT di atas main flow sekarang
 
@@ -58,7 +65,7 @@ skills/
     └── triage.md             # on-ramp: issue mentah jadi agent ready
 ```
 
-Tidak ada skill baru. Yang berubah hanya kontrak di tiga file: `guide`, `tdd`, `implement`, plus checklist kecil di `to-spec`.
+Skill baru hanya kalau P2 disetujui (lihat section 6). Selain itu yang berubah hanya kontrak file yang ada.
 
 ## 3. Gate yang hilang sekarang
 
@@ -148,21 +155,82 @@ implement
   prBody
 ```
 
-## 5. Urutan eksekusi yang disarankan
+### 4d. prototype UI: P1, lima tambahan kecil (disetujui)
+
+Sumber pola: Emil (named axis, tabel tradeoff, craft bar) dan Jakub (floor a11y sebagai syarat masuk, satu primary axis).
+
+```diff
+ UI.md process
+   state the question and pick N
++  name one primary axis + position per variant, no two share a position
++  recon tiga baris: tokens, density dan voice produk, konteks render
+   generate radically different variants
++  every variant clears a11y floor before entering picker
+   wire them plus floating switcher
+   hand it over
++  handoff table: variant, axis position, right when, costs; no favorite marked
++  craft bar: tunjuk skill taste yang berlaku, varian sloppy tidak melebarkan eksplorasi
+```
+
+Yang dipertahankan: `?variant=` switcher, sub-shape A (embed di halaman yang sudah ada) sebagai default, cabang logic single HTML.
+
+## 5. Sub-flow UI: menempel di fase Walk
+
+Hanya untuk ticket yang menyentuh interface. Ticket non-UI lewat Walk biasa.
 
 ```mermaid
 flowchart TD
-    A["1. guide: tambah section HIT, 30 menit"] --> B["2. tdd: tambah guardrail rules, 1 sesi"]
-    B --> C["3. to-spec: tambah checklist Map dan Guardrail, 30 menit"]
-    C --> D["4. implement: tambah Plan gate dan urutan verify lalu review, 1 sesi"]
-    D --> E["5. code-review: tegaskan behavior dulu baru style, 30 menit"]
-    E --> F["6. coba satu ticket nyata end to end"]
+    SETUP["setup-meta: rules pendek plus pointer<br/>craft bar plus a11y floor"] --> DIV["diverge: prototype 3 varian<br/>named axis, konten realistis"]
+    DIV --> STRESS["stress: break, worst-case states<br/>hitungan menit"]
+    STRESS --> REV["review with evidence<br/>path plus baris, severity dampak user"]
+    REV --> PRO["promote satu, hapus sisanya<br/>catat keputusan"]
+
+    W["T: Take a Walk"] -. owns .-> DIV
+    W -. owns .-> STRESS
+    W -. owns .-> REV
+    W -. owns .-> PRO
+```
+
+Kenapa urutannya ini: diverge tanpa stress menghasilkan varian cantik yang rapuh, stress tanpa review menghasilkan temuan tanpa severity, review tanpa promote menimbun opsi. Friction di ujung (pilih satu, hapus sisanya) adalah filternya.
+
+## 6. P2: evaluasi skill break (belum diputuskan)
+
+Apa itu: skill Jakub yang me-render satu komponen di halaman sementara dalam semua state dan skenario yang bisa mencapainya. Deliverable-nya halaman itu sendiri. Skenario disimpulkan dari props dan state komponen, yang tidak cocok di-drop dengan alasan satu baris. Satu run hitungan menit, bukan sesi.
+
+Opsi adopsi:
+
+```text
+A: skill model-invoked baru
+  plus:  paling murah dari semua kandidat skill baru, reuse pola prototype harness
+  minus: nambah satu file skill untuk dirawat, aturan invocation baru
+B: checklist 5 baris di implement untuk ticket UI
+  plus:  tanpa skill baru, langsung kepakai besok
+  minus: mudah di-skip karena bukan skill yang bisa dipanggil
+C: tunda sampai P1 prototype terbukti dipakai
+  plus:  tidak nambah beban sebelum kebiasaan diverge terbentuk
+  minus: varian tetap lolos tanpa stress test untuk sementara
+```
+
+Rekomendasi: B dulu sebagai pilot (checklist di `implement`), naik ke A kalau dipakai lebih dari tiga kali. Keputusan di tangan user.
+
+## 7. Urutan eksekusi yang disarankan
+
+```mermaid
+flowchart TD
+    A["1. guide: tambah section HIT, 30 menit"] --> B["2. prototype P1: lima tambahan kecil, 1 sesi"]
+    B --> C["3. tdd: tambah guardrail rules, 1 sesi"]
+    C --> D["4. to-spec: tambah checklist Map dan Guardrail, 30 menit"]
+    D --> E["5. implement: Plan gate plus checklist break pilot, 1 sesi"]
+    E --> F["6. code-review: behavior dulu baru style, 30 menit"]
+    F --> G["7. coba satu ticket UI nyata end to end"]
 ```
 
 Validasi tiap langkah:
 - Link di `guide` tetap resolve ke skill yang ada.
 - Kontrak before after di `implement` tidak berubah, hanya diperketat.
-- Tidak ada user-invoked baru, jadi aturan router tidak rusak.
+- Tidak ada user-invoked baru (P2 opsi A pun model-invoked), jadi aturan router tidak rusak.
 - Tanpa em dash di semua prose yang ditulis.
 
-Langkah berikut: setuju dulu pada overlay section 1 dan pemilik section 2, baru draft revisi `guide` dulu karena itu yang paling murah.
+Yang ditolak dan tidak dikerjakan: ramping `wait-what` ke tiga baris ala upstream. Versi visual dipertahankan.
+
+Langkah berikut: kerjakan nomor 1 dulu karena paling murah, lalu nomor 2 yang sudah disetujui.
