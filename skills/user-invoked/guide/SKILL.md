@@ -36,7 +36,7 @@ The main flow above runs in three phases. Name them so you know when to go back 
 
 One rule per phase: Map before Guardrails, Guardrails before Walk. When unsure about a direction, return to the Map. When unsure about correctness, return to the Guardrails.
 
-- **UI tickets** (anything touching the interface) run the UI sub-flow inside Walk: diverge (prototype variants), guard (a11y plus content floors), stress (break page), review with evidence, promote one and delete the rest. Non-UI tickets use the plain Walk.
+- **UI tickets** (anything touching the interface) run the UI sub-flow inside Walk: diverge (`/prototype` variants), guard (a11y plus content floors), stress (`/break` page), review with evidence, promote one and delete the rest. Non-UI tickets use the plain Walk.
 ### Context hygiene
 
 Keep steps 1–3 in **one unbroken context window** (don't compact or clear until after `/to-tickets`) so the interview, spec, and tickets all build on the same thinking. Each `/implement` then starts fresh, working from the ticket.
