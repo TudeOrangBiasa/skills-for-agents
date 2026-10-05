@@ -69,6 +69,20 @@ ticket-ui/
 
 Enam file kecil ini adalah Map dan Guardrail yang dibawa antar konteks. Agent implement tidak boleh diasumsikan ingat sesi diverge.
 
+## Checklist fondasi yang dipilih
+
+Lima file dari bank checklist-design yang lolos seleksi fondasi (diverifikasi isi penuh, dominan lapisan functional dan usability, minim selera). Lokasi: `references/checklist-design/references/checklists/`.
+
+| File | Dipakai untuk | Kenapa fondasi |
+| --- | --- | --- |
+| `web-app-data-table.md` | G3 floor konten data, skenario break tabel | sort, visibility kolom, selection plus bulk action, filter chips, pagination plus total count, frozen kolom, export ikut filter, skeleton saat loading: semua mencegah user tersesat atau salah paham isi data |
+| `web-app-empty-state.md` | G3 state kosong, skenario break | bedakan zero vs no-results vs error, tiap state wajib jalan keluar: tanpa ini user mengira data hilang atau mentok di jalan buntu |
+| `flows-showing-input-error.md` | G3 form, skenario break | validasi setelah blur bukan saat mengetik, error hilang saat retry fokus: mencegah interupsi dan kebingungan yang terukur |
+| `web-app-login.md` | G4 audit gerbang auth | forgot password, error message yang mengarahkan, prefill email setelah gagal: tanpanya user terkunci dari akunnya |
+| `web-app-checkout.md` | G4 audit layar transaksi | order summary dan total cost terlihat awal, konfirmasi sebelum bayar: mencegah abandon dan salah bayar |
+
+Catatan seleksi: item berlapis bisnis di dalamnya (SSO, promo code, express payment) diperlakukan sebagai saran produk, bukan floor. Aturannya ikut marker audit: 🔴 di item fondasi memblokir, 🔴 di item selera jadi bahan diskusi. Checklist keenam dan seterusnya diambil on demand saat ticket menyentuh areanya, bukan dihafal di depan.
+
 ## Perubahan file yang direncanakan
 
 ```text
