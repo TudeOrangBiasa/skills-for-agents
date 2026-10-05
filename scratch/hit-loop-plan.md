@@ -16,7 +16,7 @@ Keputusan user yang dicatat: `wait-what` versi visual dipertahankan, usulan ramp
 File ini master plan tunggal. Detail desain di `ui-flow-design.md`, data di `references/`.
 
 Status:
-- DONE: langkah 1 (guide) sampai 6 (code-review). Langkah 7 (trial) dan 8 (evaluasi P2) DICORET atas permintaan user: fokus ke diagram dan cara kerja, bukan uji coba.
+- DONE: langkah 1 (guide) sampai 6 (code-review), plus skill `break` mandiri (P2 opsi A, dieksekusi langsung atas permintaan user). Sisa: review dan test oleh user.
 - DONE: bank 87 checklist fondasi (plus 17 mixed, 25 taste), desain UI flow, distilasi aihero, Emil, Jakub, checklist-design.
 - TODO: 8 langkah eksekusi di section 7, mulai dari guide.
 - PENDING: keputusan P2 (pilot checklist vs skill break baru). Craft bar DONE (`prototype/CRAFT.md`, floor plus taste, disetujui user).

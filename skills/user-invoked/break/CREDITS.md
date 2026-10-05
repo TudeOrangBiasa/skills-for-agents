@@ -1,0 +1,3 @@
+# Credits
+
+Adapted from [Jakub Krehel](https://github.com/jakubkrehel)'s `break` ([jakubkrehel/skills](https://github.com/jakubkrehel/skills)): the observe-don't-judge posture, the scenario-axes menu with cues (`SCENARIOS.md`), and the throwaway-harness rules. The worst-case-content idea is shared with [Emil Kowalski](https://github.com/emilkowalski)'s break-the-UI practice (see `scratch/references/emil-essays.md`). Rewritten to this repo's conventions: foundation breaks fixed directly, the rest reported for confirmation. Copied in, not depended on, so standalone installs keep working without the upstream repo.

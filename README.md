@@ -160,6 +160,7 @@ These split on one axis: who can invoke them. **User-invoked** skills are reacha
 
 Skills for daily work, fired by hand. Full list in [skills/user-invoked/](skills/user-invoked/).
 
+- **[break](./skills/user-invoked/break/SKILL.md)**: Stress-test one component against worst-case content and states on a throwaway page, then report what visibly broke.
 - **[discuss](./skills/user-invoked/discuss/SKILL.md)**: Get relentlessly interviewed about a plan or design until every branch of the design tree is resolved.
 - **[discuss-with-docs](./skills/user-invoked/discuss-with-docs/SKILL.md)**: Interview session that also builds your project's domain model, sharpening terminology and updating `GLOSSARY.md` and ADRs inline.
 - **[guide](./skills/user-invoked/guide/SKILL.md)**: Ask which skill or flow fits your situation. A router over the user-invoked skills in this repo.

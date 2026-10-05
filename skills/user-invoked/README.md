@@ -2,6 +2,7 @@
 
 Skills that fire only when the human types their name. They orchestrate; they never fire each other. A user-invoked skill may invoke model-invoked skills, but never another user-invoked one.
 
+- **[break](./break/SKILL.md)**: Stress-test one component against worst-case content and states on a throwaway page.
 - **[discuss](./discuss/SKILL.md)**: A relentless interview to sharpen a plan or design.
 - **[discuss-with-docs](./discuss-with-docs/SKILL.md)**: A relentless interview to sharpen a plan or design, which also creates docs (ADR's and glossary) as we go.
 - **[guide](./guide/SKILL.md)**: Ask which skill or flow fits your situation. A router over the skills in this repo.
