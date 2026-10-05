@@ -18,8 +18,6 @@ Semua 129 file checklist isi SUDAH di-vendor di `references/checklists/` plus `r
 
 Artinya bank soal G3 dan break scenarios sekarang lokal dan offline. Tiap checklist flows pada dasarnya daftar worst-case yang sudah ditulis orang, tiap checklist komponen adalah definisi apa yang harus ada sebelum kita berani bilang desainnya jelek.
 
-Daftar file tersedia (129 menurut index upstream, lima kategori): `design-system-*` (button, input-field, modal, toast, table, tokens, typography, dst), `flows-*` (showing-input-error, empty state, login-to-payment, dst), `mobile-*`, `web-app-*` (dashboard, data-table, settings, empty-state, dst), `website-*` (landing-page, pricing, checkout, dst). Nama file lengkap ada di output fetch, tidak disalin ke sini.
-
 ## Cara kerja dua mode, ringkas
 
 Audit: cocokkan checklist, pilah item mana yang bisa dijawab input yang ada (source vs screenshot), nilai tiap item dengan 🟢🟡🔴⚪❔ plus kolom Why satu kalimat, tanpa skor. Yang paling tajam: 🟡 partially present sebagai jawaban paling berguna, ⚪ butuh alasan nyata (kalau tidak bisa artikulasikan, itu 🔴), ❔ wajib bilang apakah input tambahan bisa membantu. Checklist membatasi yang dicek, bukan yang boleh disadari.
