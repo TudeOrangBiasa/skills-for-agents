@@ -25,6 +25,18 @@ The route most work travels. You have an idea and want it built.
 
    Either way, **`/implement`** builds each issue by driving **`/tdd`** internally (one red-green slice at a time), then closes out by running **`/code-review`**, a two-axis review (Standards + Spec) of the diff, before committing. Reach for **`/tdd`** on its own when you just want to build a concrete behaviour test-first without a full spec, and **`/code-review`** on its own whenever you want to review a branch or PR against a fixed point.
 
+
+### HIT: the three phases
+
+The main flow above runs in three phases. Name them so you know when to go back instead of pushing forward.
+
+- **H (Have a Map):** `/discuss-with-docs`, `/wayfinder`, `/prototype`, `/to-spec`. Know the components, the data flow, and the expensive decisions before coding. If the map is vague, do not proceed: sharpen it first.
+- **I (Install Guardrails):** `/tdd` behavior tests plus negative cases. Define what must happen and what must never happen, while leaving the implementation free. If guardrails are missing, do not implement: write them first. Never quietly change a guardrail to fit a wrong implementation; that decision belongs to the user.
+- **T (Take a Walk):** `/to-tickets` splits the work small, `/implement` runs Plan then Coding then Review per ticket, `/code-review` checks behavior before style. Keep each walk small: one ticket, one fresh context.
+
+One rule per phase: Map before Guardrails, Guardrails before Walk. When unsure about a direction, return to the Map. When unsure about correctness, return to the Guardrails.
+
+- **UI tickets** (anything touching the interface) run the UI sub-flow inside Walk: diverge (prototype variants), guard (a11y plus content floors), stress (break page), review with evidence, promote one and delete the rest. Non-UI tickets use the plain Walk.
 ### Context hygiene
 
 Keep steps 1–3 in **one unbroken context window** (don't compact or clear until after `/to-tickets`) so the interview, spec, and tickets all build on the same thinking. Each `/implement` then starts fresh, working from the ticket.
