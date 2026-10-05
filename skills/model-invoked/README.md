@@ -4,9 +4,9 @@ Skills the agent can fire on its own when the task fits, or the human can type b
 
 - **[codebase-design](./codebase-design/SKILL.md)**: Shared vocabulary for designing deep modules.
 - **[code-review](./code-review/SKILL.md)**: Review the changes since a fixed point along two axes: Standards and Spec.
-- **[diagnosing-bugs](./diagnosing-bugs/SKILL.md)**: Diagnosis loop for hard bugs and performance regressions.
+- **[diagnose](./diagnose/SKILL.md)**: Diagnosis loop for hard bugs and performance regressions.
 - **[domain-modeling](./domain-modeling/SKILL.md)**: Build and sharpen a project's domain model.
-- **[interview](./interview/SKILL.md)**: Interview the user relentlessly about a plan, decision, or idea. The reusable interview primitive behind `discuss`, `discuss-with-docs`, `triage`, `wayfinder` and `improve-codebase-architecture`.
+- **[interview](./interview/SKILL.md)**: Interview the user relentlessly about a plan, decision, or idea. The reusable interview primitive behind `discuss`, `discuss-with-docs`, `triage`, `wayfinder` and `deepen`.
 - **[pr](./pr/SKILL.md)**: The mandatory PR body shape: summary visual, before/after evidence with UI tables, merge danger. Captures visuals with `agent-browser`; attachment method packed in the skill.
 - **[prototype](./prototype/SKILL.md)**: Build a throwaway prototype to answer a design question.
 - **[research](./research/SKILL.md)**: Investigate a question against high-trust primary sources and capture the findings as a cited Markdown file in the repo.
