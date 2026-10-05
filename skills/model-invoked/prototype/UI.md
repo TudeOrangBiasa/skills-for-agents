@@ -54,9 +54,11 @@ Draft each variant. Hold each one to:
 - The page's purpose and the data it has access to.
 - The project's component library / styling system (TailwindCSS, shadcn, MUI, plain CSS, whatever).
 - A clear exported component name, e.g. `VariantA`, `VariantB`, `VariantC`.
+- The taste bar: UI motion under 300ms, `transform`/`opacity` only, correct `transform-origin`, reduced-motion handled. A sloppy variant does not widen the exploration; it just loses on execution.
 
 Variants must be **structurally different**: different layout, different information hierarchy, different primary affordance, not just different colours. Three slightly-tweaked card grids isn't a UI prototype, it's wallpaper. If two drafts come out too similar, redo one with explicit "do not use a card grid" guidance.
 
+Before wiring, every variant clears two floors. Floor one is a11y: accessible names on all controls, everything reachable by keyboard, visible focus, nothing clipped at 320px, no meaning carried by color alone. Floor two is content: worst-case scenarios held (long names, weird strings, high volume, empty and partial states, narrow widths, mixed loading/error/success). A variant that fails a floor is fixed, or its direction is dropped and stated.
 ### 3. Wire them together
 
 Create a single switcher component on the route:
@@ -97,7 +99,13 @@ Put the switcher in a single shared component so both sub-shapes can reuse it. L
 
 ### 5. Hand it over
 
-Surface the URL (and the `?variant=` keys). The user will flip through whenever they get to it. The interesting feedback is usually **"I want the header from B with the sidebar from C"**, which is the actual design they want.
+Surface the URL (and the `?variant=` keys) plus a handoff table, then stop: the choice belongs to the user.
+
+| Variant | Axis position | Right when | Costs |
+| --- | --- | --- | --- |
+| Quiet | Lowest visual weight | The page is used daily | Least memorable |
+
+Name each variant's tradeoff honestly and never mark a favourite. Asked directly, answer from how often the piece is seen and the product's personality, not from which one was most fun to build. The interesting feedback is usually **"I want the header from B with the sidebar from C"**, which is the actual design they want.
 
 ### 6. Capture the answer and clean up
 
