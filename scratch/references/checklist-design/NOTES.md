@@ -14,12 +14,9 @@ Dari https://github.com/checklist-design/skills (MIT, Checklist Design, v3.2.4, 
 - `references/audit.md`: cara audit item by item dengan lima marker.
 - `references/critique.md`: cara kritik cepat gaya peer.
 
-Yang sengaja TIDAK di-vendor: 129 file checklist isi (`references/checklists/`) dan `references/index.md`. Alasan: volume besar dan yang dibutuhkan untuk discuss adalah mekanismenya, bukan isi tiap checklist. Cara ambil satu checklist saat dibutuhkan:
+Semua 129 file checklist isi SUDAH di-vendor di `references/checklists/` plus `references/index.md` (total sekitar 213KB). Tiap file berisi definisi, source URL checklist.design, dan daftar item yang masing-masing punya deskripsi plus Tip. Contoh `web-app-data-table.md`: sortable columns, column visibility, row selection, search dan filter, pagination, frozen columns, masing-masing dengan tip seperti total count 1 sampai 50 of 1.240.
 
-```bash
-scrapling extract get "https://raw.githubusercontent.com/checklist-design/skills/main/skills/checklist-design/references/checklists/<nama-file>.md" /tmp/<nama-file>.md --timeout 60
-```
-
+Artinya bank soal G3 dan break scenarios sekarang lokal dan offline. Tiap checklist flows pada dasarnya daftar worst-case yang sudah ditulis orang, tiap checklist komponen adalah definisi apa yang harus ada sebelum kita berani bilang desainnya jelek.
 
 Daftar file tersedia (129 menurut index upstream, lima kategori): `design-system-*` (button, input-field, modal, toast, table, tokens, typography, dst), `flows-*` (showing-input-error, empty state, login-to-payment, dst), `mobile-*`, `web-app-*` (dashboard, data-table, settings, empty-state, dst), `website-*` (landing-page, pricing, checkout, dst). Nama file lengkap ada di output fetch, tidak disalin ke sini.
 

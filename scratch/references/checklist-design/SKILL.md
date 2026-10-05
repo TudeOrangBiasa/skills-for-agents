@@ -9,7 +9,7 @@ metadata:
 version: "3.2.4"
 author: "Checklist Design"
 ---
-<!-- Vendored verbatim from https://github.com/checklist-design/skills (MIT, Checklist Design) on 2026-10-05 for reference discussion. Original punctuation kept. The 129 checklist files were NOT vendored; fetch on demand from upstream. See NOTES.md -->
+<!-- Vendored verbatim from https://github.com/checklist-design/skills (MIT, Checklist Design) on 2026-10-05 for reference discussion. Original punctuation kept. All 129 checklist files vendored under references/checklists/. See NOTES.md -->
 # Checklist Design
 Design review grounded in Checklist Design's own checklists. Two modes: **audit** for a systematic item-by-item check, **critique** for quick honest feedback. Work out which one is wanted, then follow that mode's reference file.
 ## What you're looking at
