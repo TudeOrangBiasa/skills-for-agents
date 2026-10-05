@@ -16,6 +16,8 @@ The issue tracker and triage label vocabulary should have been provided to you. 
 
 Check with the user that these seams match their expectations.
 
+Pre-write gate: do not write the spec until both lists exist. Map: components, data flow, and the expensive decisions, agreed with the user. Guardrails: what must always happen, what must never happen, and the key failure cases. If either list is vague, return to `/discuss-with-docs` first; a spec written over fog just freezes the fog.
+
 3. Write the spec using the template below, then publish it to the project issue tracker. Apply the `ready-for-agent` triage label - no need for additional triage.
 
 <spec-template>
