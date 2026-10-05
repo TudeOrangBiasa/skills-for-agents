@@ -10,7 +10,7 @@ Skills the agent can fire on its own when the task fits, or the human can type b
 - **[pr](./pr/SKILL.md)**: The mandatory PR body shape: summary visual, before/after evidence with UI tables, merge danger. Captures visuals with `agent-browser`; attachment method packed in the skill.
 - **[prototype](./prototype/SKILL.md)**: Build a throwaway prototype to answer a design question.
 - **[research](./research/SKILL.md)**: Investigate a question against high-trust primary sources and capture the findings as a cited Markdown file in the repo.
-- **[resolving-merge-conflicts](./resolving-merge-conflicts/SKILL.md)**: Use when you need to resolve an in-progress git merge/rebase conflict.
+- **[merge-fix](./merge-fix/SKILL.md)**: Use when you need to resolve an in-progress git merge/rebase conflict.
 - **[setup-pre-commit](./setup-pre-commit/SKILL.md)**: Set up Husky pre-commit hooks with lint-staged (Prettier), type checking, and tests in the current repo.
 - **[tdd](./tdd/SKILL.md)**: Test-driven development with a red-green-refactor loop.
 - **[wizard](./wizard/SKILL.md)**: Generate an interactive bash wizard that walks a human through steps only they can perform.
