@@ -31,7 +31,8 @@ Log keputusan:
 
 - `wait-what` visual dipertahankan, usulan tiga baris ditolak.
 - P1 prototype disetujui (axis, recon, dua floor, tabel handoff, craft bar).
-- P2 break belum diputuskan, rekomendasi pilot checklist dulu.
+- P2 selesai sebagai skill `break` mandiri (opsi A, dieksekusi langsung).
+- Prinsip eval: skills adalah data, bukan model. Tidak ada eval otomatis untuk skills; untuk skills UI penilainya manusia lewat pemakaian (user feedback ala Matt). Review dan test oleh user, development oleh agent.
 Sumber:
 - [Principles Coding with AI](./references/Principles%20-%20Coding%20with%20AI.md)
 - [guide](../skills/user-invoked/guide/SKILL.md)
