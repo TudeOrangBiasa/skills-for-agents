@@ -219,12 +219,13 @@ Rekomendasi: B dulu sebagai pilot (checklist di `implement`), naik ke A kalau di
 
 ```mermaid
 flowchart TD
-    A["1. guide: tambah section HIT, 30 menit"] --> B["2. prototype P1: lima tambahan kecil, 1 sesi"]
-    B --> C["3. tdd: tambah guardrail rules, 1 sesi"]
-    C --> D["4. to-spec: tambah checklist Map dan Guardrail, 30 menit"]
-    D --> E["5. implement: Plan gate plus checklist break pilot, 1 sesi"]
-    E --> F["6. code-review: behavior dulu baru style, 30 menit"]
-    F --> G["7. coba satu ticket UI nyata end to end"]
+    A["1. guide: section HIT plus router UI, 30 menit"] --> B["2. prototype P1: axis, recon, 2 floor, tabel handoff, craft bar, 1 sesi"]
+    B --> C["3. tdd: guardrail rules, 1 sesi"]
+    C --> D["4. to-spec: checklist Map dan Guardrail, 30 menit"]
+    D --> E["5. implement: Plan gate plus pilot checklist break, 1 sesi"]
+    E --> F["6. code-review: behavior dulu plus marker audit, 30 menit"]
+    F --> G["7. trial satu ticket UI end to end"]
+    G --> H["8. evaluasi P2: pilot dipakai lebih dari 3x jadi skill break?"]
 ```
 
 Validasi tiap langkah:
@@ -235,4 +236,4 @@ Validasi tiap langkah:
 
 Yang ditolak dan tidak dikerjakan: ramping `wait-what` ke tiga baris ala upstream. Versi visual dipertahankan.
 
-Langkah berikut: kerjakan nomor 1 dulu karena paling murah, lalu nomor 2 yang sudah disetujui.
+Sudah selesai sebelum eksekusi: bank 87 checklist fondasi (references/checklist-design) dan desain UI flow (ui-flow-design.md). Langkah berikut: kerjakan nomor 1 dulu karena paling murah, lalu nomor 2 yang sudah disetujui.
