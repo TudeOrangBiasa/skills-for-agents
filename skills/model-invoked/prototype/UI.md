@@ -37,6 +37,8 @@ In both sub-shapes the floating bottom bar is identical.
 
 Default to **3 variants**. More than 5 stops being radically different and starts being noise, so cap there.
 
+Name one primary axis per variant (layout, density, emphasis, type, voice) and give each a different position on it, e.g. Quiet, Editorial, Dense. No two variants share a position. If two drafts differ only in accent color or copy, they are one direction: replace one with a real alternative.
+
 Write down the plan in one line, in the prototype's location or a top-of-file comment:
 
 > "Three variants of the settings page, switchable via `?variant=`, on the existing `/settings` route."
@@ -44,6 +46,8 @@ Write down the plan in one line, in the prototype's location or a top-of-file co
 This works whether the user is here to push back or not.
 
 ### 2. Generate radically different variants
+
+First, three lines of recon so variants look shippable: the tokens they stand on (color, spacing, radius, type, easing), the product's density and voice (which bounds how bold the boldest variant may go), and the render context (background, neighbours, widths).
 
 Draft each variant. Hold each one to:
 
