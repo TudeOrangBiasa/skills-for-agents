@@ -87,7 +87,20 @@ Delapan puluh tujuh file dari bank checklist-design yang lolos seleksi fondasi. 
 | `web-app-notifications.md` | G4 audit notifikasi | beda read unread, timestamp relatif plus absolut, mark all read, empty state: tanpa ini user kehilangan info atau tenggelam |
 | `web-app-search-results.md` | G3 dan G4 pencarian | query bisa direfine tanpa ulang, count tampil walau nol sebagai bukti search jalan, no-results plus saran: tanpa ini user mengira rusak |
 
-Catatan seleksi: item berlapis bisnis di dalamnya (SSO, promo code, express payment) diperlakukan sebagai saran produk, bukan floor. Aturannya ikut marker audit: 🔴 di item fondasi memblokir, 🔴 di item selera jadi bahan diskusi. Checklist keenam dan seterusnya diambil on demand saat ticket menyentuh areanya, bukan dihafal di depan.
+Fondasi gelombang tiga (klasifikasi agent, pola sama: mencegah task gagal, data hilang, user terkunci, atau kebingungan terukur):
+
+- design-system: accessibility, accordion, alert, banner, breadcrumb, checkbox, date-picker, drawer, dropdown-menu, radio, searchbar, slider, stepper, table, toggle, tooltip. Plus button, modal, toast, color-system, typography, spacing-and-grid (verifikasi langsung).
+- flows: canceling-subscription, contacting-support, deleting-account, entering-promo-code, filtering-items, making-a-payment, resetting-password, saving-changes, uploading-media, verifying-account.
+- mobile: account, action-sheet, billing, camera-media-capture, cart, chat, checkout, gesture-navigation, in-app-browser, in-app-notifications, login, map-view, search, settings, sign-up, tab-bar-navigation.
+- web-app: 2-factor-authentication, account, admin-panel, api-keys, audit-log, billing, chat, comments, feed, help-center, integrations, kanban-board-view, maintenance, multi-step-form, notification-settings, public-profile, single-item-detail, timeline-gantt-view, user-management, version-history.
+- website: 404, billing, cart, contact-us, faq, legal-privacy, search, status.
+
+Tidak lolos (17 mixed, 25 taste, dipakai selektif atau jadi saran produk, bukan floor):
+
+- mixed: avatar, carousel, loading, tabs, adding-to-cart, mobile dashboard, invite, onboarding, onboarding-checklist, paywall, profile, analytics, web-app onboarding, report-view, barter, website login, website sign-up, mobile-onboarding. Cara pakai: ambil item fondasinya saja per item, sisanya diskusi.
+- taste: badge, card, icon, skeleton, tokens, push-notification-opt-in, referral, splash-screen, web-app pricing, about, affiliate, blog, blog-post, careers, coming-soon, compare-page, event-page, features, landing-page, press-media, website pricing, security, team, testimonials, waitlist. Catatan: inti fungsional skeleton (mirror struktur, fade transition) sudah tercover tips di data-table.
+
+Aturan marker audit untuk semua file di atas: 🔴 di item fondasi memblokir, 🔴 di item selera jadi bahan diskusi, ⚪ butuh alasan nyata (kalau tidak bisa artikulasikan, itu missing). Total bank: 87 fondasi, 17 mixed, 25 taste, 129 tersapu semua.
 
 ## Perubahan file yang direncanakan
 
