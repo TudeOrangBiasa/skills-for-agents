@@ -71,7 +71,7 @@ Enam file kecil ini adalah Map dan Guardrail yang dibawa antar konteks. Agent im
 
 ## Checklist fondasi yang dipilih
 
-Lima file dari bank checklist-design yang lolos seleksi fondasi (diverifikasi isi penuh, dominan lapisan functional dan usability, minim selera). Lokasi: `references/checklist-design/references/checklists/`.
+Sebelas file dari bank checklist-design yang lolos seleksi fondasi (diverifikasi isi penuh, dominan lapisan functional dan usability, minim selera). Lokasi: `references/checklist-design/references/checklists/`.
 
 | File | Dipakai untuk | Kenapa fondasi |
 | --- | --- | --- |
@@ -80,6 +80,12 @@ Lima file dari bank checklist-design yang lolos seleksi fondasi (diverifikasi is
 | `flows-showing-input-error.md` | G3 form, skenario break | validasi setelah blur bukan saat mengetik, error hilang saat retry fokus: mencegah interupsi dan kebingungan yang terukur |
 | `web-app-login.md` | G4 audit gerbang auth | forgot password, error message yang mengarahkan, prefill email setelah gagal: tanpanya user terkunci dari akunnya |
 | `web-app-checkout.md` | G4 audit layar transaksi | order summary dan total cost terlihat awal, konfirmasi sebelum bayar: mencegah abandon dan salah bayar |
+| `web-app-settings.md` | G4 audit pengaturan | kategori logis, re-auth untuk ubah security, danger zone terpisah plus konfirmasi: mencegah salah ubah dan hapus permanen |
+| `flows-submitting-a-form.md` | G3 submit form | tombol submit jelas, state loading, pesan sukses, pesan error: tanpa ini user tidak tahu form terkirim atau tidak |
+| `web-app-dashboard.md` | G4 audit home | metrik plus konteks periode, recent activity, needs attention yang kritis saja, empty state plus first action: dashboard kosong alasan umum churn |
+| `design-system-input-field.md` | G3 level field, skenario break | label jelas bukan caps, placeholder sebagai contoh bukan pengganti label, format data plus hint: mencegah input salah sejak awal |
+| `web-app-notifications.md` | G4 audit notifikasi | beda read unread, timestamp relatif plus absolut, mark all read, empty state: tanpa ini user kehilangan info atau tenggelam |
+| `web-app-search-results.md` | G3 dan G4 pencarian | query bisa direfine tanpa ulang, count tampil walau nol sebagai bukti search jalan, no-results plus saran: tanpa ini user mengira rusak |
 
 Catatan seleksi: item berlapis bisnis di dalamnya (SSO, promo code, express payment) diperlakukan sebagai saran produk, bukan floor. Aturannya ikut marker audit: 🔴 di item fondasi memblokir, 🔴 di item selera jadi bahan diskusi. Checklist keenam dan seterusnya diambil on demand saat ticket menyentuh areanya, bukan dihafal di depan.
 
