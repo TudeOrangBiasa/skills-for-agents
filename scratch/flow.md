@@ -2,11 +2,11 @@
 
 Peta skill repo ini: daftar + alur idea to ship.
 
-## Daftar skill (28)
+## Daftar skill (29)
 
-**User-invoked (15)**, diketik manual: guide, discuss, discuss-with-docs, implement, improve-codebase-architecture, loop-me, retro, setup-meta, setup-ts-deep-modules, teach, to-spec, to-tickets, triage, wait-what, wayfinder.
+**User-invoked (16)**, diketik manual: break, guide, discuss, discuss-with-docs, implement, deepen, worklog, retro, setup-meta, setup-ts-deep-modules, teach, to-spec, to-tickets, triage, wait-what, wayfinder.
 
-**Model-invoked (13)**, agent bisa panggil sendiri: codebase-design, code-review, diagnosing-bugs, domain-modeling, interview, pr, prototype, research, resolving-merge-conflicts, setup-pre-commit, tdd, wizard, writing-for-agents.
+**Model-invoked (13)**, agent bisa panggil sendiri: codebase-design, code-review, diagnose, domain-modeling, interview, pr, prototype, research, merge-fix, setup-pre-commit, tdd, wizard, writing-for-agents.
 
 ## Main flow: idea to ship
 
@@ -32,7 +32,7 @@ flowchart TD
 
     subgraph ONRAMP["On-ramp"]
         TRIAGE["/triage<br/>laporan mentah jadi agent-ready"]
-        DIAG["/diagnosing-bugs<br/>red loop dulu baru hipotesis"]
+        DIAG["/diagnose<br/>red loop dulu baru hipotesis"]
         WAY["/wayfinder<br/>peta decision tickets"]
     end
     TRIAGE -.-> IMPL
@@ -40,7 +40,7 @@ flowchart TD
     WAY -.-> SPEC
 
     subgraph UPKEEP["Rawat"]
-        IMPROVE["/improve-codebase-architecture<br/>survey deepening"]
+        IMPROVE["/deepen<br/>survey deepening"]
         RETRO["/retro<br/>meta docs anti-stale + pattern"]
     end
     IMPROVE -. "ide baru" .-> GRILL
@@ -57,7 +57,8 @@ flowchart TD
         T["/teach"]
         W["/wait-what<br/>repitch visual"]
         WZ["/wizard"]
-        RMC["/resolving-merge-conflicts"]
+        RMC["/merge-fix"]
+        BRK["/break<br/>stress test worst-case"]
     end
 ```
 
