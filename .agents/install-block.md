@@ -2,12 +2,12 @@
 
 One install story, one wording. `README.md` and `.changeset/*` must say **this** and nothing else. Change it here first, then propagate.
 
-Skills install as editable files into the project via [skills.sh](https://skills.sh/mattpocock/skills). Use the whole-set form on `README.md`:
+Skills install as editable files into the project via [skills.sh](https://skills.sh/TudeOrangBiasa/skills-for-agents). Use the whole-set form on `README.md`:
 
 <canonical-block name="skills-sh-whole-set">
 
 ```bash
-npx skills@latest add mattpocock/skills
+npx skills@latest add TudeOrangBiasa/skills-for-agents
 ```
 
 Pick the skills you want, and which coding agents to install them on. **The installer lets you choose which skills to take: make sure `setup-meta` is one of them.**
@@ -19,7 +19,7 @@ Pick the skills you want, and which coding agents to install them on. **The inst
 <canonical-block name="skills-sh-one-skill">
 
 ```bash
-npx skills@latest add mattpocock/skills --skill=<name>
+npx skills@latest add TudeOrangBiasa/skills-for-agents --skill=<name>
 ```
 
 ```bash
