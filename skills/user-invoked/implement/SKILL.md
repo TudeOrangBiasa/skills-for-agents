@@ -26,7 +26,7 @@ Do not anticipate future slices or add speculative behaviour. Agree the seams up
 Run typechecking regularly, single test files regularly, and the full test suite once at the end.
 
 
-For UI tickets, run the break pilot before calling the work done: render the touched components against worst-case content (long names, weird strings, high volume, empty and partial states, narrow widths, mixed loading/error/success) plus the a11y floor (names, keyboard, focus, 320px, no color-only meaning), and note what visibly broke.
+For UI tickets, run `/break` before calling the work done: render the touched components against worst-case content plus the a11y floor, and note what visibly broke. Foundation breaks are fixed directly; the rest is reported for confirmation.
 ## 4. Scale with the graph
 
 A single slice fits one session: build it here. A ticket graph gets worked along its frontier: finish blockers first so new tickets unlock. Where the harness supports background subagents, fan implementers out across the ready frontier and merge each finished slice back before kicking off more.
