@@ -25,6 +25,12 @@ Ask: "What's the public interface, and which seams should we test?"
 
 When the shape of that interface is itself in question (how deep the module is, where the seam belongs, what the interface should expose), call the Skill tool with "codebase-design" for the vocabulary. It is the shared source of the module, interface, depth, seam, adapter, leverage and locality terms, and it is a reference to consult, not a session to run.
 
+## Guardrails first
+
+Before writing tests, list from the map: what must always happen, what must never happen, what happens on failure, and the important edge cases. Prioritize business rules, critical flows, failure cases, data integrity, and security-sensitive behavior.
+
+Include negative cases: every happy path gets its must-never counterpart (a payment cannot be captured twice, an already-used confirmation ID cannot be reused, a user cannot touch another user's order). These lists are the guardrails the loop protects; the agent does not narrow them quietly.
+
 ## The undefined check
 
 Before keeping a test, ask whether it would still pass if every imported function returned `undefined`. If yes, it observes no behavior and cannot fail for a defect. Rewrite the assertion or delete the test.
