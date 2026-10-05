@@ -126,7 +126,7 @@ For automated tests, a red-green-refactor loop is critical. This is where the ag
 
 I've built a **[`/tdd`](./skills/model-invoked/tdd/SKILL.md) skill** you can slot into any project. It encourages red-green-refactor and gives the agent plenty of guidance on what makes good and bad tests.
 
-For debugging, I've also built a **[`/diagnosing-bugs`](./skills/model-invoked/diagnosing-bugs/SKILL.md)** skill that wraps best debugging practices into a disciplined loop, gated phase by phase.
+For debugging, I've also built a **[`/diagnose`](./skills/model-invoked/diagnose/SKILL.md)** skill that wraps best debugging practices into a disciplined loop, gated phase by phase.
 
 ### #4: We Built A Ball Of Mud
 
@@ -146,7 +146,7 @@ This is built in to every layer of these skills:
 
 - [`/to-spec`](./skills/user-invoked/to-spec/SKILL.md) quizzes you about which modules you're touching before creating a spec
 
-And crucially, [`/improve-codebase-architecture`](./skills/user-invoked/improve-codebase-architecture/SKILL.md) surveys a codebase for deepening opportunities and hands you the candidates. I recommend running it on your codebase once every few days. It is a survey, not a rescue: on a genuinely old codebase it will find real candidates, but it won't untangle the mud for you.
+And crucially, [`/deepen`](./skills/user-invoked/deepen/SKILL.md) surveys a codebase for deepening opportunities and hands you the candidates. I recommend running it on your codebase once every few days. It is a survey, not a rescue: on a genuinely old codebase it will find real candidates, but it won't untangle the mud for you.
 
 ### Summary
 
@@ -164,8 +164,8 @@ Skills for daily work, fired by hand. Full list in [skills/user-invoked/](skills
 - **[discuss-with-docs](./skills/user-invoked/discuss-with-docs/SKILL.md)**: Interview session that also builds your project's domain model, sharpening terminology and updating `GLOSSARY.md` and ADRs inline.
 - **[guide](./skills/user-invoked/guide/SKILL.md)**: Ask which skill or flow fits your situation. A router over the user-invoked skills in this repo.
 - **[implement](./skills/user-invoked/implement/SKILL.md)**: Implement from a spec or tickets, test-first with before/after proof per slice, closing with mandatory review and a `pr`-shaped PR body.
-- **[improve-codebase-architecture](./skills/user-invoked/improve-codebase-architecture/SKILL.md)**: Scan a codebase for deepening opportunities, present them as a visual HTML report, then discuss through whichever one you pick.
-- **[loop-me](./skills/user-invoked/loop-me/SKILL.md)**: Interview yourself into implementable workflow specs over multiple sessions, using the current directory as a stateful workspace.
+- **[deepen](./skills/user-invoked/deepen/SKILL.md)**: Scan a codebase for deepening opportunities, present them as a visual HTML report, then discuss through whichever one you pick.
+- **[worklog](./skills/user-invoked/worklog/SKILL.md)**: Interview yourself into implementable workflow specs over multiple sessions, using the current directory as a stateful workspace.
 - **[retro](./skills/user-invoked/retro/SKILL.md)**: Conduct a retrospective on a coding session: refresh meta docs, kill rot, surface patterns.
 - **[setup-meta](./skills/user-invoked/setup-meta/SKILL.md)**: Configure this repo for the skills: tracker, labels, domain docs, DESIGN.md, coding standards, commit/PR formats, pre-commit tooling. Run once per repo.
 - **[setup-ts-deep-modules](./skills/user-invoked/setup-ts-deep-modules/SKILL.md)**: Wire dependency-cruiser into a TypeScript repo so each package is a deep module.
@@ -182,13 +182,13 @@ Reusable discipline the agent reaches for on its own. Full list in [skills/model
 
 - **[codebase-design](./skills/model-invoked/codebase-design/SKILL.md)**: Shared vocabulary for designing deep modules.
 - **[code-review](./skills/model-invoked/code-review/SKILL.md)**: Two-axis review of the diff since a fixed point: Standards and Spec.
-- **[diagnosing-bugs](./skills/model-invoked/diagnosing-bugs/SKILL.md)**: Disciplined diagnosis loop for hard bugs and performance regressions.
+- **[diagnose](./skills/model-invoked/diagnose/SKILL.md)**: Disciplined diagnosis loop for hard bugs and performance regressions.
 - **[domain-modeling](./skills/model-invoked/domain-modeling/SKILL.md)**: Build and sharpen a project's domain model.
-- **[interview](./skills/model-invoked/interview/SKILL.md)**: Interview the user relentlessly about a plan, decision, or idea. The reusable interview primitive behind `discuss`, `discuss-with-docs`, `triage`, `wayfinder` and `improve-codebase-architecture`.
+- **[interview](./skills/model-invoked/interview/SKILL.md)**: Interview the user relentlessly about a plan, decision, or idea. The reusable interview primitive behind `discuss`, `discuss-with-docs`, `triage`, `wayfinder` and `deepen`.
 - **[pr](./skills/model-invoked/pr/SKILL.md)**: The mandatory PR body shape: summary visual, before/after evidence with UI tables, merge danger. Captures visuals with `agent-browser`; attachment method packed in the skill.
 - **[prototype](./skills/model-invoked/prototype/SKILL.md)**: Build a throwaway prototype to answer a design question.
 - **[research](./skills/model-invoked/research/SKILL.md)**: Investigate a question against high-trust primary sources and capture the findings as a cited Markdown file in the repo.
-- **[resolving-merge-conflicts](./skills/model-invoked/resolving-merge-conflicts/SKILL.md)**: Use when you need to resolve an in-progress git merge/rebase conflict.
+- **[merge-fix](./skills/model-invoked/merge-fix/SKILL.md)**: Use when you need to resolve an in-progress git merge/rebase conflict.
 - **[setup-pre-commit](./skills/model-invoked/setup-pre-commit/SKILL.md)**: Set up Husky pre-commit hooks with lint-staged, type checking, and tests.
 - **[tdd](./skills/model-invoked/tdd/SKILL.md)**: Test-driven development with a red-green-refactor loop.
 - **[wizard](./skills/model-invoked/wizard/SKILL.md)**: Generate an interactive bash wizard that walks a human through steps only they can perform.
