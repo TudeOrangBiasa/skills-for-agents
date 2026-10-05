@@ -71,7 +71,7 @@ Enam file kecil ini adalah Map dan Guardrail yang dibawa antar konteks. Agent im
 
 ## Checklist fondasi yang dipilih
 
-Sebelas file dari bank checklist-design yang lolos seleksi fondasi (diverifikasi isi penuh, dominan lapisan functional dan usability, minim selera). Lokasi: `references/checklist-design/references/checklists/`.
+Delapan puluh tujuh file dari bank checklist-design yang lolos seleksi fondasi. Metode: 20 file diverifikasi isi penuh langsung (11 di tabel rinci bawah plus button, modal, toast, color-system, typography, spacing-and-grid), 109 file diklasifikasi via agent lalu 2 file sensitif (skeleton, website-login) saya verifikasi ulang. Lokasi: `references/checklist-design/references/checklists/`.
 
 | File | Dipakai untuk | Kenapa fondasi |
 | --- | --- | --- |
