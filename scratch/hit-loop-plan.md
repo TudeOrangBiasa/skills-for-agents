@@ -19,7 +19,7 @@ Status:
 - DONE: langkah 1 (guide) sampai 6 (code-review). Langkah 7 (trial) dan 8 (evaluasi P2) DICORET atas permintaan user: fokus ke diagram dan cara kerja, bukan uji coba.
 - DONE: bank 87 checklist fondasi (plus 17 mixed, 25 taste), desain UI flow, distilasi aihero, Emil, Jakub, checklist-design.
 - TODO: 8 langkah eksekusi di section 7, mulai dari guide.
-- PENDING: keputusan P2 (pilot checklist vs skill break baru) dan isi craft bar (aturan Emil vs tulis ulang).
+- PENDING: keputusan P2 (pilot checklist vs skill break baru). Craft bar DONE (`prototype/CRAFT.md`, floor plus taste, disetujui user).
 
 Aturan main (dari user, berlaku untuk semua eksekusi):
 
