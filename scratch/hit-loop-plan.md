@@ -10,6 +10,28 @@ Tujuan: pakai HIT sebagai bahasa untuk main flow yang sudah ada, lalu kunci tiga
 
 Keputusan user yang dicatat: `wait-what` versi visual dipertahankan, usulan ramping ke tiga baris ala upstream ditolak. Alasan: pain membaca teks, diagram dan flowchart plus diff lebih enak dibaca.
 
+
+## 0. Master plan
+
+File ini master plan tunggal. Detail desain di `ui-flow-design.md`, data di `references/`.
+
+Status:
+
+- DONE: bank 87 checklist fondasi (plus 17 mixed, 25 taste), desain UI flow, distilasi aihero, Emil, Jakub, checklist-design.
+- TODO: 8 langkah eksekusi di section 7, mulai dari guide.
+- PENDING: keputusan P2 (pilot checklist vs skill break baru) dan isi craft bar (aturan Emil vs tulis ulang).
+
+Aturan main (dari user, berlaku untuk semua eksekusi):
+
+- Straight-forward, tanpa emoticon. Label status audit pakai teks.
+- Fondasi langsung di-fix, non-fondasi wajib konfirmasi.
+- Standar di atas selera, tidak bisa dilonggarkan diam-diam.
+
+Log keputusan:
+
+- `wait-what` visual dipertahankan, usulan tiga baris ditolak.
+- P1 prototype disetujui (axis, recon, dua floor, tabel handoff, craft bar).
+- P2 break belum diputuskan, rekomendasi pilot checklist dulu.
 Sumber:
 - [Principles Coding with AI](./references/Principles%20-%20Coding%20with%20AI.md)
 - [guide](../skills/user-invoked/guide/SKILL.md)
