@@ -1,7 +1,5 @@
 # Skills for Agents
 
-[![skills.sh](https://skills.sh/b/TudeOrangBiasa/skills-for-agents)](https://skills.sh/TudeOrangBiasa/skills-for-agents)
-
 Agent skills for real engineering: small, composable, human-in-the-loop. Forked from [mattpocock/skills](https://github.com/mattpocock/skills) and reworked around a HIT flow (Have a Map, Install Guardrails, Take a Walk), a UI sub-flow for interface tickets, memorable skill names, and per-skill credits. MIT licensed; every skill carries its own `CREDITS.md`.
 
 ## Installation (30-second setup)
