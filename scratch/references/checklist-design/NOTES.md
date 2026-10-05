@@ -20,7 +20,7 @@ Yang sengaja TIDAK di-vendor: 129 file checklist isi (`references/checklists/`) 
 scrapling extract get "https://raw.githubusercontent.com/checklist-design/skills/main/skills/checklist-design/references/checklists/<nama-file>.md" /tmp/<nama-file>.md --timeout 60
 ```
 
-Daftar file tersedia (129 total, lima kategori): `design-system-*` (31 file: button, input-field, modal, toast, table, tokens, typography, dst), `flows-*` (13 file: login-to-payment, error, empty state, dst), `mobile-*` (24 file), `web-app-*` (30 file: dashboard, data-table, settings, empty-state, dst), `website-*` (31 file: landing-page, pricing, checkout, dst).
+
 Daftar file tersedia (129 menurut index upstream, lima kategori): `design-system-*` (button, input-field, modal, toast, table, tokens, typography, dst), `flows-*` (showing-input-error, empty state, login-to-payment, dst), `mobile-*`, `web-app-*` (dashboard, data-table, settings, empty-state, dst), `website-*` (landing-page, pricing, checkout, dst). Nama file lengkap ada di output fetch, tidak disalin ke sini.
 
 ## Cara kerja dua mode, ringkas
