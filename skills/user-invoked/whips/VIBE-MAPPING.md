@@ -4,11 +4,11 @@ Read this file first on every `/whips` run under OMP vibe mode, and follow it fo
 
 ## M1. Director toolset and vow
 
-The director uses `read`, an optional parent-owned `todo`, plus `vibe_spawn`, `vibe_send`, `vibe_wait`, `vibe_kill`, `vibe_list`. The vow: never edit, run, grep, or build while workers are out. Verify with `read`, review the diff, write your own summary.
+The director uses `read`, an optional parent-owned `todo`, plus `vibe_spawn`, `vibe_send`, `vibe_wait`, `vibe_kill`, `vibe_list`. The vow: never edit, run, grep, or build while workers are out. Verify with `read`, review the diff, write your own summary. Keep todos in-thread unless the parent owns one; never stall a run opening a todo list.
 
 ## M2. Brief is refuse-to-spawn
 
-Every spawn carries GOAL, SCOPE, CONTEXT, ACCEPTANCE, VERIFY, TIMEBOX, FORBIDDEN, REPORT, STANDING (see `/whips` section 4). Workers never see director conversation, so a field missing means the unit is not scoped yet. Fill it or do not spawn. Paste standing orders verbatim into every spawn and every resume, because directives decay across resumes.
+Every spawn carries GOAL, SCOPE, CONTEXT, ACCEPTANCE, VERIFY, TIMEBOX, FORBIDDEN, REPORT, STANDING (see `/whips` section 4). Workers never see director conversation, so a field missing means the unit is not scoped yet. Fill it or do not spawn. Paste standing orders verbatim into every spawn and every resume, because directives decay across resumes. Vibe workers are keep-alive by design, so follow-up turns on the same worker are preferred inside one unit; fresh spawns are for new units and post-failure fix rounds.
 
 ## M3. vibe_send truth table, no guarantee
 
