@@ -33,6 +33,53 @@ Behavior:
 4. Subagent brief rule (vibe safe): every delegate gets GOAL, SCOPE paths, CONTEXT pointers, ACCEPTANCE, VERIFY command, REPORT shape. Fresh agent per round with consolidated scope. No resume chains. Director verifies with `read`, reviews diff, writes own summary.
 5. Harness mapping: on OMP use `vibe_spawn`/`vibe_send`/`vibe_wait`; elsewhere use background Agent. Decided: separate `VIBE-MAPPING.md` reference (see Open questions). SKILL.md points at it.
 
+## Flow
+
+Router loop (one entry, HIT gates stay, typing goes away):
+
+```mermaid
+flowchart TD
+    U["/whips plus task"] --> M["Match playbook"]
+    M --> T["Open todo, steps verbatim"]
+    T --> H{"HIT gate"}
+    H -->|"Map vague"| D["discuss-with-docs, wayfinder, prototype"]
+    H -->|"No guardrails"| G["tdd behavior plus negative cases"]
+    H -->|"Ready"| W["Walk: to-tickets, implement per ticket"]
+    D --> H
+    G --> W
+    W --> V["code-review plus unslop gate"]
+    V --> P["pr-shaped body, human lands"]
+```
+
+Director plus workers (same shape on OMP vibe and on plain background agents):
+
+```mermaid
+flowchart LR
+    B["Write self-contained briefs"] --> I["Workers implement"]
+    I --> Vf["Workers verify on real artifact"]
+    Vf --> R["Director verifies with read, owns summary"]
+    R -->|"fix round, fresh agent"| B
+```
+
+Fan out choice (parent level only for independent artifacts, else one owner with checkpoint inline):
+
+```mermaid
+flowchart TD
+    S["Slice the work"] --> C{"Shape?"}
+    C -->|"one owner"| O["Single delegate plus throughput checkpoint"]
+    C -->|"same brief, N tries"| A["arena: pick base, graft losers"]
+    C -->|"N slices or race"| Sw["swarm: drain, one report"]
+```
+
+## Usecases (from pstack, mapped to /whips)
+
+Sources: `pstack/docs/guide/07-overnight.md`, `pstack/skills/poteto-mode/playbooks/autonomous-run.md`, `autopilot-full.md`, `autopilot-stack.md`, `orchestrate.md`.
+
+1. Overnight migration (one task, one finish condition). Handoff has goal, falsifiable done predicate, fresh worktree, decision log, no permission blocks, `/loop` until done, escape hatch to stop and write up why. Morning audit reads the decision log plus the cross model Attention section, not the whole night. Maps to `/whips` feature or bug playbook plus `show-me-your-work` trail.
+2. Queue to merged by morning (independent PRs). Each PR gets one owner from build to merge, a verifier swarm checks every code ready head, only a clean verdict on the merged patch authorizes the merge. Coupled changes use the stack variant instead: one linear stack with a verdict per link, human lands it. Maps to `/whips` plus the `babysit` plus `shipping` build new items.
+3. Program that outlives any single agent (multi day, many stacked PRs). One standing coordinator owns briefs, queue drains, and a green frontier, never code. Human checks in twice a day. Deferred in our inventory until `/whips` proves itself on single efforts.
+4. Throughput claim (TODO: verify source). Reported from a Lauren Tan talk: about 2000 PRs merged in a month with this setup. Treat as unverified until the source lands. The mechanism behind it is usecases 2 and 3 running in parallel: many owners, verifier swarms per push, landing continuous instead of terminal.
+
 ## Files to change
 
 - New: `skills/user-invoked/whips/SKILL.md` (frontmatter `disable-model-invocation: true`, plus `policy.allow_implicit_invocation: false` in `agents/openai.yaml`)
