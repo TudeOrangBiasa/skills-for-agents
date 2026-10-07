@@ -80,6 +80,18 @@ Sources: `pstack/docs/guide/07-overnight.md`, `pstack/skills/poteto-mode/playboo
 3. Program that outlives any single agent (multi day, many stacked PRs). One standing coordinator owns briefs, queue drains, and a green frontier, never code. Human checks in twice a day. Deferred in our inventory until `/whips` proves itself on single efforts.
 4. Throughput reference (verified, corrects the 2000 figure). Lauren Tan merged about 1000 PRs in a month at Cursor, with nearly 800 in the first 12 days of the next month, which is the pace the 2000 number likely came from. Sources: UninformedInvestors interview (https://www.youtube.com/watch?v=Zc07HI9Ppxk), Matt Pocock livestream on shipping 1000s of PRs a month (https://www.youtube.com/watch?v=MN9dGgmLyso), team shape quote of 15 plus agents with chief of staff, managers, workers (https://www.youtube.com/watch?v=PaPpyQocMww). The mechanism is usecases 2 and 3 in parallel: many owners, verifier swarms per push, landing continuous instead of terminal. Lesson for us: verification is the bottleneck, so plan high parallel small units with mandatory independent verification rather than raw agent count.
 
+## Automations (benny equivalent for /whips plus vibe)
+
+Benny shape (source: `pstack/automations/benny/FOR_AGENTS.md`): two automations, triage issue reports (classify, dedupe against tracker, ticket only net new bugs) then reproduce and fix (repro twice through the real UI with screenshots plus video, one bounded root cause fix, draft PR only). Both fail closed on missing config, draft PRs only, never merge, never post root messages, config lives outside the pack so refreshes cannot overwrite it.
+
+/whips equivalent on vibe mode: auto pick issues (triage into agent ready tickets per `/triage` roles, dedupe first) then worker (implement plus verify plus PR with evidence) then audit gate (review plus unslop plus attachments check) before a human ever looks. Draft PRs only, never merge, never self add as collaborator, assignee, or reviewer. Tools are not people.
+
+PR evidence gate (the pain you named): the PR body IS the review surface when you cannot review live. Every visible change needs the before and after pair in a table at native 1x with matched viewport and crop, video when motion matters, never inside `<details>` (source: our `pr` skill `ATTACHMENTS.md`). The worker REPORT must carry proof pointers (commit SHAs, screenshot paths, video path, verify commands with output). The audit rejects evidence free PRs as NOT VERIFIED and respawns a fix round with a fresh agent. A green CI alone is not a verdict.
+
+Steer race (main agent stops before advisor steer lands): research running on OMP advisor mechanics. Working rule until it lands, taken from the orchestrate brief discipline: never rely on mid turn steering. Put every steer inline in the brief plus standing orders pasted verbatim into every spawn and resume, because directives decay across resumes. Add explicit drain points (`vibe_wait` only when blocked) so guidance is read at a boundary, not raced mid turn. Full answer with OMP file paths when the research returns.
+
+Scope note: the automation pack itself is walk phase, after the skill proves itself. Map stays skill plus VIBE-MAPPING.md plus 2 playbooks.
+
 ## Files to change
 
 - New: `skills/user-invoked/whips/SKILL.md` (frontmatter `disable-model-invocation: true`, plus `policy.allow_implicit_invocation: false` in `agents/openai.yaml`)
