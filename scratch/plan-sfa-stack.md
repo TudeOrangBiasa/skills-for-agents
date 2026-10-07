@@ -9,7 +9,7 @@ Goal: one user invoked entry that routes our HIT skills without micromanagement,
 
 ## Design
 
-New user invoked skill, working name `/playbook` (alternates: `/vibe`, `/route`). Decision needed from user before scaffold.
+New user invoked skill `/whips`. Decision made (see Open questions).
 
 Behavior:
 1. Match task to one playbook (small set, reuse existing skills):
@@ -26,10 +26,11 @@ Behavior:
 
 ## Files to change
 
-- New: `skills/user-invoked/playbook/SKILL.md` (frontmatter `disable-model-invocation: true`, plus `policy.allow_implicit_invocation: false` in `agents/openai.yaml`)
-- New: `skills/user-invoked/playbook/playbooks/*.md` (6 to 8 files, one per playbook above)
-- New: `skills/user-invoked/playbook/CREDITS.md` (credit Poteto pstack, OMP vibe docs)
-- New: `skills/user-invoked/playbook/agents/openai.yaml`
+- New: `skills/user-invoked/whips/SKILL.md` (frontmatter `disable-model-invocation: true`, plus `policy.allow_implicit_invocation: false` in `agents/openai.yaml`)
+- New: `skills/user-invoked/whips/VIBE-MAPPING.md` (reference per `writing-for-agents`, OMP director plus worker rules, agents must read and follow it)
+- New: `skills/user-invoked/whips/playbooks/*.md` (6 to 8 files, one per playbook above)
+- New: `skills/user-invoked/whips/CREDITS.md` (credit Poteto pstack, OMP vibe docs)
+- New: `skills/user-invoked/whips/agents/openai.yaml`
 - Edit: `skills/user-invoked/guide/SKILL.md` (router must mention new skill, per repo router rule)
 - Edit: top `README.md` (add skill row with link, per repo rule)
 - Edit: `skills/user-invoked/README.md` (add one line row)
@@ -41,20 +42,22 @@ Behavior:
 - Install block wording copied verbatim from `.agents/install-block.md` where install is mentioned.
 - `guide` stays accurate: new skill mentioned, flows updated.
 - `agents/openai.yaml` per skill carries invocation flags.
+- Unslop gate like Poteto: short declarative sentences, no AI tells, no filler or phase narrating comments, keep only why comments the code cannot show. Ship it as a model invoked rule the router calls before review and before PR.
+- PR body follows this repo `pr` skill shape (summary visual, before and after evidence, merge danger). Agents never add themselves as collaborator, assignee, or reviewer on GitHub. Tools are not people, so they only author the body and request review from humans.
 
 ## Steps
 
-1. Confirm skill name and vibe mapping placement (inline vs reference). DONE when user answers.
-2. Scaffold `skills/user-invoked/playbook/` with SKILL.md plus 2 starter playbooks (feature, bug). DONE when files exist and READMEs plus guide updated.
+1. Confirm scope cut only (name and vibe reference decided). DONE when user answers.
+2. Scaffold `skills/user-invoked/whips/` with SKILL.md plus VIBE-MAPPING.md plus 2 starter playbooks (feature, bug). DONE when files exist and READMEs plus guide updated.
 3. Add remaining playbooks (investigation, UI variant, wayfinder handoff, upkeep). DONE when each playbook has steps plus owning skills.
 4. Dry run on a real task in this repo. DONE when director plus worker flow produces verified diff with evidence.
 5. OMP vibe pass. DONE when same playbook runs under `/vibe` with `vibe_*` tools and read only verification.
 
 ## Open questions
 
-- Name: `/playbook` vs `/vibe` vs other.
-- Vibe mapping: inline section vs `VIBE-MAPPING.md`.
-- Scope cut: scaffold with 2 playbooks first, or all 6 at once.
+- Name: decided, `/whips` (from Indonesian pecut, whip, the director drives the workers). Folder `skills/user-invoked/whips/`.
+- Vibe mapping: decided, use a reference file (`VIBE-MAPPING.md`) written per `writing-for-agents`, not an inline section. The router SKILL.md points at it and agents must read and follow it on every OMP run (director stays read only, workers get self contained briefs, verify with read).
+- Scope cut: map first before walk. Scaffold the router map plus SKILL.md plus 2 playbooks (feature, bug) first, then walk the rest (investigation, UI variant, wayfinder handoff, upkeep).
 
 ## Report back
 
