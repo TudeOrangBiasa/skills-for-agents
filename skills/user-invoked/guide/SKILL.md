@@ -13,6 +13,7 @@ A **flow** is a path through the skills. Most paths run along one **main flow**,
 ## The main flow: idea → ship
 
 The route most work travels. You have an idea and want it built.
+Start here with `/whips`: it matches your task to a playbook below, opens its steps as a todo, and drives the skills itself so you decide only at forks. The manual per-skill path stays for when you want each step by hand.
 
 1. **`/discuss-with-docs`** sharpens the idea by interview. Start here whenever you are **working in a working directory**: it's stateful, retaining what it learns in `GLOSSARY.md` and ADRs. (No working directory? Use `/discuss` instead, covered under Standalone. Both run the same `/interview` primitive; `discuss-with-docs` is the one that leaves a paper trail, which makes it the better of the two whenever a repo is there to leave it in.)
 2. **Branch: can you settle every question in conversation?** If a question needs a runnable answer (state, business logic, a UI you have to see), detour through a prototype, bridged by a fresh session in both directions (a prototype lives in its own directory; see Phase boundaries):

@@ -67,6 +67,7 @@ Skills for daily work, fired by hand. Full list in [skills/user-invoked/](skills
 - **[triage](./skills/user-invoked/triage/SKILL.md)**: Move issues through a state machine of triage roles.
 - **[wait-what](./skills/user-invoked/wait-what/SKILL.md)**: Fire this the moment an agent message doesn't land. The agent re-pitches it visually, in plain English, using your `GLOSSARY.md` vocabulary.
 - **[wayfinder](./skills/user-invoked/wayfinder/SKILL.md)**: Plan a huge chunk of work, more than one agent session can hold, as a shared map of decision tickets on the issue tracker, and resolve them one at a time until the way is clear.
+- **[whips](./skills/user-invoked/whips/SKILL.md)**: Route any non-trivial task through one entry: match a playbook, drive HIT skills plus subagents, land a reviewed diff with pr-shaped evidence.
 - **[worklog](./skills/user-invoked/worklog/SKILL.md)**: Interview yourself into implementable workflow specs over multiple sessions, using the current directory as a stateful workspace.
 
 ### Model-invoked
