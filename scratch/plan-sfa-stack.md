@@ -118,7 +118,7 @@ Scope note: the automation pack itself is walk phase, after the skill proves its
 
 1. DONE. Inventory split plus Automations approved, buildable spec written at `scratch/spec-whips.md` (goal, non-goals, identity, R1 to R6, feature and bug playbooks, M1 to M7, brief schema, gates, acceptance A1 to A6, build order).
 2. DONE. `skills/user-invoked/whips/` scaffolded (SKILL.md, VIBE-MAPPING.md, playbooks feature and bug, CREDITS.md, agents/openai.yaml) plus guide entry, both README rows, and `.changeset/whips-router-skill.md`. No em dashes, acceptance A1 to A5 pass.
-3. Add remaining playbooks (investigation, UI variant, wayfinder handoff, upkeep). DONE when each playbook has steps plus owning skills.
+3. DONE. All 6 playbooks exist (feature, bug, investigation, ui, wayfinder-handoff, upkeep), each with steps naming owning skills, and SKILL.md matches all six. Em dash check clean.
 4. DONE. Dry ran `/whips` feature playbook on the README flow section: one line routing new users to `/whips` with `/guide` as the manual path. how single pass, data shape n/a (prose), architect skipped (no boundary), one inline worker named, interrogate skipped (uncontested). Verified: 1 file, 1 insertion, 1 deletion, em dash check clean. Change left uncommitted for your review.
 5. OMP vibe pass. DONE when same playbook runs under `/vibe` with `vibe_*` tools and read only verification.
 
