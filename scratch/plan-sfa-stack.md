@@ -124,9 +124,9 @@ Scope note: the automation pack itself is walk phase, after the skill proves its
 
 ## Open questions
 
-- Name: decided, `/whips` (from Indonesian pecut, whip, the director drives the workers). Folder `skills/user-invoked/whips/`.
-- Vibe mapping: decided, use a reference file (`VIBE-MAPPING.md`) written per `writing-for-agents`, not an inline section. The router SKILL.md points at it and agents must read and follow it on every OMP run (director stays read only, workers get self contained briefs, verify with read).
-- Scope cut: map first before walk. Map is this inventory plus the router map plus SKILL.md plus VIBE-MAPPING.md plus 2 playbooks (feature, bug). Walk is the adapt items first, then the build new items, then the remaining playbooks (investigation, UI variant, wayfinder handoff, upkeep).
+- Name: decided, `/whips` (from Indonesian pecut, whip, the director drives the workers). Folder `skills/user-invoked/whips/`. answer : YES
+- Vibe mapping: decided, use a reference file (`VIBE-MAPPING.md`) written per `writing-for-agents`, not an inline section. The router SKILL.md points at it and agents must read and follow it on every OMP run (director stays read only, workers get self contained briefs, verify with read). answer : YES
+- Scope cut: map first before walk. Map is this inventory plus the router map plus SKILL.md plus VIBE-MAPPING.md plus 2 playbooks (feature, bug). Walk is the adapt items first, then the build new items, then the remaining playbooks (investigation, UI variant, wayfinder handoff, upkeep). answer : YES
 - Map review: this document is the map. Walk (scaffold) starts after your approval of the inventory split plus the Automations section.
 
 ## Report back
