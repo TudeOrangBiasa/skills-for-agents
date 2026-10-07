@@ -1,0 +1,14 @@
+ts	phase	decision	why	evidence	result
+2026-10-07T00:00:00Z	frame	researched OMP vibe mode against primary sources	director rules must be grounded, not guessed	subagent report + omp.sh docs + can1357/oh-my-pi code	vibe_spawn/send/wait/kill/list, fast/good tiers, pain issues recorded
+2026-10-07T00:00:00Z	frame	decoded poteto pstack (Lauren Tan, cursor/plugins)	user terms mapped to real artifacts	pstack README + poteto-mode SKILL.md	router + 23 playbooks + subagent discipline confirmed
+2026-10-07T00:00:00Z	frame	corrected 2000 PR/month to ~1000/month	unverified claims rot into lore	UninformedInvestors + Pocock interviews	~1000/mo done, ~800/12d pace; lesson: verification is the bottleneck
+2026-10-07T00:00:00Z	design	named the skill /whips (Indonesian pecut)	user approved, director-drives-workers	plan open questions	skills/user-invoked/whips/
+2026-10-07T00:00:00Z	design	VIBE-MAPPING.md as must-follow reference, not inline	agents must follow rules every run	plan + writing-for-agents	M1-M7 normative table
+2026-10-07T00:00:00Z	design	routed-skills inventory (have/adapt/build/defer)	router is thin, power is what it routes to	leaf reads: how/why/architect/arena/interrogate/swarm/unslop/reflect/show-me/blast-radius	arena + swarm + unslop + babysit/shipping are gaps; orchestrate deferred
+2026-10-07T00:00:00Z	design	benny-equivalent automations deferred to walk	map first	plan Automations section	triage-worker-audit shape recorded, pack later
+2026-10-07T00:00:00Z	design	evidence gate + unslop gate + tools-are-not-people	user cannot review live, PR body is the review surface	pr ATTACHMENTS.md + OMP hooks docs	proof-less PRs return NOT VERIFIED to a fresh agent
+2026-10-07T00:00:00Z	build	scaffolded skill + 6 playbooks + wiring + changeset	spec sections 3/5/10	skills/user-invoked/whips/, guide, READMEs, .changeset	A1-A5 pass, zero em dashes
+2026-10-07T00:00:00Z	verify	dry ran feature playbook on README flow section	prove the router on a real task	git diff 1+/1- + em dash grep	VERIFIED, left uncommitted for user review
+2026-10-07T00:00:00Z	verify	vibe pass on toy bug under /vibe	prove the mapping on real tools	verdict table + closeout PR body	all rows PASS (M1-M5, evidence, bug fixed)
+2026-10-07T00:00:00Z	fix	follow-up turns in-unit + todos in-thread	vibe evidence: t1-t2 flow + advisor concern	SKILL.md section 4 + M1/M2 edits	folded into source; test copy untouched
+2026-10-07T00:00:00Z	close	test workspace retired after pass	single-use snapshot, do not maintain	user runs rm -rf whips-test	pending user action
