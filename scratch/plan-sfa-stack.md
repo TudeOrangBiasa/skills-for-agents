@@ -117,7 +117,7 @@ Scope note: the automation pack itself is walk phase, after the skill proves its
 ## Steps
 
 1. DONE. Inventory split plus Automations approved, buildable spec written at `scratch/spec-whips.md` (goal, non-goals, identity, R1 to R6, feature and bug playbooks, M1 to M7, brief schema, gates, acceptance A1 to A6, build order).
-2. Scaffold `skills/user-invoked/whips/` with SKILL.md plus VIBE-MAPPING.md plus 2 starter playbooks (feature, bug). DONE when files exist and READMEs plus guide updated.
+2. DONE. `skills/user-invoked/whips/` scaffolded (SKILL.md, VIBE-MAPPING.md, playbooks feature and bug, CREDITS.md, agents/openai.yaml) plus guide entry, both README rows, and `.changeset/whips-router-skill.md`. No em dashes, acceptance A1 to A5 pass.
 3. Add remaining playbooks (investigation, UI variant, wayfinder handoff, upkeep). DONE when each playbook has steps plus owning skills.
 4. Dry run on a real task in this repo. DONE when director plus worker flow produces verified diff with evidence.
 5. OMP vibe pass. DONE when same playbook runs under `/vibe` with `vibe_*` tools and read only verification.
