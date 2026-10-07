@@ -13,9 +13,13 @@ You are the director. While workers are out you never edit, run, or build. You v
 
 Read the task and match exactly one:
 
-- New or changed behavior, a migration, a UI change: `playbooks/feature.md`.
-- A reported defect: `playbooks/bug.md`.
-- Nothing fits: answer directly in chat. Never invent a playbook on the spot. A large effort that keeps missing every playbook is a sign to run `/wayfinder` first, then return here.
+- New or changed behavior, a migration: `playbooks/feature.md`.
+- A UI ticket: `playbooks/ui.md` on top of feature (diverge, guard, stress, promote one).
+- A reported defect: `playbooks/bug.md` (repro first, root cause, runtime evidence).
+- A read-only question: `playbooks/investigation.md` (cited answer, never code).
+- A huge, foggy effort: `playbooks/wayfinder-handoff.md` (map, collapse at `/to-spec`, then tickets).
+- Codebase health on a spare moment: `playbooks/upkeep.md` (survey, design on the bench, feed back as an idea).
+- Nothing fits: answer directly in chat. Never invent a playbook on the spot.
 
 ## 2. Open the todo, verbatim
 
