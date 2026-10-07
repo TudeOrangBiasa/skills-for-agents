@@ -1,0 +1,5 @@
+interface:
+  display_name: "Whips"
+  short_description: "Route work through one entry with playbooks"
+policy:
+  allow_implicit_invocation: false
