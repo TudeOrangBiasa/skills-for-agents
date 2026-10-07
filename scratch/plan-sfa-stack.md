@@ -5,6 +5,7 @@ Goal: one user invoked entry that routes our HIT skills without micromanagement,
 ## Context (researched)
 
 - OMP vibe mode: director plus keep alive worker subagents. Director shrinks to `read` plus `vibe_spawn`, `vibe_send`, `vibe_wait`, `vibe_kill`, `vibe_list`. Workers are blank slate, briefs must be self contained. Director verifies with `read` and owns the summary. No autonomous continuation without Goal mode. Sources: `docs/vibe-mode.md`, `packages/coding-agent/src/vibe/runtime.ts`, `packages/coding-agent/src/prompts/system/vibe-mode-active.md`, issues 5674, 5630, 6487, 11005, 9654, 5317, 8171, 11123, 10121, 7963.
+- OMP advisor plus hooks: advisor is an async reviewer model with nit, concern, blocker, preserve channels and weigh-dont-obey guidance. Steering races the turn end (syncBacklog default off, steer only while streaming, vibe_send gives steered, queued, or turn with no landing guarantee). Enforceable gates are hooks: tool_call block, agent_end and turn_end checks, fail closed. Sources: `docs/advisor-watchdog.md`, `docs/hooks.md`, `packages/coding-agent/src/advisor/`, `packages/coding-agent/src/extensibility/hooks/`, issues 5628, 4840, 9745.
 - Poteto pstack: `cursor/plugins`, folder `pstack`. Entry `/poteto-mode` matches task to 1 of 23 playbooks, opens todo with steps verbatim, routes to skills as steps fire, delegates implementation to fresh subagents with consolidated scope, director reviews diff and writes own summary. Key files: `pstack/skills/poteto-mode/SKILL.md`, `pstack/skills/swarm/SKILL.md`, `pstack/skills/poteto-mode/playbooks/feature.md`, `pstack/skills/poteto-mode/playbooks/orchestrate.md`.
 
 ## Routed skills inventory (what makes pstack overpowered)
@@ -88,14 +89,14 @@ Benny shape (source: `pstack/automations/benny/FOR_AGENTS.md`): two automations,
 
 PR evidence gate (the pain you named): the PR body IS the review surface when you cannot review live. Every visible change needs the before and after pair in a table at native 1x with matched viewport and crop, video when motion matters, never inside `<details>` (source: our `pr` skill `ATTACHMENTS.md`). The worker REPORT must carry proof pointers (commit SHAs, screenshot paths, video path, verify commands with output). The audit rejects evidence free PRs as NOT VERIFIED and respawns a fix round with a fresh agent. A green CI alone is not a verdict.
 
-Steer race (main agent stops before advisor steer lands): research running on OMP advisor mechanics. Working rule until it lands, taken from the orchestrate brief discipline: never rely on mid turn steering. Put every steer inline in the brief plus standing orders pasted verbatim into every spawn and resume, because directives decay across resumes. Add explicit drain points (`vibe_wait` only when blocked) so guidance is read at a boundary, not raced mid turn. Full answer with OMP file paths when the research returns.
+Steer race (main agent stops before advisor steer lands): verified against OMP source, and the race is real. The advisor is an optional reviewer model that injects `<advisory severity=...>` into primary context with weigh-dont-obey guidance. It never approves actions or mutates state (sources: `docs/advisor-watchdog.md`, `packages/coding-agent/src/advisor/runtime.ts`, `advise-tool.ts`, `emission-guard.ts`, `session/session-advisors.ts`). Delivery channels: `nit` lands at the next boundary, `concern` or `blocker` interrupts a streaming turn, `preserve` shows a card with no wake (late terminal answers, plan mode, cooldowns). Reported races: blocker ignored until next turn (issue 5628), duplicate final answers after advisor continuations (issue 4840), stale review trapping the drain while primary sits idle (issue 9745, open). Causes: the advisor runs async, the primary only waits when `advisor.syncBacklog` is set (default off), and `steer()` only steers while streaming. Same for `vibe_send`: streaming gets `steered` at the next step, non streaming gets `queued`, idle starts a `turn`. No guarantee a directive lands before finish (sources: `docs/vibe-mode.md`, `packages/coding-agent/src/vibe/runtime.ts`, `tools/vibe.ts`). So the rule stands: never rely on mid turn steering. Steer inline in briefs plus standing orders, drain at boundaries. The enforceable gate is OMP hooks (source: `docs/hooks.md`): `tool_call` pre-exec blocks a report-done or submit without PR evidence, `agent_end` or `turn_end` plus `tool_result` demands proof, and hooks fail closed. VIBE-MAPPING.md carries the severity table plus the hook gate recipe.
 
 Scope note: the automation pack itself is walk phase, after the skill proves itself. Map stays skill plus VIBE-MAPPING.md plus 2 playbooks.
 
 ## Files to change
 
 - New: `skills/user-invoked/whips/SKILL.md` (frontmatter `disable-model-invocation: true`, plus `policy.allow_implicit_invocation: false` in `agents/openai.yaml`)
-- New: `skills/user-invoked/whips/VIBE-MAPPING.md` (reference per `writing-for-agents`, OMP director plus worker rules, agents must read and follow it)
+- New: `skills/user-invoked/whips/VIBE-MAPPING.md` (reference per `writing-for-agents`, OMP director plus worker rules, advisor severity table, hooks evidence gate recipe, agents must read and follow it)
 - New: `skills/user-invoked/whips/playbooks/*.md` (6 to 8 files, one per playbook above)
 - New: `skills/user-invoked/whips/CREDITS.md` (credit Poteto pstack, OMP vibe docs)
 - New: `skills/user-invoked/whips/agents/openai.yaml`
@@ -126,6 +127,7 @@ Scope note: the automation pack itself is walk phase, after the skill proves its
 - Name: decided, `/whips` (from Indonesian pecut, whip, the director drives the workers). Folder `skills/user-invoked/whips/`.
 - Vibe mapping: decided, use a reference file (`VIBE-MAPPING.md`) written per `writing-for-agents`, not an inline section. The router SKILL.md points at it and agents must read and follow it on every OMP run (director stays read only, workers get self contained briefs, verify with read).
 - Scope cut: map first before walk. Map is this inventory plus the router map plus SKILL.md plus VIBE-MAPPING.md plus 2 playbooks (feature, bug). Walk is the adapt items first, then the build new items, then the remaining playbooks (investigation, UI variant, wayfinder handoff, upkeep).
+- Map review: this document is the map. Walk (scaffold) starts after your approval of the inventory split plus the Automations section.
 
 ## Report back
 
