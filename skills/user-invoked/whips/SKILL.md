@@ -33,8 +33,7 @@ Map before Guardrails, Guardrails before Walk. When the map is vague, return to 
 
 Drive model-invoked skills as steps fire. Never invoke another user-invoked skill from inside `/whips`.
 
-Give every delegate a self-contained brief: GOAL, SCOPE, CONTEXT, ACCEPTANCE, VERIFY, TIMEBOX, FORBIDDEN, REPORT, STANDING. A field you cannot fill is a unit you have not scoped yet, so refuse to spawn until it is filled. Use a fresh subagent per round with consolidated scope (original brief plus every later directive plus prior report and branch). Resume only for state that is costly to move: uncommitted changes or a still running process. Interrupt-chained resumes are banned.
-
+Give every delegate a self-contained brief: GOAL, SCOPE, CONTEXT, ACCEPTANCE, VERIFY, TIMEBOX, FORBIDDEN, REPORT, STANDING. A field you cannot fill is a unit you have not scoped yet, so refuse to spawn until it is filled. Prefer a follow-up turn on the same worker inside one unit (it carries context natively). Use a fresh subagent with consolidated scope (original brief plus every later directive plus prior report and branch) for a new unit, a fix round after failure, or a retry. Resume only for state that is costly to move: uncommitted changes or a still running process. Interrupt-chained resumes are banned.
 Bulk goes to subagents, summaries stay in this thread. A second opinion is the same prompt against a different model; agreement is the signal.
 
 On OMP, read `VIBE-MAPPING.md` first and follow it on every run: director toolset and vow, the `vibe_send` truth table, advisor severities, drain discipline, and the hooks evidence gate. Never rely on mid-turn steering; steer inline in briefs plus standing orders and at drain points.
