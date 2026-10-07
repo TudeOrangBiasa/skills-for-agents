@@ -42,7 +42,7 @@ Three phases, one rule per phase: Map before Guardrails, Guardrails before Walk.
 - **I (Install Guardrails):** `/tdd` behavior tests plus negative cases. What must happen and what must never happen, implementation left free.
 - **T (Take a Walk):** `/to-tickets` splits the work small, `/implement` runs Plan then Coding then Review per ticket, `/code-review` checks behavior before style.
 
-UI tickets run a sub-flow inside Walk: diverge (`/prototype` variants), guard (a11y plus content floors), stress (`/break` page), review with evidence, promote one and delete the rest. Start at `/guide` whenever you don't know which skill fits.
+UI tickets run a sub-flow inside Walk: diverge (`/prototype` variants), guard (a11y plus content floors), stress (`/break` page), review with evidence, promote one and delete the rest. Start with `/whips` and it drives this flow for you; use `/guide` when you want to pick the skill by hand.
 
 ## Reference
 
