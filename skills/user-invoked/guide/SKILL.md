@@ -102,4 +102,4 @@ Off the main flow entirely.
 
 ## Precondition
 
-**`/setup-meta`**: run before your first flow to configure the issue tracker, triage labels, and doc layout the other skills assume. Custom issue trackers also work.
+**`/setup-meta`**: run before your first flow to configure the issue tracker, triage labels, and doc layout the other skills assume, plus, optionally, a model per subagent role for `/whips`. Custom issue trackers also work.
