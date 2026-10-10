@@ -55,10 +55,11 @@ Each row fires whenever its condition holds, on top of the playbook steps. Call 
 | A merge or rebase conflict | "merge-fix" |
 | A step only a human can do (secrets, dashboards) | "wizard" |
 | A PR body | "pr" |
+| A UI change about to ship | "break" |
 
-Every prose surface (reply, PR body, commit message, tracker comment) passes the unslop gate: short declarative sentences, no AI tells, no filler or phase-narrating comments, keep only why comments the code cannot show.
+Every prose surface (reply, PR body, commit message, tracker comment, code comment) passes the unslop gate: call the Skill tool with "unslop".
 
-A step that names a user-invoked skill (`/wayfinder`, `/to-spec`, `/to-tickets`, `/deepen`, `/break`, `/discuss-with-docs`) is a human gate: tell the user to run it and wait at that step. No skill can fire a user-invoked one, `/whips` included.
+A step that names a user-invoked skill (`/wayfinder`, `/to-spec`, `/to-tickets`, `/deepen`, `/discuss-with-docs`) is a human gate: tell the user to run it and wait at that step. No skill can fire a user-invoked one, `/whips` included.
 
 [PRINCIPLES.md](PRINCIPLES.md) holds the principles behind these triggers. Read it once per run before the first design decision.
 
