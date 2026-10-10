@@ -1,6 +1,6 @@
 ---
 name: whips
-description: "Route any non-trivial task through one entry: match a playbook, drive HIT skills plus subagents, land a reviewed diff with pr-shaped evidence."
+description: "Route any non-trivial task through one entry: match a playbook, drive HIT skills plus subagents, open a reviewed draft PR with pr-shaped evidence."
 disable-model-invocation: true
 ---
 # Whips
@@ -19,6 +19,8 @@ Read the task and match exactly one:
 - A read-only question: `playbooks/investigation.md` (cited answer, never code).
 - A huge, foggy effort: `playbooks/wayfinder-handoff.md` (map, collapse at `/to-spec`, then tickets).
 - Codebase health on a spare moment: `playbooks/upkeep.md` (survey, design on the bench, feed back as an idea).
+- Pick up the next agent-ready issue: `playbooks/triage.md` intake (one `ready-for-agent` issue, brief checked, then bug or feature).
+- Review or bot comments on an open agent PR: `playbooks/triage.md` review mode (fix, dismiss, or ask per comment).
 - Nothing fits: answer directly in chat. Never invent a playbook on the spot.
 
 ## 2. Open the todo, verbatim
@@ -38,13 +40,13 @@ Bulk goes to subagents, summaries stay in this thread. A second opinion is the s
 
 On OMP, read `VIBE-MAPPING.md` first and follow it on every run: director toolset and vow, the `vibe_send` truth table, advisor severities, drain discipline, and the hooks evidence gate. Never rely on mid-turn steering; steer inline in briefs plus standing orders and at drain points.
 
-## 5. Verify, gate, ship the body
+## 5. Verify, gate, open the draft
 
 Verify on the matching surface. Verdicts are VERIFIED, NOT VERIFIED, or INCONCLUSIVE, and inconclusive is not a pass. CI green is an input, not a verdict. Evidence-free work returns to a fresh fix agent, never to the same worker by resume chain.
 
 Run the unslop gate before review and before the PR: short declarative sentences, no AI tells, no filler or phase-narrating comments, keep only why comments the code cannot show.
 
-Shape the closing PR with the `pr` skill (summary visual, before/after evidence, merge danger). Visible changes add the ATTACHMENTS.md pair: before/after table, native 1x, matched viewport and crop, video when motion matters, never inside `<details>`. Agents never add themselves as collaborator, assignee, or reviewer. Tools are not people, so they only author the body and request review from humans.
+Open the closing PR per `playbooks/opening-a-pr.md`: always a draft, `Closes #N` when an issue exists, body shaped with the `pr` skill (summary visual, before/after evidence, merge danger). The human marks it ready and merges; agents never do. Visible changes add the ATTACHMENTS.md pair: before/after table, native 1x, matched viewport and crop, video when motion matters, never inside `<details>`. Agents never add themselves as collaborator, assignee, or reviewer. Tools are not people, so they only author the body and request review from humans.
 
 ## 6. Reply
 
