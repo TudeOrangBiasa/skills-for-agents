@@ -1,0 +1,5 @@
+interface:
+  display_name: "Nightshift"
+  short_description: "Run ready issues overnight into draft PRs"
+policy:
+  allow_implicit_invocation: false
