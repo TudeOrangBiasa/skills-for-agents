@@ -10,6 +10,7 @@
   "license": "MIT",
   "scripts": {
     "changeset": "changeset",
+    "lint:pr": "scripts/lint-pr.sh",
     "version": "changeset version"
   },
   "devDependencies": {
