@@ -29,11 +29,11 @@ Open a todo whose first items are the matched playbook steps copied word for wor
 
 ## 3. Enforce the HIT gates, in order
 
-Map before Guardrails, Guardrails before Walk. When the map is vague, return to the Map (`/discuss-with-docs`, `/wayfinder`, `/prototype`) and do not proceed. When guardrails are missing, write `/tdd` behavior plus negative cases first and do not implement. Never quietly change a guardrail to fit a wrong implementation; that decision belongs to the user.
+Map before Guardrails, Guardrails before Walk. When the map is vague, return to the Map and do not proceed: call the Skill tool with "prototype" when running code can answer the question, else tell the user to run `/discuss-with-docs` or `/wayfinder`. When guardrails are missing, call the Skill tool with "tdd" and write behavior plus negative cases first, and do not implement. Never quietly change a guardrail to fit a wrong implementation; that decision belongs to the user.
 
 ## 4. Drive skills and subagents
 
-Drive model-invoked skills as steps fire. Never invoke another user-invoked skill from inside `/whips`.
+Drive model-invoked skills as steps fire: call the Skill tool with the named skill. A step that names a user-invoked skill (`/wayfinder`, `/to-spec`, `/to-tickets`, `/deepen`, `/break`, `/discuss-with-docs`) is a human gate: tell the user to run it and wait at that step. No skill can fire a user-invoked one, `/whips` included.
 
 Give every delegate a self-contained brief: GOAL, SCOPE, CONTEXT, ACCEPTANCE, VERIFY, TIMEBOX, FORBIDDEN, REPORT, STANDING. A field you cannot fill is a unit you have not scoped yet, so refuse to spawn until it is filled. Prefer a follow-up turn on the same worker inside one unit (it carries context natively). Use a fresh subagent with consolidated scope (original brief plus every later directive plus prior report and branch) for a new unit, a fix round after failure, or a retry. Resume only for state that is costly to move: uncommitted changes or a still running process. Interrupt-chained resumes are banned.
 Bulk goes to subagents, summaries stay in this thread. A second opinion is the same prompt against a different model; agreement is the signal.
