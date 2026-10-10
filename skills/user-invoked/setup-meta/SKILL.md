@@ -11,6 +11,7 @@ Scaffold the per-repo configuration that the skills assume:
 - **Issue tracker**: where issues live (GitHub by default; local markdown is also supported out of the box)
 - **Triage labels**: the strings used for the five canonical triage roles
 - **Domain docs**: where `GLOSSARY.md` and ADRs live, and the consumer rules for reading them
+- **Models** (optional): which model each subagent role uses, for skills that spawn subagents
 
 This is a prompt-driven skill, not a deterministic script. Explore, present what you found, confirm with the user, then write.
 
@@ -69,12 +70,19 @@ Offer **multi-context** (a root `GLOSSARY-MAP.md` pointing to per-context `GLOSS
 
 **Section E: Tooling.** Husky pre-commit hooks: call the Skill tool with "setup-pre-commit" (it detects the package manager, installs Husky + lint-staged + Prettier, and wires typecheck and tests). Only when the repo is a JS/TS project; skip otherwise.
 
+**Section F: Models (optional).** Skip unless `whips` is installed. Ask one question:
+
+> Do you want to pin a model per subagent role? (recommended: **no**, every subagent runs on whatever model you run the parent on)
+
+On **no**, write nothing. On **yes**, read the harness config and environment for the model ids already available (config files, CLI `--help` or model list, provider env var names, never their values), show what you found, and ask which id goes on each role in [models.md](./models.md). Never suggest a model the user did not already have configured.
+
 ### 3. Confirm and edit
 
 Show the user a draft of:
 
 - The `## Agent skills` block to add to the repo's `AGENTS.md`
 - The contents of `docs/agents/issue-tracker.md`, `docs/agents/domain.md`, and `docs/agents/triage-labels.md` (the last only when `triage` is installed)
+- The contents of `docs/agents/models.md`, only when Section F ran with **yes**
 
 Let them edit before writing.
 
@@ -101,12 +109,16 @@ The block:
 
 [one-line summary of layout: "single-context" or "multi-context"]. See `docs/agents/domain.md`.
 
+### Models
+
+[one line: which roles are pinned]. See `docs/agents/models.md`.
+
 ### Meta docs
 
 [one-line summary of what was scaffolded: DESIGN.md, standards file name, commit format]. PR body needs no line: the `pr` skill is the format.
 ```
 
-Include the `### Triage labels` sub-block, and write `docs/agents/triage-labels.md`, only when `triage` is installed and Section B ran. When it isn't, both are omitted.
+Include the `### Triage labels` sub-block, and write `docs/agents/triage-labels.md`, only when `triage` is installed and Section B ran. When it isn't, both are omitted. Include the `### Models` sub-block, and write `docs/agents/models.md`, only when Section F ran with **yes**.
 
 Then write the docs files using the seed templates in this skill folder as a starting point:
 
@@ -115,6 +127,7 @@ Then write the docs files using the seed templates in this skill folder as a sta
 - [issue-tracker-local.md](./issue-tracker-local.md): local-markdown issue tracker
 - [triage-labels.md](./triage-labels.md): label mapping (only if `triage` is installed)
 - [domain.md](./domain.md): domain doc consumer rules + layout
+- [models.md](./models.md): model per subagent role (only if Section F ran with **yes**)
 
 Then write the repo-level meta docs agreed in Section D, at the repo root:
 
