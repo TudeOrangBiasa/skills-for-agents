@@ -18,7 +18,9 @@ Read the task and match exactly one row. First match wins.
 | Pick up the next agent-ready issue | `playbooks/triage.md` intake |
 | Review or bot comments on an open agent PR | `playbooks/triage.md` review mode |
 | A reported defect | `playbooks/bug.md` |
+| A fork running code can settle: which layout, flow, query, or approach | `playbooks/prototype.md` |
 | A UI ticket | `playbooks/ui.md`, on top of feature |
+| Structure changes, behavior must not: rename, extract, dedupe, move | `playbooks/refactor.md` |
 | New or changed behavior, a migration | `playbooks/feature.md` |
 | A read-only question | `playbooks/investigation.md` |
 | A huge, foggy effort | `playbooks/wayfinder-handoff.md` |
