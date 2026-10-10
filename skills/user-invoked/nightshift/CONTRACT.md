@@ -1,87 +1,73 @@
-# Nightshift contract
+# Contract
 
-The script any scheduler calls. Everything a runner needs is here; adapters in `ADAPTERS.md` only decide when to call it.
+What `scripts/nightshift.sh` reads, does, and writes. A scheduler needs only this file.
 
 ## Commands
 
-| Command | Interactive | What it does | Exit |
+| Command | Prompts | Does | Exit |
 | --- | --- | --- | --- |
-| `nightshift.sh setup [flags]` | yes, unless every value comes in by flag | Detects agents and models, asks, writes the config, validates it | 0 saved, 2 refused |
-| `nightshift.sh detect` | no | Prints agents on PATH, models from harness configs, provider env var names | 0 |
-| `nightshift.sh check` | no | Is at least one issue eligible? For scheduler prechecks | 0 yes, 1 no, 2 config error |
-| `nightshift.sh run` | no | Releases stale claims, runs up to `NIGHTSHIFT_MAX_ISSUES` issues, prints a summary | 0 done or lock busy, 2 config error |
-| `nightshift.sh status [N]` | no | Last start and finish, config, active claims, last N outcomes | 0 |
-| `nightshift.sh reset owner/repo#N` | no | Forgets failed attempts so the issue is eligible again | 0 |
+| `setup [flags]` | unless every value is a flag | Detects, asks, writes the config, validates it | 0 saved, 2 refused |
+| `detect` | no | Agents on PATH, models in harness configs, provider env var names, per-repo tracker and labels | 0 |
+| `check` | no | Is any issue eligible? | 0 yes, 1 no, 2 config error |
+| `run` | no | Releases stale claims, works up to the per-run cap, prints a summary | 0 done or lock busy, 2 config error |
+| `status [N]` | no | Config, last start and finish, last N outcomes | 0 |
+| `reset <repo-dir>#<n>` | no | Clears an issue's failed attempts | 0 |
 
-Setup flags: `--agent-cmd`, `--model`, `--repos`, `--allowlist`, `--label`, `--window`, `--max-issues`. With no terminal and no `--agent-cmd` or `--model`, setup refuses rather than guessing.
+Setup flags: `--agent-cmd`, `--model`, `--repos`, `--allowlist`, `--max-issues`. Without a terminal, setup refuses unless `--agent-cmd` and `--model` are given.
 
 ## Config
 
-One shell file, written by setup: `$NIGHTSHIFT_CONFIG`, else `${XDG_CONFIG_HOME:-~/.config}/nightshift/config.sh`. Environment variables of the same name override the file for one call.
+`$NIGHTSHIFT_CONFIG`, else `~/.config/nightshift/config.sh`, written by setup. An env var of the same name overrides the file for one call.
 
-| Key | Required | Default | Meaning |
-| --- | --- | --- | --- |
-| `NIGHTSHIFT_AGENT_CMD` | yes | none | Shell command that runs your agent non-interactively in the worktree |
-| `NIGHTSHIFT_MODEL` | yes | none | Model id passed to the command as `$NIGHTSHIFT_MODEL` |
-| `NIGHTSHIFT_REPOS` | yes | none | Space separated `owner/repo` list |
-| `NIGHTSHIFT_MODEL_ALLOWLIST` | no | empty | Space separated ids. When set, a model outside it makes every command refuse |
-| `NIGHTSHIFT_READY_LABEL` | no | `ready-for-agent` | Use your `triage-labels.md` string |
-| `NIGHTSHIFT_CLAIM_LABEL` | no | `nightshift-claimed` | Created on first claim if missing |
-| `NIGHTSHIFT_NEEDS_INFO_LABEL` | no | `needs-info` | How a thin-brief outcome is recognized |
-| `NIGHTSHIFT_MAX_ISSUES` | no | `1` | Issues per run |
-| `NIGHTSHIFT_MAX_ATTEMPTS` | no | `2` | Failed attempts before an issue is skipped until `reset` |
-| `NIGHTSHIFT_TIMEOUT_MIN` | no | `120` | Per issue; the agent is killed after it |
-| `NIGHTSHIFT_WINDOW` | no | empty | `HH:MM-HH:MM`, may wrap midnight. New issues start only inside it |
-| `NIGHTSHIFT_ENFORCE_DRAFT` | no | `1` | Convert a non-draft linked PR back to draft |
-| `NIGHTSHIFT_NOTIFY_CMD` | no | empty | Shell command run after each run with `$NIGHTSHIFT_SUMMARY` |
-| `NIGHTSHIFT_STATE_DIR` | no | `${XDG_STATE_HOME:-~/.local/state}/nightshift` | Lock, logs, history |
-| `NIGHTSHIFT_WORK_DIR` | no | `${XDG_CACHE_HOME:-~/.cache}/nightshift` | Repo clones and worktrees |
+| Key | Default | Meaning |
+| --- | --- | --- |
+| `NIGHTSHIFT_AGENT_CMD` | none, required | Shell command that runs the agent non-interactively |
+| `NIGHTSHIFT_MODEL` | none, required | Passed to the command as `$NIGHTSHIFT_MODEL` |
+| `NIGHTSHIFT_REPOS` | none, required | Space separated paths to local clones |
+| `NIGHTSHIFT_MODEL_ALLOWLIST` | empty | Space separated; a model outside it refuses |
+| `NIGHTSHIFT_MAX_ISSUES` | `1` | Issues per run |
+| `NIGHTSHIFT_MAX_ATTEMPTS` | `2` | Failures before an issue waits for `reset` |
+| `NIGHTSHIFT_TIMEOUT_MIN` | `120` | Per issue |
+| `NIGHTSHIFT_STATE_DIR` | `~/.local/state/nightshift` | Lock, logs, history |
+| `NIGHTSHIFT_WORK_DIR` | `~/.cache/nightshift` | Worktrees |
 
-There is no default agent, model, or provider. A missing required key fails with a message that names it and points at `setup`.
+Label strings and tracker commands are not config. They come from each repo's `docs/agents/`.
 
-### What the agent command sees
+## Per repo, per run
 
-It runs through `bash -c` with the worktree as its working directory, stdin closed, and these variables exported: `NIGHTSHIFT_MODEL`, `NIGHTSHIFT_PROMPT` (the full prompt text), `NIGHTSHIFT_PROMPT_FILE`, `NIGHTSHIFT_REPO`, `NIGHTSHIFT_ISSUE`, `NIGHTSHIFT_WORKTREE`. Its stdout and stderr go to the per-issue log. Example values, not defaults:
+1. `git fetch`, then read `docs/agents/issue-tracker.md` and `docs/agents/triage-labels.md` from the default branch.
+2. The `# Issue tracker:` heading picks the CLI: GitHub is `gh`, GitLab is `glab`. Anything else is skipped as `unsupported_tracker`. A missing file means `gh`.
+3. The right-hand column of the labels table gives the strings for `ready-for-agent` and `needs-info`. A missing file or row means the canonical role name.
+
+## The agent command
+
+Runs through `bash -c` in the worktree, stdin closed, output to the per-issue log, killed at the timeout. Exported: `NIGHTSHIFT_MODEL`, `NIGHTSHIFT_PROMPT`, `NIGHTSHIFT_PROMPT_FILE`, `NIGHTSHIFT_ISSUE`, `NIGHTSHIFT_WORKTREE`. An example, not a default:
 
 ```bash
-# OpenCode (https://opencode.ai/docs/cli/)
 NIGHTSHIFT_AGENT_CMD='opencode run --auto -m "$NIGHTSHIFT_MODEL" "$NIGHTSHIFT_PROMPT"'
 NIGHTSHIFT_MODEL='opencode-go/muse-spark-1.3'
-NIGHTSHIFT_MODEL_ALLOWLIST='opencode-go/muse-spark-1.3'
 ```
 
-The allowlist stops nightshift from launching a model you did not approve. Whether the agent itself can switch models mid-run (subagents, a separate small model for titles) is the agent's setting, so pin it there too. For OpenCode that is `enabled_providers` and `small_model` in its config, which `OPENCODE_CONFIG_CONTENT` can set for nightshift runs only ([OpenCode config](https://opencode.ai/docs/config/)).
+The allowlist only governs what nightshift launches. Pin the agent's own subagent or fallback models in the agent's config.
 
-### The prompt
+The prompt opens with `/whips` and asks for triage intake on exactly that issue, `opening-a-pr` to finish, never ready or merge, and no waiting for answers. It is saved beside the log.
 
-Each issue gets a prompt that starts with `/whips` and asks for `playbooks/triage.md` intake on exactly that issue, in that worktree, ending with `playbooks/opening-a-pr.md` (draft, `Closes #N`), never ready or merge, and no waiting for answers. Scheduling nightshift is the user's standing request to run `/whips` this way. The prompt is saved next to the log as `*.prompt.md`.
-
-## One run, step by step
-
-1. Load the config; refuse on a missing key or an allowlist miss.
-2. Take `state/lock` with `flock -n`. Busy means another run is active: exit 0.
-3. Release stale claims listed in `state/active` (a run that died, or a laptop that went to sleep mid-run). An issue with a linked PR is recorded `recovered_pr`; otherwise `interrupted` and one attempt is counted.
-4. List open issues with the ready label across repos, oldest first, skipping assigned ones, claimed ones, ones at the attempt cap, and ones that already have an open PR whose body says `Closes|Fixes|Resolves #N`.
-5. Per issue, while under `NIGHTSHIFT_MAX_ISSUES` and inside `NIGHTSHIFT_WINDOW`: add the claim label, fetch, add a detached worktree, run the agent under `timeout`.
-6. Classify, release the claim label, record:
+## Outcomes
 
 | Outcome | Meaning | Worktree | Attempts |
 | --- | --- | --- | --- |
-| `pr_opened` | An open PR links the issue | removed | cleared |
-| `needs_info` | The issue now has the needs-info label | removed | cleared |
-| `timeout` | The agent hit `NIGHTSHIFT_TIMEOUT_MIN` | kept | +1 |
-| `no_pr` | The agent ended with no linked PR | kept | +1 |
-| `setup_failed` | Clone, fetch, or worktree failed | none | +1 |
-| `interrupted`, `recovered_pr` | Written by step 3 | | |
+| `pr_opened` | An open PR or MR closes the issue | removed | cleared |
+| `needs_info` | The issue now carries the needs-info label | removed | cleared |
+| `timeout` | Killed at the timeout | kept | +1 |
+| `no_pr` | Ended with neither | kept | +1 |
+| `setup_failed` | `git worktree add` failed | none | +1 |
+| `interrupted`, `recovered_pr` | A dead run's claim, released at the next start | | |
+| `fetch_failed`, `unsupported_tracker` | The repo was skipped | | |
 
-7. Print `nightshift: N issue(s): ...` and run `NIGHTSHIFT_NOTIFY_CMD` if set.
-
-## State files
-
-Under `NIGHTSHIFT_STATE_DIR`: `lock`, `active` (claims in flight), `attempts.json`, `runs.jsonl` (one object per issue: `ts`, `repo`, `issue`, `outcome`, `pr`, `model`, `log`, `detail`), `last-start`, `last-finish`, and `logs/` (agent output plus the prompt). Kept worktrees under `NIGHTSHIFT_WORK_DIR/worktrees` are yours to inspect and delete.
+State lives under `NIGHTSHIFT_STATE_DIR`: `lock`, `active`, `attempts.json`, `runs.jsonl`, `last-start`, `last-finish`, `logs/`.
 
 ## Limits
 
-- Locking is per machine. Two machines running nightshift on the same repos can race between listing and claiming; run it on one machine.
-- A PR is linked by its body text. A PR that never says `Closes #N` reads as `no_pr`.
-- Needs `bash`, `gh` (authenticated), `git`, `jq`, `flock`, and `timeout` (util-linux and coreutils on Linux).
+- The lock is per machine; run nightshift from one machine.
+- A PR counts as linked only when its body says `Closes`, `Fixes`, or `Resolves #N`.
+- Needs `bash`, `git`, `jq`, `flock`, `timeout`, and the tracker CLI, authenticated.
