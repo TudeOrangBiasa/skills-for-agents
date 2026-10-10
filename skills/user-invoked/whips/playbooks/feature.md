@@ -10,4 +10,4 @@ New or changed behavior, built from a named data shape. The director owns design
 6. Verify on the matching surface. Inconclusive or wrong-surface is not a pass. Flag it.
 7. Rebase into small ordered commits, one verifiable unit per commit. Verify each before the next.
 8. Contested design means `interrogate` before shipping (multi-model when available, else `/code-review` on Standards plus Spec).
-9. Unslop gate, then PR body with before/after evidence.
+9. Unslop gate, then PR body with before/after evidence, then `playbooks/opening-a-pr.md`.

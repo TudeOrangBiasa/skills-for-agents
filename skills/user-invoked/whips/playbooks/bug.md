@@ -8,4 +8,4 @@ A reported defect, reproduced first, root-caused, fixed with runtime evidence.
 4. `tdd` when the test path is cheap: failing test first, then the fix, and the regression test stays.
 5. Spanning workstreams means delegate per the feature throughput checkpoint, else implement directly against the brief.
 6. Verify the original repro plus the new test on the real artifact, never a proxy.
-7. Unslop gate, then PR body with before/after proof of the fixed behavior (pair table plus video when motion matters).
+7. Unslop gate, then PR body with before/after proof of the fixed behavior (pair table plus video when motion matters), then `playbooks/opening-a-pr.md`.

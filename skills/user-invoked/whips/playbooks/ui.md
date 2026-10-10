@@ -7,4 +7,4 @@ A UI ticket inside the Walk: diverge, guard, stress, review with evidence, promo
 3. Guard: each variant meets the a11y floor plus the content floor (worst-case content renders without breakage). A variant that fails a floor is out, no matter how it looks.
 4. Stress: run `/break` on the surviving variant. Foundation breaks are fixed directly, the rest is reported for confirmation.
 5. Review with evidence: before/after pair per ATTACHMENTS.md (table, native 1x, matched viewport and crop, video when motion matters, never in `<details>`). Promote one variant, delete the rest from the page the same pass.
-6. Unslop gate, then PR body. The pair table plus the variant record (base, grafts, rejections) is the evidence section.
+6. Unslop gate, then PR body, then `playbooks/opening-a-pr.md`. The pair table plus the variant record (base, grafts, rejections) is the evidence section.
