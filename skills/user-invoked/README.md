@@ -18,4 +18,4 @@ Skills that fire only when the human types their name. They orchestrate; they ne
 - **[triage](./triage/SKILL.md)**: Move issues and external PRs through a state machine of triage roles, categorise, verify, interview if needed, and write agent-ready briefs.
 - **[wait-what](./wait-what/SKILL.md)**: Lost in what the agent just said or built: get it re-pitched visually.
 - **[wayfinder](./wayfinder/SKILL.md)**: Plan a huge chunk of work (more than one agent session can hold) as a shared map of decision tickets on the issue tracker, and resolve them one at a time until the way to the destination is clear.
-- **[whips](./whips/SKILL.md)**: Route any non-trivial task through one entry: match a playbook, drive HIT skills plus subagents, land a reviewed diff with evidence.
+- **[whips](./whips/SKILL.md)**: Route any non-trivial task through one entry: match a playbook, drive HIT skills plus subagents, open a reviewed draft PR with evidence. Also picks up `ready-for-agent` issues and sorts review comments.
