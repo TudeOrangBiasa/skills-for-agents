@@ -17,6 +17,8 @@ Read the task and match exactly one row. First match wins.
 | --- | --- |
 | Pick up the next agent-ready issue | `playbooks/triage.md` intake |
 | Review or bot comments on an open agent PR | `playbooks/triage.md` review mode |
+| Check on a PR or stack, get it green, anything outstanding | `playbooks/babysit.md` |
+| Is this ready, what do I merge first, give me a merge plan | `playbooks/ready-check.md` |
 | A reported defect | `playbooks/bug.md` |
 | A fork running code can settle: which layout, flow, query, or approach | `playbooks/prototype.md` |
 | A UI ticket | `playbooks/ui.md`, on top of feature |
@@ -88,7 +90,7 @@ On OMP, read `VIBE-MAPPING.md` first and follow it on every run: director toolse
 
 Verify on the matching surface. Verdicts are VERIFIED, NOT VERIFIED, or INCONCLUSIVE, and inconclusive is not a pass. CI green is an input, not a verdict. Evidence-free work returns to a fresh fix agent, never to the same worker by resume chain.
 
-Open the closing PR per `playbooks/opening-a-pr.md`: always a draft, `Closes #N` when an issue exists, body shaped with the `pr` skill (summary visual, before/after evidence, merge danger). The human marks it ready and merges; agents never do. Visible changes add the ATTACHMENTS.md pair: before/after table, native 1x, matched viewport and crop, video when motion matters, never inside `<details>`. On a PR, agents never add themselves as collaborator, assignee, or reviewer. Claiming an issue by assignment, per the Claim step in `docs/agents/issue-tracker.md`, is allowed. Tools are not people, so they only author the body and request review from humans.
+Open the closing PR per `playbooks/opening-a-pr.md`: always a draft, one risk label plus a `## Risk` paragraph per [RISK.md](RISK.md), `Closes #N` when an issue exists, body shaped with the `pr` skill (summary visual, before/after evidence, merge danger). The human marks it ready and merges; agents never do. Visible changes add the ATTACHMENTS.md pair: before/after table, native 1x, matched viewport and crop, video when motion matters, never inside `<details>`. On a PR, agents never add themselves as collaborator, assignee, or reviewer. Claiming an issue by assignment, per the Claim step in `docs/agents/issue-tracker.md`, is allowed. Tools are not people, so they only author the body and request review from humans.
 
 ## 8. Reply
 
