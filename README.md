@@ -40,7 +40,7 @@ Three phases, one rule per phase: Map before Guardrails, Guardrails before Walk.
 
 - **H (Have a Map):** `/discuss-with-docs`, `/wayfinder`, `/prototype`, `/to-spec`. Know the components, the data flow, and the expensive decisions first.
 - **I (Install Guardrails):** `/tdd` behavior tests plus negative cases. What must happen and what must never happen, implementation left free.
-- **T (Take a Walk):** `/to-tickets` splits the work small, `/implement` runs Plan then Coding then Review per ticket, `/code-review` checks behavior before style.
+- **T (Take a Walk):** `/to-tickets` splits the work small, `/whips` runs Plan then Coding then Review per ticket, `/code-review` checks behavior before style.
 
 UI tickets run a sub-flow inside Walk: diverge (`/prototype` variants), guard (a11y plus content floors), stress (`/break` page), review with evidence, promote one and delete the rest. Start with `/whips` and it drives this flow for you; use `/guide` when you want to pick the skill by hand.
 
@@ -52,12 +52,11 @@ These split on one axis: who can invoke them. **User-invoked** skills are reacha
 
 Skills for daily work, fired by hand. Full list in [skills/user-invoked/](skills/user-invoked/).
 
-- **[break](./skills/user-invoked/break/SKILL.md)**: Stress-test one component against worst-case content and states on a throwaway page, then report what visibly broke.
 - **[deepen](./skills/user-invoked/deepen/SKILL.md)**: Scan a codebase for deepening opportunities, present them as a visual HTML report, then discuss through whichever one you pick.
 - **[discuss](./skills/user-invoked/discuss/SKILL.md)**: Get relentlessly interviewed about a plan or design until every branch of the design tree is resolved.
 - **[discuss-with-docs](./skills/user-invoked/discuss-with-docs/SKILL.md)**: Interview session that also builds your project's domain model, sharpening terminology and updating `GLOSSARY.md` and ADRs inline.
 - **[guide](./skills/user-invoked/guide/SKILL.md)**: Ask which skill or flow fits your situation. A router over the skills in this repo.
-- **[implement](./skills/user-invoked/implement/SKILL.md)**: Implement from a spec or tickets, test-first with before/after proof per slice, closing with mandatory review and a `pr`-shaped PR body.
+- **[implement](./skills/user-invoked/implement/SKILL.md)**: Alias for `/whips`; points you there with the same spec or ticket.
 - **[retro](./skills/user-invoked/retro/SKILL.md)**: Conduct a retrospective on a coding session: refresh meta docs, kill rot, surface patterns.
 - **[nightshift](./skills/user-invoked/nightshift/SKILL.md)**: Work `ready-for-agent` issues unattended through `/whips` intake, one fresh worktree each, draft PRs only, with the agent and model you pick at setup.
 - **[setup-meta](./skills/user-invoked/setup-meta/SKILL.md)**: Configure this repo for the skills: tracker, labels, domain docs, DESIGN.md, coding standards, commit/PR formats, pre-commit tooling. Run once per repo.
@@ -75,6 +74,7 @@ Skills for daily work, fired by hand. Full list in [skills/user-invoked/](skills
 
 Reusable discipline the agent reaches for on its own. Full list in [skills/model-invoked/](skills/model-invoked/).
 
+- **[break](./skills/model-invoked/break/SKILL.md)**: Stress-test one component against worst-case content and states on a throwaway page, then report what visibly broke.
 - **[codebase-design](./skills/model-invoked/codebase-design/SKILL.md)**: Shared vocabulary for designing deep modules.
 - **[code-review](./skills/model-invoked/code-review/SKILL.md)**: Two-axis review of the diff since a fixed point: Standards and Spec.
 - **[diagnose](./skills/model-invoked/diagnose/SKILL.md)**: Disciplined diagnosis loop for hard bugs and performance regressions.
@@ -86,6 +86,7 @@ Reusable discipline the agent reaches for on its own. Full list in [skills/model
 - **[research](./skills/model-invoked/research/SKILL.md)**: Investigate a question against high-trust primary sources and capture the findings as a cited Markdown file in the repo.
 - **[setup-pre-commit](./skills/model-invoked/setup-pre-commit/SKILL.md)**: Set up Husky pre-commit hooks with lint-staged, type checking, and tests.
 - **[tdd](./skills/model-invoked/tdd/SKILL.md)**: Test-driven development with a red-green-refactor loop.
+- **[unslop](./skills/model-invoked/unslop/SKILL.md)**: Cut AI tells from prose before it ships: replies, PR bodies, commit messages, docs, skills.
 - **[wizard](./skills/model-invoked/wizard/SKILL.md)**: Generate an interactive bash wizard that walks a human through steps only they can perform.
 - **[writing-for-agents](./skills/model-invoked/writing-for-agents/SKILL.md)**: Writing documents for agents: skills, AGENTS.md, and any doc an agent reaches by a pointer.
 

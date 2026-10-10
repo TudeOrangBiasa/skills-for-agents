@@ -1,7 +1,6 @@
 ---
 name: break
-description: Stress-test one component against worst-case content and states on a throwaway page, then report what visibly broke. User-invoked.
-disable-model-invocation: true
+description: Stress-test one component against worst-case content and states on a throwaway page, then report what visibly broke. Use when a UI change is about to ship, a component renders user content, or the user asks to break or stress-test a component.
 ---
 # Break
 
