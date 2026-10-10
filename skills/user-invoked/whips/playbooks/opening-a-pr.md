@@ -1,0 +1,13 @@
+# Playbook: opening a PR
+
+Invoked at the end of every playbook that changes code. The PR opens as a draft. The human marks it ready and merges.
+
+1. Resolve the forge and labels before the first PR operation: `docs/agents/issue-tracker.md` for the commands (GitHub `gh pr`, GitLab `glab mr`), `docs/agents/triage-labels.md` for the label strings. A missing file means you tell the user to run `/setup-meta`; until then use `gh` and the canonical role names. Keep that forge for create, edit, and view.
+2. Worktree: one worktree and one branch per unit, off main. Subagents inherit it. Two workers on one branch each get their own worktree. A dirty branch with unrelated work: patch it out, open a fresh worktree, apply.
+3. Commits: commit liberally, then rebase into small ordered commits. Each commit is landable on its own and the order tells the story. Amend when the fix belongs in the commit just made. Use the commit format from the standards file, default Conventional Commits.
+4. Title: Conventional Commits, `type(scope): subject`. Type is `feat`, `fix`, `docs`, `refactor`, `test`, `chore`, or `perf`. Scope is the changed area. The subject is short and imperative, names a real symbol when one carries the change, and has no trailing period.
+5. Body: the `pr` skill template (Summary, Evidence, Merge Danger). Add a `**Scope:**` line for what the PR deliberately leaves out and a `**Verification:**` line for each command actually run plus its outcome, when Evidence does not already say it. Keep the body under about 40 lines. Link the source issue with `Closes #N` when one exists; a PR with no issue says so.
+6. Stacks: prefer five narrow PRs to one large one. The root PR targets main. Each child branch rebases onto its parent's tip and its PR targets the parent branch (`gh pr create --draft --base <parent-branch>`). Branch from main only for independent work.
+7. Open as a draft, always: `gh pr create --draft`. Run `gh pr view <number>` before you report its status. Never run `gh pr ready`, never merge, never enable auto-merge. Agents never add themselves as collaborator, assignee, or reviewer.
+8. Move the linked issue's state label to `ready-for-human` once the PR is up: remove `ready-for-agent`, add `ready-for-human`. The human now owns the next step.
+9. Opening a PR does not start a babysit. Post the URL and keep building until the phase or stack is done. Review comments that arrive later go through `playbooks/triage.md` review mode, only when the user asks.
