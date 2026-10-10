@@ -46,7 +46,7 @@ Verify on the matching surface. Verdicts are VERIFIED, NOT VERIFIED, or INCONCLU
 
 Run the unslop gate before review and before the PR: short declarative sentences, no AI tells, no filler or phase-narrating comments, keep only why comments the code cannot show.
 
-Open the closing PR per `playbooks/opening-a-pr.md`: always a draft, `Closes #N` when an issue exists, body shaped with the `pr` skill (summary visual, before/after evidence, merge danger). The human marks it ready and merges; agents never do. Visible changes add the ATTACHMENTS.md pair: before/after table, native 1x, matched viewport and crop, video when motion matters, never inside `<details>`. Agents never add themselves as collaborator, assignee, or reviewer. Tools are not people, so they only author the body and request review from humans.
+Open the closing PR per `playbooks/opening-a-pr.md`: always a draft, `Closes #N` when an issue exists, body shaped with the `pr` skill (summary visual, before/after evidence, merge danger). The human marks it ready and merges; agents never do. Visible changes add the ATTACHMENTS.md pair: before/after table, native 1x, matched viewport and crop, video when motion matters, never inside `<details>`. On a PR, agents never add themselves as collaborator, assignee, or reviewer. Claiming an issue by assignment, per the Claim step in `docs/agents/issue-tracker.md`, is allowed. Tools are not people, so they only author the body and request review from humans.
 
 ## 6. Reply
 
