@@ -5,6 +5,6 @@ A UI ticket inside the Walk: diverge, guard, stress, review with evidence, promo
 1. Run the feature playbook through step 4 (grounded, shaped, checkpointed). UI work without a data shape and checkpoint is decoration.
 2. Diverge: call the Skill tool with "prototype" and build 2 to 3 variants on a throwaway page. One variant per genuinely different direction, never micro variations of one idea.
 3. Guard: each variant meets the a11y floor plus the content floor (worst-case content renders without breakage). A variant that fails a floor is out, no matter how it looks.
-4. Stress: tell the user to run `/break` on the surviving variant and wait for its report. Foundation breaks are fixed directly, the rest is reported for confirmation.
+4. Stress: call the Skill tool with "break" on the surviving variant. Foundation breaks are fixed directly, the rest is reported for confirmation.
 5. Review with evidence: before/after pair per ATTACHMENTS.md (table, native 1x, matched viewport and crop, video when motion matters, never in `<details>`). Promote one variant, delete the rest from the page the same pass.
 6. Unslop gate, then PR body, then `playbooks/opening-a-pr.md`. The pair table plus the variant record (base, grafts, rejections) is the evidence section.

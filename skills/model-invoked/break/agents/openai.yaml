@@ -1,5 +1,3 @@
 interface:
   display_name: "Break"
   short_description: "Stress-test a component against worst cases"
-policy:
-  allow_implicit_invocation: false
