@@ -54,7 +54,7 @@ A starting situation that generates work, then merges onto the main flow.
 
   To build an agent-ready issue, `/whips` picks up one `ready-for-agent` issue, checks its brief, routes it to the bug or feature playbook, and opens a draft PR that links it. A thin brief goes back to `needs-info` instead.
 
-  To do that unattended, **`/nightshift`** sets up a scheduled runner (Orca automation, systemd timer, cron, or by hand) that feeds each `ready-for-agent` issue to `/whips` intake overnight and leaves only draft PRs for you to review in the morning. You pick the agent and model once at setup.
+  To work that queue unattended, **`/nightshift`** sets up a runner that claims each `ready-for-agent` issue, hands it to `/whips` intake in a fresh worktree, and leaves only draft PRs. You pick the agent and model once; any scheduler can call it.
 
 - **Something's broken** → **`/diagnose`**. For the hard ones: the bug that resists a first glance, the intermittent flake, the regression that crept in between two known-good states. It refuses to theorise until it has a **tight feedback loop** (one command that already goes red on *this* bug), then fixes with a regression test. Its post-mortem hands off to **`/deepen`** when the real finding is that there's no good seam to lock the bug down.
 

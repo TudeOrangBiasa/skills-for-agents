@@ -1,3 +1,3 @@
 # Credits
 
-Original to this repo. It schedules `/whips` (its `triage` and `opening-a-pr` playbooks) and reuses the `/triage` label vocabulary. The Orca adapter is written against the public Orca docs and source at [stablyai/orca](https://github.com/stablyai/orca), cited inline in `ADAPTERS.md`.
+Original to this repo. It runs `/whips` (its `triage` intake and `opening-a-pr` playbooks) unattended, and reads the tracker and label conventions `/setup-meta` writes for `/triage`.

@@ -1,37 +1,47 @@
 ---
 name: nightshift
-description: Run ready-for-agent issues unattended on a schedule through /whips triage intake, draft PRs only, with your own agent and model chosen once at setup. User-invoked.
+description: "Work ready-for-agent issues unattended through /whips intake, one fresh worktree each, draft PRs only, with the agent and model you pick at setup."
 disable-model-invocation: true
 ---
+
 # Nightshift
 
-Unattended issue runs while you sleep. A scheduler calls one script; the script picks `ready-for-agent` issues, hands each to `/whips` triage intake in a fresh worktree, and keeps only draft PRs. The agent CLI and the model are yours: chosen once at setup, saved to a config file, never guessed.
+Hand the agent-ready queue to an agent while nobody is watching. One script, [scripts/nightshift.sh](scripts/nightshift.sh), claims each `ready-for-agent` issue, runs `/whips` triage intake on it in a fresh worktree, and keeps only draft PRs. The human reviews in the morning, marks ready, and merges.
 
-The script is `scripts/nightshift.sh`. Its full contract (config keys, commands, exit codes, state files, outcomes) is in [CONTRACT.md](CONTRACT.md). How to schedule it (Orca automation, systemd user timer, cron, by hand) is in [ADAPTERS.md](ADAPTERS.md).
+The agent command and the model are the user's choice, made once at setup and saved to a config file. Nothing is defaulted. [CONTRACT.md](CONTRACT.md) holds the config keys, commands, exit codes, and outcomes. Any scheduler can call `nightshift.sh run`; wiring one is out of scope here.
 
-## When the user types /nightshift
+## 1. Check the repos
 
-1. Check the preconditions, and stop with the fix when one fails:
-   - `gh auth status` succeeds.
-   - Each target repo has `/whips` and `/setup-meta` output (`docs/agents/issue-tracker.md`, `docs/agents/triage-labels.md`), or the agent CLI loads the skills globally. Missing means you tell the user to install the skills and run `/setup-meta` in that repo.
-   - The ready label exists in each repo. Read the right-hand column of `docs/agents/triage-labels.md` for its real string.
-2. Run `scripts/nightshift.sh detect`. Show the user what it found: agent CLIs on PATH, models read from harness configs (OpenCode, pi, OMP, Codex, Claude), and the names (never values) of provider key env vars.
-3. Ask the user, one question at a time: which agent command, which model, which repos, the ready label, an optional model allowlist, an optional start window (`HH:MM-HH:MM`), and the max issues per run. Never pick for them. There is no default agent or model, and the script refuses to run without one.
-4. Save the answers with `scripts/nightshift.sh setup --agent-cmd ... --model ... --repos ... [--allowlist ...] [--label ...] [--window ...] [--max-issues ...]`. In a real terminal the user can run `scripts/nightshift.sh setup` with no flags and answer the same questions interactively.
-5. Prove it once: `scripts/nightshift.sh check`, then offer one manual `scripts/nightshift.sh run` while the user watches.
-6. Ask which scheduler they want and set it up from [ADAPTERS.md](ADAPTERS.md). Only use features that file marks as verified.
-7. Reply with the config path, the schedule, and how to read results (`scripts/nightshift.sh status`).
+Each target repo needs the `/setup-meta` output: `docs/agents/issue-tracker.md` for the tracker and its commands, `docs/agents/triage-labels.md` for the label strings. The script reads both from the default branch on every run, so a rename in those docs takes effect without re-running setup.
+
+A missing file falls back the way `/whips` `playbooks/opening-a-pr.md` does: `gh` and the canonical role names. Tell the user to run `/setup-meta` in that repo. A tracker with no CLI mapping (local markdown, or a freeform "other") is skipped and reported.
+
+`/whips` must be reachable by the agent in each repo, installed per repo or globally.
+
+## 2. Set up: detect, then ask
+
+Run `scripts/nightshift.sh detect` and show the user what it found: agent CLIs on PATH, models read from harness configs, provider key env var names (never values), and per repo the tracker and label strings it resolved.
+
+Then ask, one question at a time, leading with what detection found:
+
+- Which agent command. Presets exist only for CLIs with a documented non-interactive mode; anything else, the user types.
+- Which model. Never pick one for them.
+- Which local clones to work on.
+- An optional model allowlist. When set, a model outside it makes every command refuse.
+- How many issues per run.
+
+Save with `scripts/nightshift.sh setup --agent-cmd ... --model ... --repos ... [--allowlist ...] [--max-issues ...]`. In a terminal, the user can run `scripts/nightshift.sh setup` bare and answer the same questions there.
+
+## 3. Prove one run
+
+Run `scripts/nightshift.sh check`, then one `scripts/nightshift.sh run` while the user watches. Read the log it names and `scripts/nightshift.sh status` back to them: the outcome, the PR link, and anything kept for inspection.
 
 ## What a run guarantees
 
-- One run at a time per machine (`flock`), and one claim label per issue while it runs, so nothing is picked twice.
-- Every issue gets its own worktree, detached at the default branch. The agent creates its branch per `/whips` `playbooks/opening-a-pr.md`.
-- Draft PRs only, linked with `Closes #N`. A PR found open as ready is converted back to draft and the run log says so. Nightshift never marks ready and never merges.
-- Missed nights are caught up: a run processes whatever is ready now, and a claim left by a crashed or interrupted run is released at the next start.
-- Every run appends one JSON line per issue to `runs.jsonl` and prints a one-line summary for the scheduler to capture.
+- One run per machine at a time (`flock`). Each issue is claimed with the tracker's own claim, assigning it to the authenticated user, and released when the run ends. Assigned issues are never picked.
+- An issue with an open PR that says `Closes #N` is skipped. Failures count, and an issue stops being picked after the attempt cap until `reset`.
+- A claim left by a run that died is released at the next start, so a missed or interrupted night is picked up by the next run.
+- Draft only. A linked PR found ready is converted back to draft and the log says so.
+- Every issue appends one line to `runs.jsonl`; every run prints a one-line summary.
 
-## Never
-
-- Never prompt during `run` or `check`. Unattended runs read the saved config; a missing config fails with a message telling the user to run setup.
-- Never hardcode or default an agent, model, or provider in the script, the config, or a scheduler unit. Example values in docs are examples.
-- Never mark a PR ready, merge, or enable auto-merge, and never close an issue.
+Never prompt during `run` or `check`; a missing config fails with a pointer to setup. Never mark a PR ready, merge, enable auto-merge, or close an issue.
