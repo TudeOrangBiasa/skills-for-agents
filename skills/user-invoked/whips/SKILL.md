@@ -30,9 +30,14 @@ Read the task and match exactly one row. First match wins.
 | A read-only question | `playbooks/investigation.md` |
 | A huge, foggy effort | `playbooks/wayfinder-handoff.md` |
 | Codebase health on a spare moment | `playbooks/upkeep.md` |
+| A live process to instrument: spin, leak, or glitch with no diagnosis | `playbooks/runtime-forensics.md` |
+| A captured trace or dump to diagnose: cpuprofile, heapsnapshot, spindump | `playbooks/trace-forensics.md` |
+| A migration that must stay pixel-identical | `playbooks/visual-parity.md` |
+| A variant to test blind before promoting it | `playbooks/eval.md` |
+| A large migration or multi-part change no row above fits | `playbooks/figure-it-out.md` |
 | Every playbook that changes code ends here | `playbooks/opening-a-pr.md` |
 
-Nothing fits: answer directly in chat. Never invent a playbook on the spot.
+Truly nothing fits (a question, a small ask): answer directly in chat. Real work with no matching row goes to `figure-it-out.md`. Never invent a playbook on the spot.
 
 ## 2. Open the todo, verbatim
 
@@ -74,6 +79,7 @@ Reversible work proceeds without asking: branches, worktrees, commits, pushing y
 Always pause for the human, and keep building everything else meanwhile:
 
 - Merging, marking a PR ready, or enabling auto-merge above your risk authority: low-risk PASS PRs and qualifying medium PRs per [RISK.md](RISK.md) may land; everything else waits.
+- A `figure-it-out` design: present the phase list and wait for approval before executing.
 - Force-pushing a branch someone else works on.
 - Deploying, deleting data, touching secrets or production config.
 - Closing an issue, messaging anyone outside the repo.
@@ -92,7 +98,7 @@ On OMP, read `VIBE-MAPPING.md` first and follow it on every run: director toolse
 
 ## 7. Verify, gate, open the draft
 
-Verify on the matching surface. Verdicts are VERIFIED, NOT VERIFIED, or INCONCLUSIVE, and inconclusive is not a pass. CI green is an input, not a verdict. Evidence-free work returns to a fresh fix agent, never to the same worker by resume chain.
+Verify on the matching surface. Verdicts are VERIFIED, NOT VERIFIED, or INCONCLUSIVE, and inconclusive is not a pass. CI green is an input, not a verdict. Evidence-free work returns to a fresh fix agent, never to the same worker by resume chain. Strategic track: nominate at most one environment improvement this task suggested (a repeated manual step, a missing check, a confusing doc) as a `/retro` candidate with its evidence. Never fix it mid-run; the list goes to retro.
 
 Open the closing PR per `playbooks/opening-a-pr.md`: always a draft, one risk label plus a `## Risk` paragraph per [RISK.md](RISK.md), `Closes #N` when an issue exists, body shaped with the `pr` skill (summary visual, before/after evidence, merge danger). Landing follows the risk tier per [RISK.md](RISK.md): low-risk PASS PRs and qualifying medium PRs may be marked ready and merged by the agent; high-risk PRs wait for the human. Visible changes add the ATTACHMENTS.md pair: before/after table, native 1x, matched viewport and crop, video when motion matters, never inside `<details>`. On a PR, agents never add themselves as collaborator, assignee, or reviewer. Claiming an issue by assignment, per the Claim step in `docs/agents/issue-tracker.md`, is allowed. Tools are not people, so they only author the body and request review from humans.
 

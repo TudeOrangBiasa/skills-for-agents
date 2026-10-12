@@ -1,6 +1,6 @@
 ---
 name: setup-meta
-description: "Configure this repo for the skills: issue tracker, triage labels, domain docs, design system file, coding standards, commit and PR formats, and pre-commit tooling. Run once before first use of the other skills."
+description: "Configure this repo for the skills: issue tracker, triage and risk labels, domain docs, design system file, coding standards, commit and PR formats, pre-commit tooling, and the unattended-run wake mechanism. Run once before first use of the other skills."
 disable-model-invocation: true
 ---
 
@@ -29,6 +29,7 @@ Look at the current repo to understand its starting state. Read whatever exists;
 - `.scratch/`: a sign that a local-markdown issue tracker convention is already in use
 - Is the `triage` skill installed? (a `triage` skill folder alongside this one, or `triage` in your available skills.) This decides whether Section B runs at all.
 - Monorepo signals: a `pnpm-workspace.yaml`, a `workspaces` field in `package.json`, or a populated `packages/*` with its own `src/`. These are present only in a genuinely large multi-package repo; their absence means single-context, which is almost every repo.
+- Unattended wake options: what this harness offers for runs without the user watching (a loop or wait command, a watch on CI or refs, an outside scheduler). This decides Section G.
 
 ### 2. Present findings and ask
 
@@ -55,7 +56,7 @@ If it is installed, ask exactly one question:
 
 > Do you want to keep the default triage labels? (recommended: **yes**)
 
-The defaults are the five canonical roles, each label string equal to its name: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. On **yes**, write them as-is. Only if the user says no, usually because their tracker already uses other names (e.g. `bug:triage` for `needs-triage`), collect the overrides so `triage` applies existing labels instead of creating duplicates.
+The defaults are the five canonical roles, each label string equal to its name: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. Plus three risk rows for agent PRs: `risk-low`, `risk-medium`, `risk-high` (mapped to `risk:low`, `risk:medium`, `risk:high` unless the tracker names them otherwise). Overrides work the same way: collect the tracker's names so `whips` applies existing labels instead of creating duplicates. On **yes**, write them as-is. Only if the user says no, usually because their tracker already uses other names (e.g. `bug:triage` for `needs-triage`), collect the overrides so `triage` applies existing labels instead of creating duplicates.
 
 **Section C: Domain docs.** Default to **single-context** (one `GLOSSARY.md` + `docs/adr/` at the repo root). This fits almost every repo; write it without asking.
 
@@ -76,12 +77,18 @@ Offer **multi-context** (a root `GLOSSARY-MAP.md` pointing to per-context `GLOSS
 
 On **no**, write nothing. On **yes**, read the harness config and environment for the model ids already available (config files, CLI `--help` or model list, provider env var names, never their values), show what you found, and ask which id goes on each role in [models.md](./models.md). Never suggest a model the user did not already have configured.
 
+**Section G: Unattended runs.** Ask one question:
+
+> How should unattended runs wake up? (recommended: the harness loop or wait command you already use)
+
+Record the mechanism in `docs/agents/unattended.md`: the command or scheduler entry that re-invokes `/whips` (or the `nightshift` runner for queues), the run log convention (`.scratch/whips/<run>/log.md`, one row per iteration), and the budget habit (predicate first, stated iteration, hour, or PR cap). Point at `/nightshift` for issue-queue runs and the `autonomous-run` playbook for predicate-driven runs; both read this file.
+
 ### 3. Confirm and edit
 
 Show the user a draft of:
 
 - The `## Agent skills` block to add to the repo's `AGENTS.md`
-- The contents of `docs/agents/issue-tracker.md`, `docs/agents/domain.md`, and `docs/agents/triage-labels.md` (the last only when `triage` is installed)
+- The contents of `docs/agents/issue-tracker.md`, `docs/agents/domain.md`, `docs/agents/triage-labels.md` (the last only when `triage` is installed), and `docs/agents/unattended.md`
 - The contents of `docs/agents/models.md`, only when Section F ran with **yes**
 
 Let them edit before writing.
@@ -113,12 +120,16 @@ The block:
 
 [one line: which roles are pinned]. See `docs/agents/models.md`.
 
+### Unattended runs
+
+[one line: the wake mechanism]. See `docs/agents/unattended.md`.
+
 ### Meta docs
 
 [one-line summary of what was scaffolded: DESIGN.md, standards file name, commit format]. PR body needs no line: the `pr` skill is the format.
 ```
 
-Include the `### Triage labels` sub-block, and write `docs/agents/triage-labels.md`, only when `triage` is installed and Section B ran. When it isn't, both are omitted. Include the `### Models` sub-block, and write `docs/agents/models.md`, only when Section F ran with **yes**.
+Include the `### Triage labels` sub-block, and write `docs/agents/triage-labels.md`, only when `triage` is installed and Section B ran. When it isn't, both are omitted. Include the `### Models` sub-block, and write `docs/agents/models.md`, only when Section F ran with **yes**. Always include the `### Unattended runs` sub-block, and always write `docs/agents/unattended.md`.
 
 Then write the docs files using the seed templates in this skill folder as a starting point:
 
@@ -128,6 +139,7 @@ Then write the docs files using the seed templates in this skill folder as a sta
 - [triage-labels.md](./triage-labels.md): label mapping (only if `triage` is installed)
 - [domain.md](./domain.md): domain doc consumer rules + layout
 - [models.md](./models.md): model per subagent role (only if Section F ran with **yes**)
+- [unattended.md](./unattended.md): wake mechanism, run log convention, budget habit
 
 Then write the repo-level meta docs agreed in Section D, at the repo root:
 
@@ -139,4 +151,4 @@ For "other" issue trackers, write `docs/agents/issue-tracker.md` from scratch us
 
 ### 5. Done
 
-Tell the user the setup is complete: which skills will now read from these files, which meta docs were scaffolded (`DESIGN.md`, standards file, commit format), and whether pre-commit tooling was installed. Mention they can edit `docs/agents/*.md` and the meta docs directly later; re-running this skill is only necessary if they want to switch trackers, restyle, or restart from scratch.
+Tell the user the setup is complete: which skills will now read from these files, which meta docs were scaffolded (`DESIGN.md`, standards file, commit format), whether pre-commit tooling was installed, and which wake mechanism unattended runs use. Mention they can edit `docs/agents/*.md` and the meta docs directly later; re-running this skill is only necessary if they want to switch trackers, restyle, or restart from scratch.

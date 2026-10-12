@@ -18,6 +18,7 @@ Skills the agent can fire on its own when the task fits, or the human can type b
 - **[setup-pre-commit](./setup-pre-commit/SKILL.md)**: Set up Husky pre-commit hooks with lint-staged (Prettier), type checking, and tests in the current repo.
 - **[swarm](./swarm/SKILL.md)**: Parallel worker fan-out for coverage, races, and gauntlets with one report.
 - **[tdd](./tdd/SKILL.md)**: Test-driven development with a red-green-refactor loop.
+- **[ui-recording-timeline](./ui-recording-timeline/SKILL.md)**: Turn a UI screen recording into an interactive paint timeline page for motion proof.
 - **[unslop](./unslop/SKILL.md)**: Cut AI tells from prose before it ships.
 - **[wizard](./wizard/SKILL.md)**: Generate an interactive bash wizard that walks a human through steps only they can perform.
 - **[writing-for-agents](./writing-for-agents/SKILL.md)**: Writing documents for agents: skills, AGENTS.md, and any doc an agent reaches by a pointer.

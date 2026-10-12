@@ -57,6 +57,7 @@ Skills for daily work, fired by hand. Full list in [skills/user-invoked/](skills
 - **[discuss-with-docs](./skills/user-invoked/discuss-with-docs/SKILL.md)**: Interview session that also builds your project's domain model, sharpening terminology and updating `GLOSSARY.md` and ADRs inline.
 - **[guide](./skills/user-invoked/guide/SKILL.md)**: Ask which skill or flow fits your situation. A router over the skills in this repo.
 - **[implement](./skills/user-invoked/implement/SKILL.md)**: Alias for `/whips`; points you there with the same spec or ticket.
+- **[ketchup](./skills/user-invoked/ketchup/SKILL.md)**: Catch up on everything in this chat since your last message, with an executive summary for each action item.
 - **[retro](./skills/user-invoked/retro/SKILL.md)**: Conduct a retrospective on a coding session: refresh meta docs, kill rot, surface patterns.
 - **[nightshift](./skills/user-invoked/nightshift/SKILL.md)**: Work `ready-for-agent` issues unattended through `/whips` intake, one fresh worktree each, draft PRs only, with the agent and model you pick at setup.
 - **[setup-meta](./skills/user-invoked/setup-meta/SKILL.md)**: Configure this repo for the skills: tracker, labels, domain docs, DESIGN.md, coding standards, commit/PR formats, pre-commit tooling. Run once per repo.
@@ -90,6 +91,7 @@ Reusable discipline the agent reaches for on its own. Full list in [skills/model
 - **[setup-pre-commit](./skills/model-invoked/setup-pre-commit/SKILL.md)**: Set up Husky pre-commit hooks with lint-staged, type checking, and tests.
 - **[swarm](./skills/model-invoked/swarm/SKILL.md)**: Parallel worker fan-out for coverage, races, and gauntlets with one report.
 - **[tdd](./skills/model-invoked/tdd/SKILL.md)**: Test-driven development with a red-green-refactor loop.
+- **[ui-recording-timeline](./skills/model-invoked/ui-recording-timeline/SKILL.md)**: Turn a UI screen recording into an interactive paint timeline page for motion proof.
 - **[unslop](./skills/model-invoked/unslop/SKILL.md)**: Cut AI tells from prose before it ships: replies, PR bodies, commit messages, docs, skills.
 - **[wizard](./skills/model-invoked/wizard/SKILL.md)**: Generate an interactive bash wizard that walks a human through steps only they can perform.
 - **[writing-for-agents](./skills/model-invoked/writing-for-agents/SKILL.md)**: Writing documents for agents: skills, AGENTS.md, and any doc an agent reaches by a pointer.

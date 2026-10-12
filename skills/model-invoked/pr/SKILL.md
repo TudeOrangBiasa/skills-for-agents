@@ -25,7 +25,7 @@ Use this template for writing the PR body:
   | Before | After |
   | --- | --- |
   | ![before](<url>) | ![after](<url>) |
-- When a recording shows the change better than stills, attach the video below the pair.
+- When a recording shows the change better than stills, attach the video below the pair. When the recording needs explaining (load sequence, auth flow, what painted when), call the Skill tool with "ui-recording-timeline" first and link its timeline page alongside the video.
 
 ## Merge Danger
 
