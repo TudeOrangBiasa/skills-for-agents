@@ -93,6 +93,17 @@ open WD/index.html
 
 Read `preview.png` to verify layout and overlay alignment. Re-run `build` after any change to `paints.json` or `regions.json`; re-run `regions` only when paint frames or bases change.
 
+## 6. Trim for presentation (optional)
+
+The timeline keeps real time, idle included. For the PR attach, a shorter cut is kinder: keep the paints, cut the dead stretches.
+
+```bash
+T trim /path/to/recording.mp4 --keep 0-12.5,20-35.2 --out WD/presentation.mp4
+T concat a.mp4 b.mp4 --out WD/joined.mp4
+```
+
+`trim` re-encodes the kept ranges and joins them, writing `*-trim.json` (source, kept ranges, new duration) beside the output. Attach the cut; keep the full recording and its timeline as the source of truth, and say what was cut. Never cut inside a paint: kept ranges cover whole paints with margin.
+
 Page use: arrows step between paints, space plays, `d` toggles flashes, `l` opens the paint list drawer, `f` fullscreen. `#t=6.502` deep-links a time, `?hold` freezes boxes for screenshots. The folder is portable: `index.html`, `recording.*`, `paints/`, plus inputs and debug output (`meta.json`, `paints.json`, `regions.json`, `sheets/`).
 
 ## Reporting back
