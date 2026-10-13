@@ -73,7 +73,7 @@ A step that names a user-invoked skill (`/wayfinder`, `/to-spec`, `/to-tickets`,
 
 ## 4. Enforce the HIT gates, in order
 
-Map before Guardrails, Guardrails before Walk. When the map is vague, return to the Map and do not proceed: call the Skill tool with "prototype" when running code can answer the question, else tell the user to run `/discuss-with-docs` or `/wayfinder`. When guardrails are missing, call the Skill tool with "tdd" and write behavior plus negative cases first, and do not implement. Never quietly change a guardrail to fit a wrong implementation; that decision belongs to the user.
+Map before Guardrails, Guardrails before Walk. When the map is vague, return to the Map and do not proceed: call the Skill tool with "prototype" when running code can answer the question, else tell the user to run `/discuss-with-docs` or `/wayfinder`. Drive through instead of gating when the fog is thin (one interview round settles it, single-session scope, context still fresh): run the interview, the spec sketch, and the tickets inline, then proceed. Never drive through a human-only step (`wizard`) or above risk authority. When guardrails are missing, call the Skill tool with "tdd" and write behavior plus negative cases first, and do not implement. Never quietly change a guardrail to fit a wrong implementation; that decision belongs to the user.
 
 ## 5. Autonomy
 

@@ -1,6 +1,6 @@
 ---
 name: deepen
-description: Scan a codebase for deepening opportunities, present them as a visual HTML report, then discuss through whichever one you pick.
+description: "Scan a codebase for deepening opportunities, present them as a visual HTML report, then discuss through whichever one you pick. The structural deslop: shallow modules turned deep."
 disable-model-invocation: true
 ---
 

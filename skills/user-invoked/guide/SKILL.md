@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Guide
 
-You don't remember every skill, so ask.
+You don't remember every skill, so ask. Prefer reading over asking: [COOKBOOK.md](./COOKBOOK.md) shows every common flow as a recipe with diagrams.
 
 A **flow** is a path through the skills. Most paths run along one **main flow**, and two **on-ramps** merge onto it. Everything else is standalone, or a vocabulary layer that runs underneath.
 
@@ -24,7 +24,7 @@ Start here with `/whips`: it matches your task to a playbook below, opens its st
    - **Yes** → **`/to-spec`** (turn the thread into a spec), then **`/to-tickets`** to split it into tracer-bullet tickets, each declaring its **blocking edges**. On a local tracker that's one file per ticket under `.scratch/<feature>/issues/`, worked blockers-first by hand; on a real tracker the edges become native blocking links, so any ticket whose blockers are done can be grabbed: kick off **`/whips`** per ticket, **`/clear`ing context between each one**. Each ticket is self-contained, so the last one's context is disposable.
    - **No** → **`/whips`** right here, in the same context window.
 
-   Either way, **`/whips`** builds each issue through its feature or bug playbook, driving **`/tdd`** internally (one red-green slice at a time), then closes out with **`/code-review`**, a two-axis review (Standards + Spec) of the diff, and a draft PR. (`/implement` is an alias that points here.) Reach for **`/tdd`** on its own when you just want to build a concrete behaviour test-first without a full spec, and **`/code-review`** on its own whenever you want to review a branch or PR against a fixed point.
+   Either way, **`/whips`** builds each issue through its feature or bug playbook, driving **`/tdd`** internally (one red-green slice at a time), then closes out with **`/code-review`**, a two-axis review (Standards + Spec) of the diff, and a draft PR. Reach for **`/tdd`** on its own when you just want to build a concrete behaviour test-first without a full spec, and **`/code-review`** on its own whenever you want to review a branch or PR against a fixed point.
 
 
 ### HIT: the three phases
@@ -66,7 +66,7 @@ A starting situation that generates work, then merges onto the main flow.
 
 Not feature work, just upkeep.
 
-- **`/deepen`** runs whenever you have a spare moment to keep the codebase good for agents to operate in. It surfaces **deepening opportunities**; picking one _generates an idea_ you can take into the main flow at `/discuss-with-docs`. It's the survey that finds the candidates; **`/codebase-design`** (below) is the bench you design the chosen one on.
+- **`/deepen`** is the structural deslop for the codebase: it scans for shallow modules and proposes deepening them, as a visual HTML report. (`unslop` cleans prose; `deepen` cleans structure.) Picking a candidate _generates an idea_ you take into the main flow at `/discuss-with-docs`, or straight to `/whips` refactor for execution. **`/codebase-design`** (below) is the bench you design the chosen one on.
 
 ## Vocabulary underneath
 

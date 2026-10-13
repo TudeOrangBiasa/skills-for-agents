@@ -5,7 +5,6 @@ Skills that fire only when the human types their name. They orchestrate; they ne
 - **[discuss](./discuss/SKILL.md)**: A relentless interview to sharpen a plan or design.
 - **[discuss-with-docs](./discuss-with-docs/SKILL.md)**: A relentless interview to sharpen a plan or design, which also creates docs (ADR's and glossary) as we go.
 - **[guide](./guide/SKILL.md)**: Ask which skill or flow fits your situation. A router over the skills in this repo.
-- **[implement](implement/SKILL.md)**: Alias for `/whips`; points you there with the same spec or ticket.
 - **[ketchup](./ketchup/SKILL.md)**: Catch up on everything in this chat since your last message, with an executive summary for each action item.
 - **[deepen](./deepen/SKILL.md)**: Scan a codebase for deepening opportunities, present them as a visual HTML report, then discuss through whichever one you pick.
 - **[worklog](./worklog/SKILL.md)**: Interview me about specs for the workflows I want to build, within this workspace.

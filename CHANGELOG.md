@@ -1,5 +1,38 @@
 # skills-for-agents
 
+## 0.2.0
+
+### Minor Changes
+
+- Invocation-first repo layout: skills sorted into `skills/user-invoked` and `skills/model-invoked`; nine never-fitting skills deleted; Claude Code plugin and duplicated docs tree removed; universal-agent installs via skills.sh.
+- Glossary renamed to `GLOSSARY.md` (legacy `CONTEXT.md` still supported).
+- Interview skills renamed `grill-me`/`grill-with-docs`/`grilling` to `discuss`/`discuss-with-docs`/`interview`; `ask-matt` router to `guide`; `setup-matt-pocock-skills` to `setup-meta`; memorable renames `merge-fix`, `deepen`, `diagnose`, `worklog`.
+- `setup-meta` grows into full repo setup (`DESIGN.md` Stitch plus lint, standards file, commit format, pre-commit tooling).
+- `nightshift` unattended issue-queue runner with lock claims, draft-only PRs, and `CONTRACT.md`.
+- `implement-spec` merged into `implement`; new `break` stress-test skill; `unslop` prose gate with `break` model-invoked and `/implement` aliasing `/whips`.
+- `pr` becomes the mandatory PR body shape with `ATTACHMENTS.md` and `agent-browser` as capture prerequisite.
+- `wait-what` reworked into a visual re-pitch with the `show-me` catalog.
+- `/whips` ships as table-driven router with `PRINCIPLES.md` and per-role model map, then gains autonomous-run, pause, pickup, babysit, ready-check plus `RISK.md`, refactor, prototype, and triage intake/review playbooks.
+- `retro` gains meta-docs refresh and cross-session pattern mining.
+- `risk:medium` tier plus tiered landing (low PASS and qualifying medium may land by agent, high stays human); still HIT.
+- `PRINCIPLES.md` grows from 8 to 20 rules, ported harness-agnostic.
+- Five model-invoked skills (`how`, `why`, `interrogate`, `arena`, `swarm`) plus the blast-radius ladder in `bug.md`.
+- Four whips playbooks (`runtime-forensics`, `trace-forensics`, `visual-parity`, `eval`).
+- `/ketchup` catch-up skill; `figure-it-out` fallback playbook with approval gate; `perf-issue`, `hillclimb`, `worktree-cleanup` rows; guide cookbook rules and worklog boundary.
+- `ui-recording-timeline` motion-proof skill with `trim`/`concat`; retro tooling proposals and PR-comment mining; `pr` proof rules; `ready-check` proof verdicts; `check-proof-urls.sh`; `setup-meta` unattended section; whips strategic track.
+
+### Patch Changes
+
+- `implement-spec` skill (in-progress bucket): spec/ticket graph builds.
+- `pr` skill reference shape for PR bodies.
+- `domain-modeling` trigger rewording; YAML colon quoting fix restoring skills.sh discovery.
+- Grilling round separators and em-dash removal; repo-wide em-dash removal.
+- `retro` mechanical-vs-judgement classification for standards findings.
+- Skill-tool invocation phrasing standard plus user-invoked invariant fixes.
+- `wait-what` multi-context map support.
+- `/whips` entry skill with `VIBE-MAPPING.md`; in-repo skill refs with explicit human gates; `opening-a-pr` plus triage intake/review.
+- Unslop rule 14 tightening, rules 25/26, wordlist backfill; TDD deterministic-before-kept rule.
+
 ## 0.1.0
 
 Fork fresh start. This changelog begins here; upstream history lives at [mattpocock/skills](https://github.com/mattpocock/skills).
