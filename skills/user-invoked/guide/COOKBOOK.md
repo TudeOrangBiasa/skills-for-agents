@@ -17,12 +17,14 @@ flowchart TD
     Q1 -->|no| Q2{"Path visible?"}
     Q2 -->|"yes, one session"| IDEA["/discuss-with-docs, /to-spec, /to-tickets, /whips per ticket"]
     Q2 -->|"very foggy"| WAY["/wayfinder into a map, then main flow"]
-    Q2 -->|"real work, no playbook"| FIG["/figure-it-out: design, approve, run"]
+    Q2 -->|"real work, no playbook"| FIG["/whips routes to figure-it-out: design, approve, run"]
     ONE --> PR["Draft PR, landing follows risk tier"]
     IDEA --> PR
     WAY --> PR
     FIG --> PR
 ```
+
+Thin fog skips the hops: when one interview round settles it in a fresh context, `/whips` drives through interview, spec sketch, and tickets inline (drive-through policy) instead of changing sessions.
 
 ## 1. Tiny fix one-shot
 
@@ -51,7 +53,9 @@ flowchart TD
     W --> B["/babysit to green"] --> R["/ready-check: verdict + risk label"] --> M["You merge per plan"]
 ```
 
-One unbroken window for discuss through tickets; each whips run starts fresh.
+One unbroken window for discuss through tickets; each whips run starts fresh. Thin fog skips the hops via drive-through (recipe 0). Gate to a dedicated session only when the fog needs its own window.
+
+Spec and tickets already exist: skip straight to `/whips` per ticket, blockers-first along the frontier, fresh context (and `/clear`) between tickets. Tracker issues with `ready-for-agent`: `/whips` intake interactively, `/nightshift` unattended.
 
 Example: "skeleton loading on the Menu page". `/discuss-with-docs` decides one reusable Skeleton component (not one per page), `/to-spec`, `/to-tickets` (3 tickets: component, use in Menu, e2e proof), `/whips` per ticket.
 
@@ -67,7 +71,7 @@ flowchart TD
     W --> S["/to-spec collapses the map"] --> T["/to-tickets"] --> W2["/whips per ticket"]
 ```
 
-Never start with wayfinder: a map and tickets you turn out not to need are self-made garbage.
+Never start with wayfinder: a map and tickets you turn out not to need are self-made garbage. And thin fog never reaches it: drive-through inside whips handles what one interview round settles.
 
 Example: "migrate media uploads to S3". Start `/discuss-with-docs`; planning sprawls into cost, rollback, seeders, so type "`/wayfinder` let's turn this into a map" → map of decision tickets → `/to-spec` collapses the map → tickets → whips.
 
@@ -153,7 +157,7 @@ flowchart TD
     S --> M
 ```
 
-A repeated manual task becomes a CLI + skill candidate (fewer tokens, fewer hallucinations).
+A repeated manual task becomes a CLI + skill candidate (fewer tokens, fewer hallucinations). Whips runs feed this loop with one strategic-track nomination each.
 
 Example: the image-rescue PR was born because proof URLs died with branch deletion. The recurring "rotten proof link" objection became the canonical-main-URL rule + `check-proof-urls.sh` (deterministic check, not prose). PR comments inform the code going forward.
 
@@ -172,3 +176,35 @@ flowchart TD
 Scope before you scan (YAGNI): recently changed areas first. Unslop cleans prose; deepen cleans structure.
 
 Example: navbar variants scattered across 4 files, same assumption repeated. `/deepen` proposes one deep Navbar module; interview settles the seam; `/whips` refactor extracts it with behavior pinned.
+
+## FAQ
+
+**Issues exist but carry no labels?** → `/triage`. Unlabeled is its first bucket: it evaluates, verifies the claim, interviews when needed, and walks each issue to `ready-for-agent`, `ready-for-human`, or `wontfix`.
+
+**Labels already say `ready-for-agent`?** → `/whips` intake while you watch, `/nightshift` while you sleep.
+
+**Spec and tickets already exist?** → `/whips` per ticket, blockers-first (recipe 2).
+
+**PRs green, which merges first?** → `/whips` with "check on PR X" or "merge plan": the ready-check playbook verifies each independently and orders high-risk review first, low-risk quick batch second.
+
+**Empty repo with PRD.md but confused about the stack?** → `/discuss-with-docs` first: settle backend/frontend (spike with `/prototype` when running code can answer the fork), record the stack as an ADR (hard-to-reverse by definition), seed `GLOSSARY.md`. Then `/setup-meta` (tracker, docs, standards), `/to-spec` built from the PRD, `/to-tickets`, `/whips` per ticket.
+
+**MVP scoped but deploy target unknown?** → `/discuss-with-docs` for constraints (budget, traffic, region, ops appetite) plus `/research` for platform facts, decided into an ADR. Deploy wiring itself is repo work: `/whips` feature once the target is locked.
+
+**Whole project still needs research across domains?** → fan out one `/research` per domain in parallel (frontend tech, backend tech, deploy target); each leaves a cited findings file while you keep working. Then `/discuss-with-docs` to decide (one ADR per hard call). Project-scale fog instead: `/wayfinder`, which runs each domain as a research ticket and resolves them in parallel before the map clears.
+
+**Tickets ready and MVP clear, but no frontend design and no hassle wanted?** → nothing left to decide: `/whips` per ticket, blockers-first. Say "no design, keep one simple variant" so frontend tickets skip variant-diverge and build functional UI from the `DESIGN.md` tokens. No `DESIGN.md` yet → `/setup-meta` Section D scaffolds tokens from brand notes first, once.
+
+**Big decisions changed and meta docs went stale?** → `/retro` step 4: contradiction/unused/gap pass over `GLOSSARY.md`, ADRs, `DESIGN.md`, `CODING_STANDARDS.md`, and `AGENTS.md` pointers, proposed first and written only on approval. Small terminology or single-decision updates skip retro: `/discuss-with-docs` or `/domain-modeling` inline.
+
+**Sessions lost, forgot what was done, meta docs look stale?** → reconstruct from ground truth first (git log, issue tracker, the docs as-is), then `/retro` to resync the docs to reality. Going forward, keep decisions in ADRs and tickets so memory lives in the repo, not in sessions. No skill recovers what was never written down.
+
+**Must AFK with a deadline near, parallel tickets, no QA time?** → split first: frontier tickets (behavior already answers every open question) run now; tickets genuinely needing you wait with an explicit "needs decision X" note. Frontier goes to `/nightshift` before you leave (fresh worktree each, draft PRs only, set max-issues). QA does not vanish, it compacts: per-slice tests plus verification evidence ride in each PR, and your morning is `/ketchup` plus `/ready-check` (independent verdicts, merge the low batch, review high). Decisions the requested behavior already answers are not decisions: say so in the ticket and let them run.
+
+**Overnight run missed the spec, start over in a new session?** → no. Morning `/ketchup`, then check the Spec axis (`/code-review` Standards + Spec, or the ready-check verdict). Then `/whips` pickup on the draft PR with the spec plus the missed point: small miss means a fix round on the same PR, big miss means a fresh ticket. Either way it runs fresh by design, never as a resume-chain of the night session.
+
+**Frontend refactor with a stack change, design stays?** → `visual-parity`: screenshot baseline first (blocking prerequisite), migrate component by component, zero image diff to pass, behavior pinned throughout. Same look, new guts.
+
+**Stack plus design both change?** → new UI, not a migration: `/whips` ui/feature with the new design as the spec, `DESIGN.md` tokens updated alongside (setup-meta Section D or direct edit). Prototype variants only when the look is genuinely open; a decided design builds straight.
+
+**Screenshots requested, can they be automated?** → yes, end to end: `agent-browser` drives the flow and captures screenshots, video, and timeline pages; the visual-parity baseline harness screenshots every state; the `pr` skill attaches them (pair table, video, timeline link). The only human fallback: when `agent-browser` is not installed in the environment, the agent names the missing pairs and the human captures them by hand.
