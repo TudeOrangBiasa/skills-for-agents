@@ -1,0 +1,5 @@
+interface:
+  display_name: "Ketchup"
+  short_description: "Catch me up since my last message"
+policy:
+  allow_implicit_invocation: false

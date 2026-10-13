@@ -34,6 +34,9 @@ Read the task and match exactly one row. First match wins.
 | A captured trace or dump to diagnose: cpuprofile, heapsnapshot, spindump | `playbooks/trace-forensics.md` |
 | A migration that must stay pixel-identical | `playbooks/visual-parity.md` |
 | A variant to test blind before promoting it | `playbooks/eval.md` |
+| A slow path with numbers to prove | `playbooks/perf-issue.md` |
+| A metric to improve iteratively against a target | `playbooks/hillclimb.md` |
+| Disk full of stale worktrees and caches | `playbooks/worktree-cleanup.md` |
 | A large migration or multi-part change no row above fits | `playbooks/figure-it-out.md` |
 | Every playbook that changes code ends here | `playbooks/opening-a-pr.md` |
 

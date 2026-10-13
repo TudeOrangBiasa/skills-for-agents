@@ -5,7 +5,7 @@ The half after babysit. Verify each open agent PR independently, classify its ri
 1. Freeze the list. The PRs the user named, else every open draft PR from agent branches in the repo. For stacks, record bottom-to-top order and each PR's base.
 2. Verify each PR independently with a fresh subagent that did not write it (section 6 brief, `review` role in `docs/agents/models.md`). It runs the PR's head against its base on the real surface (tests, the page, the endpoint) and returns PASS, PASS+NOTES, or FAIL with evidence. Record the head SHA with the verdict and post the verdict as a PR comment. CI green and bot approvals are inputs, not verdicts.
 3. Check each verdict still matches the code: a head SHA that moved after the verdict means verify again.
-4. Classify risk per `RISK.md`. Apply the label and write or update the `## Risk` paragraph in the PR body. A FAIL or INCONCLUSIVE verdict is `risk:high` by rule 9.
+4. Classify risk per `RISK.md`. Apply the label and write or update the `## Risk` paragraph in the PR body. A FAIL or INCONCLUSIVE verdict is `risk:high` by rule 9. Docs-only proof PRs fail when any linked artifact does not resolve, or the body lists paths instead of rendering proof.
 5. Check mergeability per PR: conflicts, required checks, unresolved threads, base branch. A blocker that babysit can clear goes back to `playbooks/babysit.md`; anything else is listed for the human.
 6. Order the plan. Stacked PRs merge bottom-up and only as a contiguous verified run from the root: a PASS above a FAIL waits. Independent PRs order by risk.
 7. Report, high-risk first:
