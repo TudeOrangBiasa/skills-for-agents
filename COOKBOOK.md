@@ -4,7 +4,7 @@ title: "Cookbook: flows and recipes"
 ---
 # Cookbook: flows and recipes
 
-Each recipe is one complete workflow: when to use it, which skills to type in order, and its diagram. Diagrams render in preview. The interactive router stays in [`SKILL.md`](./SKILL.md); this book is for reading directly.
+Each recipe is one complete workflow: when to use it, which skills to type in order, and its diagram. Diagrams render in preview. The interactive router stays in [`SKILL.md`](./skills/user-invoked/guide/SKILL.md); this book is for reading directly.
 
 Conventions in every diagram: boxes are skills you type (`/whips`) or playbooks whips runs, diamonds are your decisions, dashed arrows are escalations. Every recipe closes with a real example from recent CMS work.
 
@@ -191,6 +191,20 @@ Example: navbar variants scattered across 4 files, same assumption repeated. `/d
 
 **MVP scoped but deploy target unknown?** → `/discuss-with-docs` for constraints (budget, traffic, region, ops appetite) plus `/research` for platform facts, decided into an ADR. Deploy wiring itself is repo work: `/whips` feature once the target is locked.
 
+**Sharpening a plan with no repo under it?** → `/discuss` (stateless interview, saves nothing). In a working directory, `/discuss-with-docs` instead: same interview plus the paper trail.
+
+**Learning something over multiple sessions?** → `/teach`: mission, lessons, and reference sheets in a stateful workspace, paced to your zone of proximal development. Not repo work, not a flow step.
+
+**Automating loops in your own life?** → `/worklog`: interview your mornings, inboxes, and weekly reviews into workflow specs in `workflows/*.md`. When a spec's implementation is repo work, its checkpoint brief hands off to `/whips` or `/nightshift`.
+
+**Handed a project with no map, unknown codebase, told to build a feature?** → orient before building, never blind. `how` walkthrough first (Where Things Live: modules, seams, data flow), check the `setup-meta` output exists (run it when missing: tracker, labels, glossary, standards). Then `/whips` feature: its Map gate refuses vague maps, so exploration lands before any implementation.
+
+**Setting up a repo for a mixed team (agents, programmers, a PM) with frontend and backend tickets?** → `/setup-meta` first so everyone shares one tracker and one label vocabulary (states mean the same to humans and agents). Scope via `/to-spec` or `/discuss-with-docs`, then `/to-tickets` with blocking edges across frontend and backend: anyone (agent or programmer) grabs frontier tickets whose blockers are done, claiming by assignment. The PM runs `/triage` for queue hygiene (needs-info interviews, `ready-for-agent` when a brief is truly agent-ready). One tracker, one vocabulary, frontier discipline.
+
+**Monorepo built and developed together?** → `/setup-meta` multi-context (root `GLOSSARY-MAP.md` plus one glossary per context, shared domain terms so packages agree on words).
+
+**When is `setup-ts-deep-modules` used?** → once, at the start of a TypeScript multi-package repo (or when imports already tangle across packages): it wires dependency-cruiser so every package exposes only root entry points with implementation hidden in subfolders, proves the rules bite (pass, fail on a deep import, pass), and writes the packages README plus the `AGENTS.md` pointer. Run it before agents start importing, not after the tangle. Tickets declare cross-package blocking edges; contracts and shared types land first, consumers follow. Each unit builds in its own worktree and branch; TypeScript packages get deep-module boundaries via `setup-ts-deep-modules`. One root CI running every package's checks.
+
 **Whole project still needs research across domains?** → fan out one `/research` per domain in parallel (frontend tech, backend tech, deploy target); each leaves a cited findings file while you keep working. Then `/discuss-with-docs` to decide (one ADR per hard call). Project-scale fog instead: `/wayfinder`, which runs each domain as a research ticket and resolves them in parallel before the map clears.
 
 **Tickets ready and MVP clear, but no frontend design and no hassle wanted?** → nothing left to decide: `/whips` per ticket, blockers-first. Say "no design, keep one simple variant" so frontend tickets skip variant-diverge and build functional UI from the `DESIGN.md` tokens. No `DESIGN.md` yet → `/setup-meta` Section D scaffolds tokens from brand notes first, once.
@@ -208,3 +222,5 @@ Example: navbar variants scattered across 4 files, same assumption repeated. `/d
 **Stack plus design both change?** → new UI, not a migration: `/whips` ui/feature with the new design as the spec, `DESIGN.md` tokens updated alongside (setup-meta Section D or direct edit). Prototype variants only when the look is genuinely open; a decided design builds straight.
 
 **Screenshots requested, can they be automated?** → yes, end to end: `agent-browser` drives the flow and captures screenshots, video, and timeline pages; the visual-parity baseline harness screenshots every state; the `pr` skill attaches them (pair table, video, timeline link). The only human fallback: when `agent-browser` is not installed in the environment, the agent names the missing pairs and the human captures them by hand.
+
+**Deploy to hosting with no SSH or MCP (cPanel FTP + terminal only), scripts ready, env left to fill?** → `/wizard`. No SSH means the agent cannot reach the server, so deploying is a human gate by definition: the agent prepares everything preparable (build artifact, env template with empty values, ordered checklist) and the wizard walks you through uploading via FTP, filling env in the cPanel terminal, and verifying live. One run, no re-explaining next time.
