@@ -84,6 +84,7 @@ Reusable discipline the agent reaches for on its own. Full list in [skills/model
 - **[interrogate](./skills/model-invoked/interrogate/SKILL.md)**: Adversarial multi-model review with rubric and bucketed verdict.
 - **[interview](./skills/model-invoked/interview/SKILL.md)**: Interview the user relentlessly about a plan, decision, or idea. The reusable interview primitive behind `discuss`, `discuss-with-docs`, `triage`, `wayfinder` and `deepen`.
 - **[merge-fix](./skills/model-invoked/merge-fix/SKILL.md)**: Resolve an in-progress git merge or rebase conflict hunk by hunk, by intent.
+- **[no-comments](./skills/model-invoked/no-comments/SKILL.md)**: Kill needless comments plus the dead code they protect, fix root causes, encode constraints.
 - **[pr](./skills/model-invoked/pr/SKILL.md)**: The mandatory PR body shape: summary visual, before/after evidence, merge danger.
 - **[prototype](./skills/model-invoked/prototype/SKILL.md)**: Build a throwaway prototype to answer a design question.
 - **[research](./skills/model-invoked/research/SKILL.md)**: Investigate a question against high-trust primary sources and capture the findings as a cited Markdown file in the repo.

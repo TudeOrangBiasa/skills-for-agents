@@ -15,6 +15,7 @@ Skills the agent can fire on its own when the task fits, or the human can type b
 - **[prototype](./prototype/SKILL.md)**: Build a throwaway prototype to answer a design question.
 - **[research](./research/SKILL.md)**: Investigate a question against high-trust primary sources and capture the findings as a cited Markdown file in the repo.
 - **[merge-fix](./merge-fix/SKILL.md)**: Use when you need to resolve an in-progress git merge/rebase conflict.
+- **[no-comments](./no-comments/SKILL.md)**: Kill needless comments plus the dead code they protect, fix root causes, encode constraints.
 - **[setup-pre-commit](./setup-pre-commit/SKILL.md)**: Set up Husky pre-commit hooks with lint-staged (Prettier), type checking, and tests in the current repo.
 - **[swarm](./swarm/SKILL.md)**: Parallel worker fan-out for coverage, races, and gauntlets with one report.
 - **[tdd](./tdd/SKILL.md)**: Test-driven development with a red-green-refactor loop.

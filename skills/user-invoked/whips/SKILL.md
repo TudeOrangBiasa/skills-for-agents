@@ -61,6 +61,7 @@ Each row fires whenever its condition holds, on top of the playbook steps. Call 
 | Outside docs or API facts | "research" |
 | Contested design, or before any PR | "code-review", plus the same prompt to a second model when the harness offers one |
 | A merge or rebase conflict | "merge-fix" |
+| Before review, comments and the code they protect | "no-comments" |
 | A step only a human can do (secrets, dashboards) | "wizard" |
 | A PR body | "pr" |
 | A UI change about to ship | "break" |
