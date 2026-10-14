@@ -39,6 +39,10 @@ Write nothing yet. Collect every proposal for step 6.
 
 Each pattern names the repeats it stands on. No pattern from a single occurrence, unless the cost was severe.
 
+## Deep mode (multi-lens review)
+
+For sessions worth a harder look, run three parallel reviewers over the session before step 6: judgment (do the findings hold, what contradicts them), tooling (which findings a lint, script, flag, or check would enforce more reliably), divergent (what the first two missed or dismissed too fast). A synthesizer merges them into Accepted, Rejected, and Backlog rows; structural findings move to Backlog per rule 13. Present all three lists; write only approved Accepted rows, file Backlog without waiting. Skip for trivial sessions and one-offs.
+
 6. Present all candidates (environment improvements from step 3, meta-docs updates from step 4, patterns from step 5) in order of severity. Write only what the user approves, file by file.
 
 ## Reference

@@ -53,7 +53,7 @@ Each row fires whenever its condition holds, on top of the playbook steps. Call 
 | When | Skill |
 | --- | --- |
 | Any code | name the data shape first: "codebase-design" |
-| Code crosses a function boundary | "codebase-design", design it twice |
+| Code crosses a function boundary | "architect" (ground, sketch twice, agree, implement, scrap) on "codebase-design" vocabulary |
 | A defect, a failing test, a slow path | "diagnose" |
 | A behavior to build or pin | "tdd" |
 | Domain terms change or a hard-to-reverse decision lands | "domain-modeling" |
@@ -62,6 +62,8 @@ Each row fires whenever its condition holds, on top of the playbook steps. Call 
 | Contested design, or before any PR | "code-review", plus the same prompt to a second model when the harness offers one |
 | A merge or rebase conflict | "merge-fix" |
 | Before review, comments and the code they protect | "no-comments" |
+| A perf number you measured | "benchmark-checklist" before reporting or acting on it |
+| A small diff you don't trust | "blast-radius" for what breaks outside it |
 | A step only a human can do (secrets, dashboards) | "wizard" |
 | A PR body | "pr" |
 | A UI change about to ship | "break" |

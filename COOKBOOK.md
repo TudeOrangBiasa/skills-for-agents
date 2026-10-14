@@ -211,7 +211,9 @@ Example: navbar variants scattered across 4 files, same assumption repeated. `/d
 
 **Big decisions changed and meta docs went stale?** → `/retro` step 4: contradiction/unused/gap pass over `GLOSSARY.md`, ADRs, `DESIGN.md`, `CODING_STANDARDS.md`, and `AGENTS.md` pointers, proposed first and written only on approval. Small terminology or single-decision updates skip retro: `/discuss-with-docs` or `/domain-modeling` inline.
 
-**Sessions lost, forgot what was done, meta docs look stale?** → reconstruct from ground truth first (git log, issue tracker, the docs as-is), then `/retro` to resync the docs to reality. Going forward, keep decisions in ADRs and tickets so memory lives in the repo, not in sessions. No skill recovers what was never written down.
+**Sessions lost, forgot what was done, meta docs look stale?** → reconstruct from ground truth first (git log, issue tracker, the docs as-is), then `/retro` to resync the docs to reality.
+
+**Starting fresh but recent work spans several chats?** → `/recall`: scope the window, mine repo history plus session traces, verify live, capsule brief with tagged threads. One specific run or branch is whips pickup; this chat alone is `/ketchup`. Going forward, keep decisions in ADRs and tickets so memory lives in the repo, not in sessions. No skill recovers what was never written down.
 
 **Must AFK with a deadline near, parallel tickets, no QA time?** → split first: frontier tickets (behavior already answers every open question) run now; tickets genuinely needing you wait with an explicit "needs decision X" note. Frontier goes to `/nightshift` before you leave (fresh worktree each, draft PRs only, set max-issues). QA does not vanish, it compacts: per-slice tests plus verification evidence ride in each PR, and your morning is `/ketchup` plus `/ready-check` (independent verdicts, merge the low batch, review high). Decisions the requested behavior already answers are not decisions: say so in the ticket and let them run.
 
