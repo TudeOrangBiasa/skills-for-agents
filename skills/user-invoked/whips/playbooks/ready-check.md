@@ -7,11 +7,11 @@ The half after babysit. Verify each open agent PR independently, classify its ri
 3. Check each verdict still matches the code: a head SHA that moved after the verdict means verify again.
 4. Classify risk per `RISK.md`. Apply the label and write or update the `## Risk` paragraph in the PR body. A FAIL or INCONCLUSIVE verdict is `risk:high` by rule 9. Docs-only proof PRs fail when any linked artifact does not resolve, or the body lists paths instead of rendering proof.
 5. Check mergeability per PR: conflicts, required checks, unresolved threads, base branch. A blocker that babysit can clear goes back to `playbooks/babysit.md`; anything else is listed for the human.
-6. Order the plan. Stacked PRs merge bottom-up and only as a contiguous verified run from the root: a PASS above a FAIL waits. Independent PRs order by risk.
+6. Order the plan. Stacked PRs merge bottom-up and only as a contiguous verified run from the root: a PASS above a FAIL waits, and the run lands squashed. Independent PRs order by risk.
 7. Report, high-risk first:
    - **Review first**: each high-risk PR with its link, verdict, the matched rules, and the one thing to check.
    - **Quick batch**: low-risk PRs that passed, in merge order, one line each.
-   - **Merge**: mark ready and merge the quick batch plus qualifying medium PRs in merge order (stacks bottom-up, only contiguous verified runs); record each merge SHA. A medium PR qualifies only with a PASS verdict at the current head, green required checks, and no unresolved threads.
+   - **Merge**: mark ready and merge the quick batch plus qualifying medium PRs in merge order (stacks bottom-up, only contiguous verified runs); record each merge SHA. A medium PR qualifies only with a PASS verdict at the current head, green required checks, and no unresolved threads. Run on ask, or scheduled (hourly cron/loop via Section G) so qualifying batches land without a human in the loop.
    - **Blocked**: FAIL, stale, or conflicted PRs and what each needs.
 
 **Reply:** the three lists above, what you merged and at which SHAs, the stack order, each verdict with who produced it and at which SHA, and a short "Why this way" for any PR whose label might surprise the user.
