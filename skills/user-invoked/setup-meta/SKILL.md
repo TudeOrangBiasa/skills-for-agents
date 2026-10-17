@@ -81,7 +81,7 @@ On **no**, write nothing. On **yes**, read the harness config and environment fo
 
 > How should unattended runs wake up? (recommended: the harness loop or wait command you already use)
 
-Record the mechanism in `docs/agents/unattended.md`: the command or scheduler entry that re-invokes `/whips` (or the `nightshift` runner for queues), the run log convention (`.scratch/whips/<run>/log.md`, one row per iteration), and the budget habit (predicate first, stated iteration, hour, or PR cap). Point at `/nightshift` for issue-queue runs and the `autonomous-run` playbook for predicate-driven runs; both read this file.
+Record the mechanism in `docs/agents/unattended.md`: the command or scheduler entry that re-invokes `/whips` (or the `nightshift` runner for queues), the run log convention (`.scratch/whips/<run>/log.md`, one row per iteration), and the budget habit (predicate first, stated iteration, hour, or PR cap). Point at `/nightshift` for issue-queue runs and the `goal` playbook for single-goal runs; both read this file.
 
 Then ask two more, one at a time. Autonomy tier for this repo (the whips mode): strict HIT with every landing human-approved, or tiered auto-land with low-risk PASS PRs merging untouched (recommended: tiered, human time reserved for high-risk). Record it in `docs/agents/unattended.md`; it overrides the default where the repo chooses strictness. Scheduled maintenance: which jobs run on a schedule and how they wake (cron line, systemd timer, or the harness non-interactive/headless mode invoking a skill). Default proposal: `/retro` stale-docs sweep every few days with its proposals filed, never auto-applied. Record each job's command, cadence, and output sink in the same file.
 

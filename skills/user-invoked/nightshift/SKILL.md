@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Nightshift
 
-Loop mode for the agent-ready queue, on any schedule: the night name is historical (cron, an interval loop, or one manual run all work; it never has to be night). Hand the queue to an agent while nobody is watching. Distinct from `/worklog`, which designs personal workflows and never runs them: nightshift runs repo issues, worklog specifies life loops. One script, [scripts/nightshift.sh](scripts/nightshift.sh), claims each `ready-for-agent` issue, runs `/whips` triage intake on it in a fresh worktree, and keeps only draft PRs. The human reviews in the morning, marks ready, and merges.
+Loop mode for the agent-ready queue, on any schedule: the night name is historical (cron, an interval loop, or one manual run all work; it never has to be night). Hand the queue to an agent while nobody is watching. Distinct from `/worklog`, which designs personal workflows and never runs them, and from goal mode (`goal.md` playbook), which pursues one long goal: nightshift runs repo issue queues, nothing else. One script, [scripts/nightshift.sh](scripts/nightshift.sh), claims each `ready-for-agent` issue, runs `/whips` triage intake on it in a fresh worktree, and keeps only draft PRs. The human reviews in the morning, marks ready, and merges.
 
 The agent command and the model are the user's choice, made once at setup and saved to a config file. Nothing is defaulted. [CONTRACT.md](CONTRACT.md) holds the config keys, commands, exit codes, and outcomes. Any scheduler can call `nightshift.sh run`; wiring one is out of scope here.
 

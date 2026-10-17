@@ -17,7 +17,7 @@ Read the task and match exactly one row. First match wins.
 | --- | --- |
 | Pause, stop for now, the laptop is closing | `playbooks/pause.md` |
 | Resume or take over a prior run, branch, or draft PR | `playbooks/pickup.md` |
-| Run until a condition holds, keep going unattended | `playbooks/autonomous-run.md` |
+| A goal to pursue until its predicate holds, unattended | `playbooks/goal.md` |
 | Pick up the next agent-ready issue | `playbooks/triage.md` intake |
 | Review or bot comments on an open agent PR | `playbooks/triage.md` review mode |
 | Check on a PR or stack, get it green, anything outstanding | `playbooks/babysit.md` |
