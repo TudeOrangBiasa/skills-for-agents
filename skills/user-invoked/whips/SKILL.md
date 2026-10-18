@@ -37,6 +37,7 @@ Read the task and match exactly one row. First match wins.
 | A slow path with numbers to prove | `playbooks/perf-issue.md` |
 | A metric to improve iteratively against a target | `playbooks/hillclimb.md` |
 | Disk full of stale worktrees and caches | `playbooks/worktree-cleanup.md` |
+| A program outliving any single agent (multi-day, many PRs) | `playbooks/orchestrate.md` |
 | A large migration or multi-part change no row above fits | `playbooks/figure-it-out.md` |
 | Every playbook that changes code ends here | `playbooks/opening-a-pr.md` |
 
@@ -106,7 +107,7 @@ On OMP, read `VIBE-MAPPING.md` first and follow it on every run: director toolse
 
 Verify on the matching surface. Verdicts are VERIFIED, NOT VERIFIED, or INCONCLUSIVE, and inconclusive is not a pass. CI green is an input, not a verdict. Evidence-free work returns to a fresh fix agent, never to the same worker by resume chain. Strategic track: nominate at most one environment improvement this task suggested (a repeated manual step, a missing check, a confusing doc) as a `/retro` candidate with its evidence. Never fix it mid-run; the list goes to retro.
 
-Open the closing PR per `playbooks/opening-a-pr.md`: always a draft, one risk label plus a `## Risk` paragraph per [RISK.md](RISK.md), `Closes #N` when an issue exists, body shaped with the `pr` skill (summary visual, before/after evidence, merge danger). Landing follows the risk tier per [RISK.md](RISK.md): low-risk PASS PRs land immediately in the same run (no draft pile, no human touch); qualifying medium PRs may be marked ready and merged by the agent; high-risk PRs wait for the human. Human review time is for high-risk only. Visible changes add the ATTACHMENTS.md pair: before/after table, native 1x, matched viewport and crop, video when motion matters, never inside `<details>`. On a PR, agents never add themselves as collaborator, assignee, or reviewer. Claiming an issue by assignment, per the Claim step in `docs/agents/issue-tracker.md`, is allowed. Tools are not people, so they only author the body and request review from humans.
+Open the closing PR per `playbooks/opening-a-pr.md`: always a draft, one risk label plus a `## Risk` paragraph per [RISK.md](RISK.md), `Closes #N` when an issue exists, body shaped with the `pr` skill (summary visual, before/after evidence, merge danger). Landing follows the risk tier per [RISK.md](RISK.md): low-risk PRs land immediately in the same run on an independent PASS (no draft pile, no human touch, never self-reported); qualifying medium PRs may be marked ready and merged by the agent; high-risk PRs wait for the human. Human review time is for high-risk only. Visible changes add the ATTACHMENTS.md pair: before/after table, native 1x, matched viewport and crop, video when motion matters, never inside `<details>`. On a PR, agents never add themselves as collaborator, assignee, or reviewer. Claiming an issue by assignment, per the Claim step in `docs/agents/issue-tracker.md`, is allowed. Tools are not people, so they only author the body and request review from humans.
 
 ## 8. Reply
 

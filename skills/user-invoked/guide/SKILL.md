@@ -13,7 +13,7 @@ A **flow** is a path through the skills. Most paths run along one **main flow**,
 ## The main flow: idea → ship
 
 The route most work travels. You have an idea and want it built.
-Start here with `/whips`: it matches your task to a playbook below, opens its steps as a todo, and drives the skills itself so you decide only at forks. Beyond this main flow it also runs a refactor playbook (structure changes, behavior pinned) and a prototype playbook (settle a fork by building the options instead of asking). Once PRs are open, ask it to babysit them to merge-ready, then for a ready-check: every PR gets an independent verdict and a `risk:low` or `risk:high` label, and you get a merge plan with high-risk PRs first and low-risk ones as a quick batch. You merge both. For long runs it can work until a stated condition holds, pause cleanly with a resume note, and pick up a prior run where it stopped. The manual per-skill path stays for when you want each step by hand.
+Start here with `/whips`: it matches your task to a playbook below, opens its steps as a todo, and drives the skills itself so you decide only at forks. Beyond this main flow it also runs a refactor playbook (structure changes, behavior pinned) and a prototype playbook (settle a fork by building the options instead of asking). Once PRs are open, ask it to babysit them to merge-ready, then for a ready-check: every PR gets an independent verdict and a `risk:low`, `risk:medium`, or `risk:high` label. Low-risk PASS lands untouched in the same run; you get a merge plan with high-risk PRs first for your review. For long runs it can pursue a goal to its predicate (goal mode), run issue queues on schedule (`/runner`), work a multi-day program under one coordinator (`orchestrate` playbook), pause cleanly with a resume note, and pick up a prior run where it stopped. The manual per-skill path stays for when you want each step by hand.
 
 1. **`/discuss-with-docs`** sharpens the idea by interview. Start here whenever you are **working in a working directory**: it's stateful, retaining what it learns in `GLOSSARY.md` and ADRs. (No working directory? Use `/discuss` instead, covered under Standalone. Both run the same `/interview` primitive; `discuss-with-docs` is the one that leaves a paper trail, which makes it the better of the two whenever a repo is there to leave it in.) Tiny and obvious (a one-line fix, a symlink, a config flag, like re-linking `public/storage`): skip the interview entirely and one-shot it with `/whips` or directly. Interviewing a trivial diff costs more than the work.
 2. **Branch: can you settle every question in conversation?** If a question needs a runnable answer (state, business logic, a UI you have to see), detour through a prototype, bridged by a fresh session in both directions (a prototype lives in its own directory; see Phase boundaries):
@@ -54,7 +54,7 @@ A starting situation that generates work, then merges onto the main flow.
 
   To build an agent-ready issue, `/whips` picks up one `ready-for-agent` issue, checks its brief, routes it to the bug or feature playbook, and opens a draft PR that links it. A thin brief goes back to `needs-info` instead.
 
-  To work that queue unattended, **`/nightshift`** sets up a runner that claims each `ready-for-agent` issue, hands it to `/whips` intake in a fresh worktree, and leaves only draft PRs. You pick the agent and model once; any scheduler can call it.
+  To work that queue unattended, **`/runner`** claims each `ready-for-agent` issue, hands it to `/whips` intake in a fresh worktree on any schedule, and lands per the risk tier. You pick the agent and model once; any scheduler can call it.
 
 - **Something's broken** → **`/diagnose`**. For the hard ones: the bug that resists a first glance, the intermittent flake, the regression that crept in between two known-good states. It refuses to theorise until it has a **tight feedback loop** (one command that already goes red on *this* bug), then fixes with a regression test. Its post-mortem hands off to **`/deepen`** when the real finding is that there's no good seam to lock the bug down.
 
@@ -67,6 +67,17 @@ A starting situation that generates work, then merges onto the main flow.
 Not feature work, just upkeep.
 
 - **`/deepen`** is the structural deslop for the codebase: it scans for shallow modules and proposes deepening them, as a visual HTML report. (`unslop` cleans prose; `deepen` cleans structure.) Picking a candidate _generates an idea_ you take into the main flow at `/discuss-with-docs`, or straight to `/whips` refactor for execution. **`/codebase-design`** (below) is the bench you design the chosen one on.
+
+## Whips-driven method
+
+You never type these; `/whips` fires them when their trigger holds. Know they exist so the router's choices read legibly:
+
+- Understand: `/how` (subsystem walkthroughs), `/why` (design rationale in confidence tiers).
+- Design: `/architect` (ground, sketch twice, agree, implement, scrap), `/arena` (parallel bakeoffs, pick a base, graft).
+- Challenge and prove: `/interrogate` (adversarial multi-model review), `/no-comments` (kill needless comments plus guarded dead code), `/blast-radius` (what breaks outside the diff, proven by running).
+- Numbers and trails: `/benchmark-checklist` (vet a measurement before reporting), `/show-me-your-work` (TSV decision trail with end audit).
+- Harden: `/correct` (eliminate repeated repo mistakes at the highest level).
+- Write and prove visuals: `/technical-writing` (layered docs standard), `/ui-recording-timeline` (paint timeline from a screen recording).
 
 ## Vocabulary underneath
 
@@ -98,13 +109,17 @@ Off the main flow entirely.
 - **`/prototype`** is a small, throwaway program that answers one design question: does this state model feel right, or what should this UI look like. Throwaway is a constraint on how the code is written, not a promise to destroy it: the answer folds into the real code, and the prototype itself is kept as a **primary source** on a `prototype/<name>` branch out of main, pointed at from the implementation issue. It's the detour in step 2 of the main flow, but reach for it any time a design question is hard to settle on paper.
 - **`/research`**: delegate reading legwork to a **background agent**: it investigates a question against **primary sources**, then leaves a cited Markdown file in the repo. Keep working while it reads. The file it produces is something to take *into* the main flow at `/discuss-with-docs`, since research feeds the thinking rather than replacing it.
 - **`/wizard`** is for the steps only a **human** can take: provisioning infrastructure, setting up credentials or CI secrets, clicking through an unfamiliar third-party dashboard, running a one-off migration or cutover. It generates an interactive bash script that opens each URL, captures each value, and writes it into `.env` and GitHub secrets, so the procedure stops being something you re-explain to an agent every time. Model-invoked, so the agent reaches for it the moment it hits a wall only you can pass. If the agent could just do it itself, it should; this is for where a human is genuinely in the loop.
+- **`/showcase`** demos the work itself: diff, running result, and proof in one visual pass. The demo to ketchup's news, wait-what's re-pitch, and recall's brief.
 - **`/wait-what`** is the visual re-pitch for a message that didn't land. Use it mid-conversation, inside any other skill, and the agent re-pitches what it just said as a visual plus plain sentences, using the `GLOSSARY.md` vocabulary. It works after the fact; `/discuss-with-docs` is the upfront cure, because a shared language agreed early is what stops the jargon arriving at all.
 - **`/ketchup`** catches you up after a long agent run: everything since your last message in plain words, each action item with an executive summary so you can decide. Use it mid-conversation, inside any other skill.
 - **`/recall`** rebuilds recent working context across chats into a tight capsule brief before you start or resume. One specific run, branch, or draft PR is whips pickup instead; this chat alone is `/ketchup`.
 - **`/teach`**: learn a concept over multiple sessions, using the current directory as a stateful workspace.
-- **`/worklog`**: design the loops in your life (mornings, inboxes, weekly reviews) as workflow specs in `workflows/*.md`, interviewed until an implementer needs no questions. Personal automation, not repo work: when a spec's implementation is repo work, its checkpoint brief hands off to `/whips` or `/nightshift`.
+- **`/retro`**: retrospective on a session, successful or not: refresh meta docs, kill rot, surface patterns, propose tooling. Run it in the main flow after every build, not only failures. Point it at the last 10 sessions to mine navigability (where agents take too long finding info or trust outdated docs): improving navigation is the cheapest token saver there is.
+- **`/retro`**: retrospective on a session (real or trial): refresh meta docs, kill rot, surface patterns, propose tooling. Writes only what you approve. Deep mode runs three review lenses for sessions worth a harder look.
+- **`/setup-ts-deep-modules`**: one-time wiring so every TypeScript package exposes only root entry points, enforced by dependency-cruiser. Run before agents start importing across packages.
+- **`/worklog`**: design the loops in your life (mornings, inboxes, weekly reviews) as workflow specs in `workflows/*.md`, interviewed until an implementer needs no questions. Personal automation, not repo work: when a spec's implementation is repo work, its checkpoint brief hands off to `/whips` or `/runner`.
 - **`/writing-for-agents`** is the reference for writing documents agents consume: skills, AGENTS.md, pointed-at docs.
 
 ## Precondition
 
-**`/setup-meta`**: run before your first flow to configure the issue tracker, triage labels, and doc layout the other skills assume, plus, optionally, a model per subagent role for `/whips`. Custom issue trackers also work.
+**`/setup-meta`**: run before your first flow to configure the issue tracker, triage and risk labels, doc layout, autonomy tier, and scheduled jobs the other skills assume, plus, optionally, a model per subagent role for `/whips`. Custom issue trackers also work. Projects needing scripted proof add **`/create-verification`** (generates an app-driving skill, proven once) with **`/maintain-verification`** upkeep.

@@ -28,7 +28,7 @@ A workflow spec is done when an implementer agent could build it without asking 
 
 ## Boundary with repo work
 
-Worklog designs loops in your life (mornings, inboxes, weekly reviews), not coding tasks in a repo. Repo work goes straight to `/whips` (incoming issues via `/triage`, unattended queues via `/nightshift`). When a workflow spec's implementation is repo work (a script, a bot, an automation PR), the spec hands off at its checkpoint: the brief becomes the ticket or brief that `/whips` intake or `/nightshift` picks up. Worklog never implements; it specifies to the point an implementer needs no questions.
+Worklog designs loops in your life (mornings, inboxes, weekly reviews), not coding tasks in a repo. Repo work goes straight to `/whips` (incoming issues via `/triage`, unattended queues via `/runner`). When a workflow spec's implementation is repo work (a script, a bot, an automation PR), the spec hands off at its checkpoint: the brief becomes the ticket or brief that `/whips` intake or `/runner` picks up. Worklog never implements; it specifies to the point an implementer needs no questions.
 
 ## The workspace
 

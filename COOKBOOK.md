@@ -55,7 +55,7 @@ flowchart TD
 
 One unbroken window for discuss through tickets; each whips run starts fresh. Thin fog skips the hops via drive-through (recipe 0). Gate to a dedicated session only when the fog needs its own window.
 
-Spec and tickets already exist: skip straight to `/whips` per ticket, blockers-first along the frontier, fresh context (and `/clear`) between tickets. Tracker issues with `ready-for-agent`: `/whips` intake interactively, `/nightshift` unattended.
+Spec and tickets already exist: skip straight to `/whips` per ticket, blockers-first along the frontier, fresh context (and `/clear`) between tickets. Tracker issues with `ready-for-agent`: `/whips` intake interactively, `/runner` unattended.
 
 Example: "skeleton loading on the Menu page". `/discuss-with-docs` decides one reusable Skeleton component (not one per page), `/to-spec`, `/to-tickets` (3 tickets: component, use in Menu, e2e proof), `/whips` per ticket.
 
@@ -81,14 +81,14 @@ When: sleep while the queue resolves itself.
 
 ```mermaid
 flowchart TD
-    T["/triage: ripen issues"] --> N["/nightshift: queue runs itself"]
+    T["/triage: ripen issues"] --> N["/runner: queue runs itself"]
     N --> M["Morning: /ketchup"]
     M --> R["/ready-check"] --> G["You merge the low batch, review high"]
 ```
 
 Alternative for one long goal: `/whips` goal mode with predicate + budget, not a queue.
 
-Example: 5 `ready-for-agent` issues → `/nightshift` before sleep → morning `/ketchup` ("2 action items: merge low batch, review Seeder high") → `/ready-check` → merge the low batch, review high.
+Example: 5 `ready-for-agent` issues → `/runner` on schedule → morning `/ketchup` ("2 action items: merge low batch, review Seeder high") → `/ready-check` → merge the low batch, review high.
 
 ## 5. UI change with proof
 
@@ -142,11 +142,11 @@ When: the chat outran you, or one agent message does not land.
 - Confused by one message: `/wait-what` (visual re-pitch + plain sentences).
 - Both run mid-conversation inside other skills.
 
-Example: morning after a 5-issue nightshift, `/ketchup` answers "2 action items: merge low batch (link), review Seeder high (summary + recommendation)". One confusing message mid-flow, `/wait-what` re-pitches it visually.
+Example: morning after a 5-issue runner queue, `/ketchup` answers "2 action items: merge low batch (link), review Seeder high (summary + recommendation)". One confusing message mid-flow, `/wait-what` re-pitches it visually.
 
 ## 9. Close the loop
 
-When: session over, the environment must be better than before it started.
+When: session over, the environment must be better than before it started. Run it after successes too: a smooth session still hides inefficiencies and workarounds the agent battled silently.
 
 ```mermaid
 flowchart TD
@@ -157,7 +157,7 @@ flowchart TD
     S --> M
 ```
 
-A repeated manual task becomes a CLI + skill candidate (fewer tokens, fewer hallucinations). Whips runs feed this loop with one strategic-track nomination each.
+A repeated manual task becomes a CLI + skill candidate (fewer tokens, fewer hallucinations). Whips runs feed this loop with one strategic-track nomination each. Every few sessions, point retro at the last 10 for navigability: slow finds and trusted-but-stale docs are the cheapest tokens you will ever save.
 
 Example: the image-rescue PR was born because proof URLs died with branch deletion. The recurring "rotten proof link" objection became the canonical-main-URL rule + `check-proof-urls.sh` (deterministic check, not prose). PR comments inform the code going forward.
 
@@ -181,7 +181,7 @@ Example: navbar variants scattered across 4 files, same assumption repeated. `/d
 
 **Issues exist but carry no labels?** → `/triage`. Unlabeled is its first bucket: it evaluates, verifies the claim, interviews when needed, and walks each issue to `ready-for-agent`, `ready-for-human`, or `wontfix`.
 
-**Labels already say `ready-for-agent`?** → `/whips` intake while you watch, `/nightshift` while you sleep.
+**Labels already say `ready-for-agent`?** → `/whips` intake while you watch, `/runner` while you sleep.
 
 **Spec and tickets already exist?** → `/whips` per ticket, blockers-first (recipe 2).
 
@@ -195,7 +195,7 @@ Example: navbar variants scattered across 4 files, same assumption repeated. `/d
 
 **Learning something over multiple sessions?** → `/teach`: mission, lessons, and reference sheets in a stateful workspace, paced to your zone of proximal development. Not repo work, not a flow step.
 
-**Automating loops in your own life?** → `/worklog`: interview your mornings, inboxes, and weekly reviews into workflow specs in `workflows/*.md`. When a spec's implementation is repo work, its checkpoint brief hands off to `/whips` or `/nightshift`.
+**Automating loops in your own life?** → `/worklog`: interview your mornings, inboxes, and weekly reviews into workflow specs in `workflows/*.md`. When a spec's implementation is repo work, its checkpoint brief hands off to `/whips` or `/runner`.
 
 **Handed a project with no map, unknown codebase, told to build a feature?** → orient before building, never blind. `how` walkthrough first (Where Things Live: modules, seams, data flow), check the `setup-meta` output exists (run it when missing: tracker, labels, glossary, standards). Then `/whips` feature: its Map gate refuses vague maps, so exploration lands before any implementation.
 
@@ -215,9 +215,9 @@ Example: navbar variants scattered across 4 files, same assumption repeated. `/d
 
 **Starting fresh but recent work spans several chats?** → `/recall`: scope the window, mine repo history plus session traces, verify live, capsule brief with tagged threads. One specific run or branch is whips pickup; this chat alone is `/ketchup`. Going forward, keep decisions in ADRs and tickets so memory lives in the repo, not in sessions. No skill recovers what was never written down.
 
-**Multi-day program with one approval up front?** → `figure-it-out` for the designed phase list (approve once), `nightshift` or goal mode to execute, scheduled `ready-check` to land qualifying batches. Review high-risk only; the design approval plus tiered landing carry the rest.
+**Multi-day program with one approval up front?** → `figure-it-out` for the designed phase list (approve once), `runner` or goal mode to execute, scheduled `ready-check` to land qualifying batches. Review high-risk only; the design approval plus tiered landing carry the rest.
 
-**Must AFK with a deadline near, parallel tickets, no QA time?** → split first: frontier tickets (behavior already answers every open question) run now; tickets genuinely needing you wait with an explicit "needs decision X" note. Frontier goes to `/nightshift` before you leave (fresh worktree each, draft PRs only, set max-issues). QA does not vanish, it compacts: per-slice tests plus verification evidence ride in each PR, and your morning is `/ketchup` plus `/ready-check` (independent verdicts, merge the low batch, review high). Decisions the requested behavior already answers are not decisions: say so in the ticket and let them run.
+**Must AFK with a deadline near, parallel tickets, no QA time?** → split first: frontier tickets (behavior already answers every open question) run now; tickets genuinely needing you wait with an explicit "needs decision X" note. Frontier goes to `/runner` before you leave (fresh worktree each, draft PRs only, set max-issues). QA does not vanish, it compacts: per-slice tests plus verification evidence ride in each PR, and your morning is `/ketchup` plus `/ready-check` (independent verdicts, merge the low batch, review high). Decisions the requested behavior already answers are not decisions: say so in the ticket and let them run.
 
 **Overnight run missed the spec, start over in a new session?** → no. Morning `/ketchup`, then check the Spec axis (`/code-review` Standards + Spec, or the ready-check verdict). Then `/whips` pickup on the draft PR with the spec plus the missed point: small miss means a fix round on the same PR, big miss means a fresh ticket. Either way it runs fresh by design, never as a resume-chain of the night session.
 

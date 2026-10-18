@@ -1,6 +1,6 @@
 # Risk classification
 
-Every agent PR carries exactly one risk label and one paragraph saying why. The label tells the human where to spend review time: high-risk PRs get a real review first, low-risk PRs merge as a quick batch. Who may land: low, the agent immediately on a PASS verdict (mark ready and merge in the same run, never left as a draft pile); medium, the agent only when every landing condition in `playbooks/ready-check.md` holds; high, the human always. Only high-risk PRs spend human review time.
+Every agent PR carries exactly one risk label and one paragraph saying why. The label tells the human where to spend review time: high-risk PRs get a real review first, low-risk PRs merge as a quick batch. Who may land: low, the agent immediately on an independent PASS verdict (a fresh agent that did not write the code, via `ready-check` or a second agent; never the worker's own claim), marking ready and merging in the same run with no draft pile; medium, the agent only when every landing condition in `playbooks/ready-check.md` holds; high, the human always. Only high-risk PRs spend human review time.
 
 Label strings come from `docs/agents/triage-labels.md` when it has `risk-low`, `risk-medium`, and `risk-high` rows; otherwise use `risk:low`, `risk:medium`, and `risk:high`. Create a missing label once with the tracker CLI (`gh label create risk:high --color B60205`, `gh label create risk:medium --color FBCA04`, `gh label create risk:low --color 0E8A16`).
 

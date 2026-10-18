@@ -1,0 +1,5 @@
+interface:
+  display_name: "Create Verification"
+  short_description: "Generate app-driving proof skill"
+policy:
+  allow_implicit_invocation: false

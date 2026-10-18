@@ -54,14 +54,17 @@ Skills for daily work, fired by hand. Full list in [skills/user-invoked/](skills
 
 - **[deepen](./skills/user-invoked/deepen/SKILL.md)**: Scan a codebase for deepening opportunities, present them as a visual HTML report, then discuss through whichever one you pick.
 - **[discuss](./skills/user-invoked/discuss/SKILL.md)**: Get relentlessly interviewed about a plan or design until every branch of the design tree is resolved.
+- **[create-verification](./skills/user-invoked/create-verification/SKILL.md)**: Generate a project-local skill that drives the app like a user, with feature map, proven once.
 - **[discuss-with-docs](./skills/user-invoked/discuss-with-docs/SKILL.md)**: Interview session that also builds your project's domain model, sharpening terminology and updating `GLOSSARY.md` and ADRs inline.
 - **[guide](./skills/user-invoked/guide/SKILL.md)**: Ask which skill or flow fits your situation. A router over the skills in this repo. Prefer reading: [COOKBOOK.md](./COOKBOOK.md) shows every common flow as a recipe with diagrams.
 - **[ketchup](./skills/user-invoked/ketchup/SKILL.md)**: Catch up on everything in this chat since your last message, with an executive summary for each action item.
 - **[recall](./skills/user-invoked/recall/SKILL.md)**: Rebuild recent working context across chats into a tight capsule brief.
+- **[maintain-verification](./skills/user-invoked/maintain-verification/SKILL.md)**: Periodic upkeep for a project's verification skill: source wave plus live pass, at most one PR.
 - **[retro](./skills/user-invoked/retro/SKILL.md)**: Conduct a retrospective on a coding session: refresh meta docs, kill rot, surface patterns.
-- **[nightshift](./skills/user-invoked/nightshift/SKILL.md)**: Work `ready-for-agent` issues unattended through `/whips` intake, one fresh worktree each, draft PRs only, with the agent and model you pick at setup.
+- **[runner](./skills/user-invoked/runner/SKILL.md)**: Run `ready-for-agent` issue queues on any schedule through `/whips` intake, landing per risk tier, with the agent and model you pick at setup.
 - **[setup-meta](./skills/user-invoked/setup-meta/SKILL.md)**: Configure this repo for the skills: tracker, labels, domain docs, DESIGN.md, coding standards, commit/PR formats, pre-commit tooling. Run once per repo.
 - **[setup-ts-deep-modules](./skills/user-invoked/setup-ts-deep-modules/SKILL.md)**: Wire dependency-cruiser into a TypeScript repo so each package is a deep module.
+- **[showcase](./skills/user-invoked/showcase/SKILL.md)**: Show me what you built: diff, running result, and proof in one visual pass.
 - **[teach](./skills/user-invoked/teach/SKILL.md)**: Teach the user a new skill or concept, within this workspace.
 - **[to-spec](./skills/user-invoked/to-spec/SKILL.md)**: Turn the current conversation into a spec and publish it to the issue tracker. No interview, just synthesizes what you've already discussed.
 - **[to-tickets](./skills/user-invoked/to-tickets/SKILL.md)**: Break any plan, spec, or conversation into a set of tracer-bullet tickets, each declaring its blocking edges.

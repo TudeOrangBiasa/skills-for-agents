@@ -1,49 +1,69 @@
 #!/usr/bin/env bash
-# Pick ready-for-agent issues, hand each to /whips triage intake, keep only draft PRs.
+# Pick ready-for-agent issues, hand each to /whips triage intake, land per the risk tier.
 # Tracker and label strings come from each repo's docs/agents/*.md (written by /setup-meta).
 # The agent command and model come only from the config written by `setup`.
+# Renamed from nightshift: RUNNER_* vars and ~/.config/runner paths are current;
+# a legacy nightshift config file or env is still honored once, with a warning.
 set -euo pipefail
 
-die() { printf 'nightshift: %s\n' "$*" >&2; exit 2; }
-log() { printf '%s nightshift: %s\n' "$(date -Is)" "$*" >&2; }
+die() { printf 'runner: %s\n' "$*" >&2; exit 2; }
+log() { printf '%s runner: %s\n' "$(date -Is)" "$*" >&2; }
 
 # ---------- config ----------
 
+# One-time bridge from the old nightshift names. New code uses RUNNER_* only.
+bridge_legacy() {
+  local pair new old
+  for pair in CONFIG AGENT_CMD MODEL REPOS MODEL_ALLOWLIST MAX_ISSUES MAX_ATTEMPTS TIMEOUT_MIN STATE_DIR WORK_DIR; do
+    new="RUNNER_$pair"; old="NIGHTSHIFT_$pair"
+    [[ -n "${!new:-}" ]] || [[ -z "${!old:-}" ]] || printf -v "$new" '%s' "${!old}"
+  done
+}
+
 load_config() {
-  NIGHTSHIFT_CONFIG_PATH="${NIGHTSHIFT_CONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}/nightshift/config.sh}"
+  bridge_legacy
+  RUNNER_CONFIG_PATH="${RUNNER_CONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}/runner/config.sh}"
+  if [[ ! -f "$RUNNER_CONFIG_PATH" ]]; then
+    local legacy="${XDG_CONFIG_HOME:-$HOME/.config}/nightshift/config.sh"
+    if [[ -f "$legacy" ]]; then
+      RUNNER_CONFIG_PATH="$legacy"
+      log "using legacy nightshift config at $legacy; re-run setup to migrate"
+    fi
+  fi
   # Caller env wins over the file for one call.
   local -A caller=()
   local v
-  for v in ${!NIGHTSHIFT_@}; do caller[$v]="${!v}"; done
+  for v in ${!RUNNER_@}; do caller[$v]="${!v}"; done
   # shellcheck disable=SC1090
-  [[ -f "$NIGHTSHIFT_CONFIG_PATH" ]] && source "$NIGHTSHIFT_CONFIG_PATH"
+  [[ -f "$RUNNER_CONFIG_PATH" ]] && source "$RUNNER_CONFIG_PATH"
   for v in "${!caller[@]}"; do printf -v "$v" '%s' "${caller[$v]}"; done
-  : "${NIGHTSHIFT_MODEL_ALLOWLIST:=}"
-  : "${NIGHTSHIFT_MAX_ISSUES:=1}"
-  : "${NIGHTSHIFT_MAX_ATTEMPTS:=2}"
-  : "${NIGHTSHIFT_TIMEOUT_MIN:=120}"
-  : "${NIGHTSHIFT_STATE_DIR:=${XDG_STATE_HOME:-$HOME/.local/state}/nightshift}"
-  : "${NIGHTSHIFT_WORK_DIR:=${XDG_CACHE_HOME:-$HOME/.cache}/nightshift}"
+  bridge_legacy
+  : "${RUNNER_MODEL_ALLOWLIST:=}"
+  : "${RUNNER_MAX_ISSUES:=1}"
+  : "${RUNNER_MAX_ATTEMPTS:=2}"
+  : "${RUNNER_TIMEOUT_MIN:=120}"
+  : "${RUNNER_STATE_DIR:=${XDG_STATE_HOME:-$HOME/.local/state}/runner}"
+  : "${RUNNER_WORK_DIR:=${XDG_CACHE_HOME:-$HOME/.cache}/runner}"
 }
 
 require_config() {
   local missing=() k
-  for k in NIGHTSHIFT_AGENT_CMD NIGHTSHIFT_MODEL NIGHTSHIFT_REPOS; do
+  for k in RUNNER_AGENT_CMD RUNNER_MODEL RUNNER_REPOS; do
     [[ -n "${!k:-}" ]] || missing+=("$k")
   done
   if ((${#missing[@]})); then
-    [[ -f "$NIGHTSHIFT_CONFIG_PATH" ]] || die "no config at $NIGHTSHIFT_CONFIG_PATH. Run 'nightshift.sh setup' in a terminal first."
-    die "unset: ${missing[*]}. Run 'nightshift.sh setup' again."
+    [[ -f "$RUNNER_CONFIG_PATH" ]] || die "no config at $RUNNER_CONFIG_PATH. Run 'runner.sh setup' in a terminal first."
+    die "unset: ${missing[*]}. Run 'runner.sh setup' again."
   fi
-  if [[ -n "$NIGHTSHIFT_MODEL_ALLOWLIST" ]] && ! [[ " $NIGHTSHIFT_MODEL_ALLOWLIST " == *" $NIGHTSHIFT_MODEL "* ]]; then
-    die "model '$NIGHTSHIFT_MODEL' is not in NIGHTSHIFT_MODEL_ALLOWLIST. Refusing to run."
+  if [[ -n "$RUNNER_MODEL_ALLOWLIST" ]] && ! [[ " $RUNNER_MODEL_ALLOWLIST " == *" $RUNNER_MODEL "* ]]; then
+    die "model '$RUNNER_MODEL' is not in RUNNER_MODEL_ALLOWLIST. Refusing to run."
   fi
   for k in git jq flock timeout; do command -v "$k" >/dev/null || die "missing dependency: $k"; done
-  mkdir -p "$NIGHTSHIFT_STATE_DIR/logs" "$NIGHTSHIFT_WORK_DIR"
+  mkdir -p "$RUNNER_STATE_DIR/logs" "$RUNNER_WORK_DIR"
   [[ -f "$(state attempts.json)" ]] || echo '{}' >"$(state attempts.json)"
 }
 
-state() { printf '%s/%s' "$NIGHTSHIFT_STATE_DIR" "$1"; }
+state() { printf '%s/%s' "$RUNNER_STATE_DIR" "$1"; }
 
 # ---------- per-repo resolution from docs/agents (the /setup-meta output) ----------
 
@@ -87,7 +107,7 @@ f_ready_issues() { # dir label -> "createdAt number" for open, unassigned issues
     gh) (cd "$1" && gh issue list --state open --label "$2" --limit 100 --json number,createdAt,assignees) |
       jq -r '.[] | select((.assignees | length) == 0) | "\(.createdAt) \(.number)"' ;;
     glab) (cd "$1" && glab issue list --label "$2" --per-page 100 --output json) |
-      jq -r '.[] | select((.assignees | length) == 0) | "\(.created_at) \(.iid)"' ;;
+      jq -r '.[] | select((.assignees | length) == 0) | "\(.createdAt) \(.iid)"' ;;
   esac
 }
 
@@ -121,12 +141,6 @@ f_unclaim() {
     glab) (cd "$1" && glab issue update "$2" --unassign >/dev/null 2>&1) || true ;;
   esac
 }
-f_to_draft() {
-  case "$FORGE" in
-    gh) (cd "$1" && gh pr ready "$2" --undo >/dev/null 2>&1) ;;
-    glab) (cd "$1" && glab mr update "$2" --draft >/dev/null 2>&1) ;;
-  esac
-}
 
 # ---------- attempts and history ----------
 
@@ -138,7 +152,7 @@ set_attempts() { # key delta|clear
 }
 record() { # repo n outcome pr log detail
   jq -cn --arg ts "$(date -Is)" --arg repo "$1" --arg n "$2" --arg outcome "$3" --arg pr "$4" \
-    --arg log "$5" --arg detail "$6" --arg model "$NIGHTSHIFT_MODEL" \
+    --arg log "$5" --arg detail "$6" --arg model "$RUNNER_MODEL" \
     '{ts:$ts, repo:$repo, issue:$n, outcome:$outcome, pr:$pr, model:$model, log:$log, detail:$detail}' >>"$(state runs.jsonl)"
 }
 
@@ -163,12 +177,12 @@ recover_stale() { # claims a dead run left behind; safe because we hold the lock
 
 write_prompt() { # dir n file
   cat >"$3" <<PROMPT
-/whips Pick up issue #$2 with playbooks/triage.md intake. This is an unattended nightshift run, so no human is watching.
+/whips Pick up issue #$2 with playbooks/triage.md intake. This is an unattended runner run, so no human is watching.
 
 - Work only on #$2, in the current directory: a fresh worktree detached at the default branch. Create your own branch per playbooks/opening-a-pr.md.
 - Resolve the tracker and labels from docs/agents/issue-tracker.md and docs/agents/triage-labels.md, as the playbooks say.
 - A thin brief follows intake step 4 (triage notes, move to the needs-info role) and stops there.
-- Otherwise finish with playbooks/opening-a-pr.md: a draft PR whose body says "Closes #$2". Never mark it ready, never merge, never enable auto-merge.
+- Otherwise finish with playbooks/opening-a-pr.md, landing per the risk tier (low-risk PASS lands, high waits for the human). Never enable auto-merge.
 - Never wait for an answer. A decision you cannot make goes into the PR body or an issue comment.
 PROMPT
 }
@@ -181,7 +195,7 @@ run_one() { # dir n
 
   f_claim "$dir" "$n" || { log "could not claim $key"; return; }
   printf '%s %s\n' "$dir" "$n" >>"$(state active)"
-  wt="$NIGHTSHIFT_WORK_DIR/worktrees/$(basename "$dir")-$n-$ts"
+  wt="$RUNNER_WORK_DIR/worktrees/$(basename "$dir")-$n-$ts"
   mkdir -p "$(dirname "$wt")"
   if ! git -C "$dir" worktree add --quiet --detach "$wt" "$(default_ref "$dir")" >&2; then
     f_unclaim "$dir" "$n"; sed -i "\|^$dir $n\$|d" "$(state active)"
@@ -192,19 +206,15 @@ run_one() { # dir n
   log "running agent on $key (log: $logf)"
   (
     cd "$wt"
-    export NIGHTSHIFT_MODEL NIGHTSHIFT_ISSUE="$n" NIGHTSHIFT_WORKTREE="$wt" NIGHTSHIFT_PROMPT_FILE="$prompt"
-    NIGHTSHIFT_PROMPT="$(cat "$prompt")"; export NIGHTSHIFT_PROMPT
-    timeout --kill-after=60 "$((NIGHTSHIFT_TIMEOUT_MIN * 60))" bash -c "$NIGHTSHIFT_AGENT_CMD"
+    export RUNNER_MODEL RUNNER_ISSUE="$n" RUNNER_WORKTREE="$wt" RUNNER_PROMPT_FILE="$prompt"
+    RUNNER_PROMPT="$(cat "$prompt")"; export RUNNER_PROMPT
+    timeout --kill-after=60 "$((RUNNER_TIMEOUT_MIN * 60))" bash -c "$RUNNER_AGENT_CMD"
   ) >"$logf" 2>&1 </dev/null || rc=$?
 
   local pr num url draft outcome detail="agent exit $rc"
   pr="$(f_linked_pr "$dir" "$n" || true)"; url=""
   if [[ -n "$pr" ]]; then
     read -r num url draft <<<"$pr"; outcome=pr_opened; set_attempts "$key" clear
-    if [[ "$draft" != true ]]; then
-      detail="$detail; PR was not a draft"
-      f_to_draft "$dir" "$num" && detail="$detail, converted back to draft"
-    fi
   elif f_has_label "$dir" "$n" "$LABEL_NEEDS_INFO"; then
     outcome=needs_info; set_attempts "$key" clear
   elif ((rc == 124 || rc == 137)); then
@@ -231,34 +241,34 @@ cmd_run() {
   recover_stale
   SUMMARY=()
   local dir created n started=0
-  for dir in $NIGHTSHIFT_REPOS; do
-    ((started < NIGHTSHIFT_MAX_ISSUES)) || break
+  for dir in $RUNNER_REPOS; do
+    ((started < RUNNER_MAX_ISSUES)) || break
     git -C "$dir" fetch --quiet --prune origin || { record "$dir" - fetch_failed "" "" ""; continue; }
     resolve_repo "$dir"
     [[ -z "$NOTE" ]] || log "$dir: $NOTE"
     [[ "$FORGE" != unsupported ]] || { record "$dir" - unsupported_tracker "" "" "$NOTE"; continue; }
     while read -r created n; do
       [[ -n "${n:-}" ]] || continue
-      ((started < NIGHTSHIFT_MAX_ISSUES)) || break
-      (($(attempts_of "$dir#$n") < NIGHTSHIFT_MAX_ATTEMPTS)) || continue
+      ((started < RUNNER_MAX_ISSUES)) || break
+      (($(attempts_of "$dir#$n") < RUNNER_MAX_ATTEMPTS)) || continue
       [[ -z "$(f_linked_pr "$dir" "$n" || true)" ]] || continue
       run_one "$dir" "$n"; started=$((started + 1))
     done < <(f_ready_issues "$dir" "$LABEL_READY" | sort)
     : "$created"
   done
   date -Is >"$(state last-finish)"
-  if ((${#SUMMARY[@]})); then printf 'nightshift: %s\n' "$(IFS=';'; echo "${SUMMARY[*]}")"; else echo 'nightshift: nothing eligible'; fi
+  if ((${#SUMMARY[@]})); then printf 'runner: %s\n' "$(IFS=';'; echo "${SUMMARY[*]}")"; else echo 'runner: nothing eligible'; fi
 }
 
 cmd_check() { # exit 0 when something is eligible, 1 when not
   load_config; require_config
   local dir created n
-  for dir in $NIGHTSHIFT_REPOS; do
+  for dir in $RUNNER_REPOS; do
     resolve_repo "$dir"
     [[ "$FORGE" != unsupported ]] || continue
     while read -r created n; do
       [[ -n "${n:-}" ]] || continue
-      (($(attempts_of "$dir#$n") < NIGHTSHIFT_MAX_ATTEMPTS)) || continue
+      (($(attempts_of "$dir#$n") < RUNNER_MAX_ATTEMPTS)) || continue
       [[ -z "$(f_linked_pr "$dir" "$n" || true)" ]] || continue
       printf 'eligible: %s#%s (since %s)\n' "$dir" "$n" "$created"; exit 0
     done < <(f_ready_issues "$dir" "$LABEL_READY" | sort)
@@ -268,8 +278,8 @@ cmd_check() { # exit 0 when something is eligible, 1 when not
 
 cmd_status() {
   load_config
-  printf 'config: %s\nagent:  %s\nmodel:  %s\nlast:   %s .. %s\n' "$NIGHTSHIFT_CONFIG_PATH" \
-    "${NIGHTSHIFT_AGENT_CMD:-unset}" "${NIGHTSHIFT_MODEL:-unset}" \
+  printf 'config: %s\nagent:  %s\nmodel:  %s\nlast:   %s .. %s\n' "$RUNNER_CONFIG_PATH" \
+    "${RUNNER_AGENT_CMD:-unset}" "${RUNNER_MODEL:-unset}" \
     "$(cat "$(state last-start)" 2>/dev/null || echo never)" "$(cat "$(state last-finish)" 2>/dev/null || echo never)"
   [[ -f "$(state runs.jsonl)" ]] && tail -n "${1:-10}" "$(state runs.jsonl)" |
     jq -r '"\(.ts)  \(.repo)#\(.issue)  \(.outcome)  \(.pr)  \(.detail)"'
@@ -285,9 +295,9 @@ AGENTS="opencode pi omp codex claude grok gemini cursor-agent aider goose amp dr
 # Offered only where the CLI documents a non-interactive mode; verify with '<agent> --help'.
 preset_cmd() {
   case "$1" in
-    opencode) printf '%s' 'opencode run --auto -m "$NIGHTSHIFT_MODEL" "$NIGHTSHIFT_PROMPT"' ;;
-    codex) printf '%s' 'codex exec --full-auto -m "$NIGHTSHIFT_MODEL" "$NIGHTSHIFT_PROMPT"' ;;
-    claude) printf '%s' 'claude -p --model "$NIGHTSHIFT_MODEL" "$NIGHTSHIFT_PROMPT"' ;;
+    opencode) printf '%s' 'opencode run --auto -m "$RUNNER_MODEL" "$RUNNER_PROMPT"' ;;
+    codex) printf '%s' 'codex exec --full-auto -m "$RUNNER_MODEL" "$RUNNER_PROMPT"' ;;
+    claude) printf '%s' 'claude -p --model "$RUNNER_MODEL" "$RUNNER_PROMPT"' ;;
     *) return 1 ;;
   esac
 }
@@ -314,12 +324,12 @@ detect_env_keys() { compgen -e | grep -E '(_API_KEY|_TOKEN)$' | grep -vxE 'GH_TO
 
 cmd_detect() {
   load_config
-  printf 'config: %s (%s)\n' "$NIGHTSHIFT_CONFIG_PATH" "$([[ -f "$NIGHTSHIFT_CONFIG_PATH" ]] && echo exists || echo missing)"
+  printf 'config: %s (%s)\n' "$RUNNER_CONFIG_PATH" "$([[ -f "$RUNNER_CONFIG_PATH" ]] && echo exists || echo missing)"
   printf '\nagents on PATH:\n'; detect_agents | sed 's/^/  /'
   printf '\nmodels in harness configs:\n'; detect_models | sort -u | sed 's/^/  /'
   printf '\nprovider env vars (names only):\n'; detect_env_keys | sed 's/^/  /'
   local dir
-  for dir in ${NIGHTSHIFT_REPOS:-}; do
+  for dir in ${RUNNER_REPOS:-}; do
     resolve_repo "$dir"
     printf '\n%s: tracker %s, ready label "%s", needs-info label "%s"%s\n' "$dir" "$FORGE" "$LABEL_READY" "$LABEL_NEEDS_INFO" "${NOTE:+ ($NOTE)}"
   done
@@ -354,7 +364,7 @@ cmd_setup() {
     ((tty)) || die "setup needs a terminal to ask, or --agent-cmd and --model"
     local opts=()
     while read -r a; do opts+=("$(preset_cmd "$a" || echo "$a <type the full non-interactive command>")"); done < <(detect_agents)
-    agent_cmd="$(choose 'Agent command (it sees $NIGHTSHIFT_MODEL, $NIGHTSHIFT_PROMPT, $NIGHTSHIFT_PROMPT_FILE):' "${opts[@]}")"
+    agent_cmd="$(choose 'Agent command (it sees $RUNNER_MODEL, $RUNNER_PROMPT, $RUNNER_PROMPT_FILE):' "${opts[@]}")"
     [[ "$agent_cmd" != *"<type the full"* ]] || agent_cmd="$(ask 'full command' "")"
   fi
   if [[ -z "$model" ]]; then
@@ -364,27 +374,27 @@ cmd_setup() {
     model="$(choose 'Model for every run:' "${models[@]}")"
   fi
   if ((tty)); then
-    [[ -n "$repos" ]] || repos="$(ask 'local clones to work on (space separated paths)' "${NIGHTSHIFT_REPOS:-}")"
-    [[ -n "$allow" ]] || allow="$(ask 'model allowlist (space separated, empty for none)' "${NIGHTSHIFT_MODEL_ALLOWLIST:-}")"
-    [[ -n "$maxi" ]] || maxi="$(ask 'issues per run' "$NIGHTSHIFT_MAX_ISSUES")"
+    [[ -n "$repos" ]] || repos="$(ask 'local clones to work on (space separated paths)' "${RUNNER_REPOS:-}")"
+    [[ -n "$allow" ]] || allow="$(ask 'model allowlist (space separated, empty for none)' "${RUNNER_MODEL_ALLOWLIST:-}")"
+    [[ -n "$maxi" ]] || maxi="$(ask 'issues per run' "$RUNNER_MAX_ISSUES")"
   fi
   [[ -n "$agent_cmd" && -n "$model" ]] || die "agent command and model are required"
-  repos="${repos:-${NIGHTSHIFT_REPOS:-}}"; [[ -n "$repos" ]] || die "no repos given"
+  repos="${repos:-${RUNNER_REPOS:-}}"; [[ -n "$repos" ]] || die "no repos given"
   local abs=()
   for dir in $repos; do
     dir="$(cd "${dir/#\~/$HOME}" 2>/dev/null && pwd)" || die "not a directory: $dir"
     git -C "$dir" rev-parse --git-dir >/dev/null 2>&1 || die "not a git clone: $dir"
     abs+=("$dir")
   done
-  mkdir -p "$(dirname "$NIGHTSHIFT_CONFIG_PATH")"
+  mkdir -p "$(dirname "$RUNNER_CONFIG_PATH")"
   {
-    printf '# Written by "nightshift.sh setup" on %s. Re-run setup to change.\n' "$(date -Is)"
-    printf 'NIGHTSHIFT_AGENT_CMD=%q\nNIGHTSHIFT_MODEL=%q\nNIGHTSHIFT_MODEL_ALLOWLIST=%q\n' "$agent_cmd" "$model" "$allow"
-    printf 'NIGHTSHIFT_REPOS=%q\nNIGHTSHIFT_MAX_ISSUES=%q\n' "${abs[*]}" "${maxi:-$NIGHTSHIFT_MAX_ISSUES}"
-  } >"$NIGHTSHIFT_CONFIG_PATH"
-  unset NIGHTSHIFT_AGENT_CMD NIGHTSHIFT_MODEL NIGHTSHIFT_MODEL_ALLOWLIST NIGHTSHIFT_REPOS NIGHTSHIFT_MAX_ISSUES
+    printf '# Written by "runner.sh setup" on %s. Re-run setup to change.\n' "$(date -Is)"
+    printf 'RUNNER_AGENT_CMD=%q\nRUNNER_MODEL=%q\nRUNNER_MODEL_ALLOWLIST=%q\n' "$agent_cmd" "$model" "$allow"
+    printf 'RUNNER_REPOS=%q\nRUNNER_MAX_ISSUES=%q\n' "${abs[*]}" "${maxi:-$RUNNER_MAX_ISSUES}"
+  } >"$RUNNER_CONFIG_PATH"
+  unset RUNNER_AGENT_CMD RUNNER_MODEL RUNNER_MODEL_ALLOWLIST RUNNER_REPOS RUNNER_MAX_ISSUES
   load_config; require_config
-  echo "saved $NIGHTSHIFT_CONFIG_PATH"
+  echo "saved $RUNNER_CONFIG_PATH"
   cmd_detect | sed -n '/^\//,$p'
 }
 
@@ -395,5 +405,5 @@ case "${1:-}" in
   run) cmd_run ;;
   status) shift; cmd_status "${1:-10}" ;;
   reset) shift; cmd_reset "${1:-}" ;;
-  *) echo 'usage: nightshift.sh setup [flags] | detect | check | run | status [N] | reset <repo-dir>#<n>' >&2; exit 2 ;;
+  *) echo 'usage: runner.sh setup [flags] | detect | check | run | status [N] | reset <repo-dir>#<n>' >&2; exit 2 ;;
 esac

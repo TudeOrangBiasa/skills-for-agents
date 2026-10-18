@@ -1,6 +1,6 @@
 # Playbook: goal mode
 
-Goal mode: one goal pursued to its predicate without the user watching. Not a queue runner (that is `/nightshift`): one goal, one predicate, done when it holds: "run until the tests are green", "work through these five issues", "keep going while I sleep". You own the exit condition. Every unit still ends as a draft PR, and the pause list in `SKILL.md` section 5 still holds.
+Goal mode: one goal pursued to its predicate without the user watching. Not a queue runner (that is `/runner`): one goal, one predicate, done when it holds: "run until the tests are green", "work through these five issues", "keep going while I sleep". You own the exit condition. Every unit still ends as a draft PR, and the pause list in `SKILL.md` section 5 still holds.
 
 1. State the exit condition as a checkable predicate before the first iteration: the suite is green, the repro passes, all N issues have draft PRs. Add a budget the user gave or one you state (iterations, hours, PR count). Hitting the budget is a stop, reported as such.
 2. Pick the wake mechanism the harness offers: its loop or wait command, a watch on CI or a ref, or an outside scheduler calling `/whips` again. Event-driven beats fixed intervals. One watcher at a time.

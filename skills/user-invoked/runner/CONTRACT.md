@@ -1,6 +1,6 @@
 # Contract
 
-What `scripts/nightshift.sh` reads, does, and writes. A scheduler needs only this file.
+What `scripts/runner.sh` reads, does, and writes. A scheduler needs only this file. Renamed from nightshift: `RUNNER_*` names and `~/.config/runner` paths are current; a legacy nightshift config file or env is honored once with a warning, then re-run setup to migrate.
 
 ## Commands
 
@@ -17,19 +17,19 @@ Setup flags: `--agent-cmd`, `--model`, `--repos`, `--allowlist`, `--max-issues`.
 
 ## Config
 
-`$NIGHTSHIFT_CONFIG`, else `~/.config/nightshift/config.sh`, written by setup. An env var of the same name overrides the file for one call.
+`$RUNNER_CONFIG`, else `~/.config/runner/config.sh`, written by setup. An env var of the same name overrides the file for one call.
 
 | Key | Default | Meaning |
 | --- | --- | --- |
-| `NIGHTSHIFT_AGENT_CMD` | none, required | Shell command that runs the agent non-interactively |
-| `NIGHTSHIFT_MODEL` | none, required | Passed to the command as `$NIGHTSHIFT_MODEL` |
-| `NIGHTSHIFT_REPOS` | none, required | Space separated paths to local clones |
-| `NIGHTSHIFT_MODEL_ALLOWLIST` | empty | Space separated; a model outside it refuses |
-| `NIGHTSHIFT_MAX_ISSUES` | `1` | Issues per run |
-| `NIGHTSHIFT_MAX_ATTEMPTS` | `2` | Failures before an issue waits for `reset` |
-| `NIGHTSHIFT_TIMEOUT_MIN` | `120` | Per issue |
-| `NIGHTSHIFT_STATE_DIR` | `~/.local/state/nightshift` | Lock, logs, history |
-| `NIGHTSHIFT_WORK_DIR` | `~/.cache/nightshift` | Worktrees |
+| `RUNNER_AGENT_CMD` | none, required | Shell command that runs the agent non-interactively |
+| `RUNNER_MODEL` | none, required | Passed to the command as `$RUNNER_MODEL` |
+| `RUNNER_REPOS` | none, required | Space separated paths to local clones |
+| `RUNNER_MODEL_ALLOWLIST` | empty | Space separated; a model outside it refuses |
+| `RUNNER_MAX_ISSUES` | `1` | Issues per run |
+| `RUNNER_MAX_ATTEMPTS` | `2` | Failures before an issue waits for `reset` |
+| `RUNNER_TIMEOUT_MIN` | `120` | Per issue |
+| `RUNNER_STATE_DIR` | `~/.local/state/runner` | Lock, logs, history |
+| `RUNNER_WORK_DIR` | `~/.cache/runner` | Worktrees |
 
 Label strings and tracker commands are not config. They come from each repo's `docs/agents/`.
 
@@ -41,16 +41,16 @@ Label strings and tracker commands are not config. They come from each repo's `d
 
 ## The agent command
 
-Runs through `bash -c` in the worktree, stdin closed, output to the per-issue log, killed at the timeout. Exported: `NIGHTSHIFT_MODEL`, `NIGHTSHIFT_PROMPT`, `NIGHTSHIFT_PROMPT_FILE`, `NIGHTSHIFT_ISSUE`, `NIGHTSHIFT_WORKTREE`. An example, not a default:
+Runs through `bash -c` in the worktree, stdin closed, output to the per-issue log, killed at the timeout. Exported: `RUNNER_MODEL`, `RUNNER_PROMPT`, `RUNNER_PROMPT_FILE`, `RUNNER_ISSUE`, `RUNNER_WORKTREE`. An example, not a default:
 
 ```bash
-NIGHTSHIFT_AGENT_CMD='opencode run --auto -m "$NIGHTSHIFT_MODEL" "$NIGHTSHIFT_PROMPT"'
-NIGHTSHIFT_MODEL='opencode-go/muse-spark-1.3'
+RUNNER_AGENT_CMD='opencode run --auto -m "$RUNNER_MODEL" "$RUNNER_PROMPT"'
+RUNNER_MODEL='opencode-go/muse-spark-1.3'
 ```
 
-The allowlist only governs what nightshift launches. Pin the agent's own subagent or fallback models in the agent's config.
+The allowlist only governs what the runner launches. Pin the agent's own subagent or fallback models in the agent's config.
 
-The prompt opens with `/whips` and asks for triage intake on exactly that issue, `opening-a-pr` to finish, never ready or merge, and no waiting for answers. It is saved beside the log.
+The prompt opens with `/whips` and asks for triage intake on exactly that issue, `opening-a-pr` to finish with tiered landing, and no waiting for answers. It is saved beside the log.
 
 ## Outcomes
 
@@ -64,10 +64,10 @@ The prompt opens with `/whips` and asks for triage intake on exactly that issue,
 | `interrupted`, `recovered_pr` | A dead run's claim, released at the next start | | |
 | `fetch_failed`, `unsupported_tracker` | The repo was skipped | | |
 
-State lives under `NIGHTSHIFT_STATE_DIR`: `lock`, `active`, `attempts.json`, `runs.jsonl`, `last-start`, `last-finish`, `logs/`.
+State lives under `RUNNER_STATE_DIR`: `lock`, `active`, `attempts.json`, `runs.jsonl`, `last-start`, `last-finish`, `logs/`.
 
 ## Limits
 
-- The lock is per machine; run nightshift from one machine.
+- The lock is per machine; run the runner from one machine.
 - A PR counts as linked only when its body says `Closes`, `Fixes`, or `Resolves #N`.
 - Needs `bash`, `git`, `jq`, `flock`, `timeout`, and the tracker CLI, authenticated.
