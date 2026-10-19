@@ -1,0 +1,5 @@
+interface:
+  display_name: "Maintain Verification"
+  short_description: "Upkeep pass for verify skill"
+policy:
+  allow_implicit_invocation: false

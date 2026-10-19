@@ -1,0 +1,5 @@
+interface:
+  display_name: "Runner"
+  short_description: "Run ready issues on schedule"
+policy:
+  allow_implicit_invocation: false

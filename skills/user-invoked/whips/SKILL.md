@@ -17,7 +17,7 @@ Read the task and match exactly one row. First match wins.
 | --- | --- |
 | Pause, stop for now, the laptop is closing | `playbooks/pause.md` |
 | Resume or take over a prior run, branch, or draft PR | `playbooks/pickup.md` |
-| Run until a condition holds, keep going unattended | `playbooks/autonomous-run.md` |
+| A goal to pursue until its predicate holds, unattended | `playbooks/goal.md` |
 | Pick up the next agent-ready issue | `playbooks/triage.md` intake |
 | Review or bot comments on an open agent PR | `playbooks/triage.md` review mode |
 | Check on a PR or stack, get it green, anything outstanding | `playbooks/babysit.md` |
@@ -30,9 +30,18 @@ Read the task and match exactly one row. First match wins.
 | A read-only question | `playbooks/investigation.md` |
 | A huge, foggy effort | `playbooks/wayfinder-handoff.md` |
 | Codebase health on a spare moment | `playbooks/upkeep.md` |
+| A live process to instrument: spin, leak, or glitch with no diagnosis | `playbooks/runtime-forensics.md` |
+| A captured trace or dump to diagnose: cpuprofile, heapsnapshot, spindump | `playbooks/trace-forensics.md` |
+| A migration that must stay pixel-identical | `playbooks/visual-parity.md` |
+| A variant to test blind before promoting it | `playbooks/eval.md` |
+| A slow path with numbers to prove | `playbooks/perf-issue.md` |
+| A metric to improve iteratively against a target | `playbooks/hillclimb.md` |
+| Disk full of stale worktrees and caches | `playbooks/worktree-cleanup.md` |
+| A program outliving any single agent (multi-day, many PRs) | `playbooks/orchestrate.md` |
+| A large migration or multi-part change no row above fits | `playbooks/figure-it-out.md` |
 | Every playbook that changes code ends here | `playbooks/opening-a-pr.md` |
 
-Nothing fits: answer directly in chat. Never invent a playbook on the spot.
+Truly nothing fits (a question, a small ask): answer directly in chat. Real work with no matching row goes to `figure-it-out.md`. Never invent a playbook on the spot.
 
 ## 2. Open the todo, verbatim
 
@@ -45,7 +54,7 @@ Each row fires whenever its condition holds, on top of the playbook steps. Call 
 | When | Skill |
 | --- | --- |
 | Any code | name the data shape first: "codebase-design" |
-| Code crosses a function boundary | "codebase-design", design it twice |
+| Code crosses a function boundary | "architect" (ground, sketch twice, agree, implement, scrap) on "codebase-design" vocabulary |
 | A defect, a failing test, a slow path | "diagnose" |
 | A behavior to build or pin | "tdd" |
 | Domain terms change or a hard-to-reverse decision lands | "domain-modeling" |
@@ -53,6 +62,9 @@ Each row fires whenever its condition holds, on top of the playbook steps. Call 
 | Outside docs or API facts | "research" |
 | Contested design, or before any PR | "code-review", plus the same prompt to a second model when the harness offers one |
 | A merge or rebase conflict | "merge-fix" |
+| Before review, comments and the code they protect | "no-comments" |
+| A perf number you measured | "benchmark-checklist" before reporting or acting on it |
+| A small diff you don't trust | "blast-radius" for what breaks outside it |
 | A step only a human can do (secrets, dashboards) | "wizard" |
 | A PR body | "pr" |
 | A UI change about to ship | "break" |
@@ -65,7 +77,7 @@ A step that names a user-invoked skill (`/wayfinder`, `/to-spec`, `/to-tickets`,
 
 ## 4. Enforce the HIT gates, in order
 
-Map before Guardrails, Guardrails before Walk. When the map is vague, return to the Map and do not proceed: call the Skill tool with "prototype" when running code can answer the question, else tell the user to run `/discuss-with-docs` or `/wayfinder`. When guardrails are missing, call the Skill tool with "tdd" and write behavior plus negative cases first, and do not implement. Never quietly change a guardrail to fit a wrong implementation; that decision belongs to the user.
+Map before Guardrails, Guardrails before Walk. When the map is vague, return to the Map and do not proceed: call the Skill tool with "prototype" when running code can answer the question, else tell the user to run `/discuss-with-docs` or `/wayfinder`. Drive through instead of gating when the fog is thin (one interview round settles it, single-session scope, context still fresh): run the interview, the spec sketch, and the tickets inline, then proceed. Never drive through a human-only step (`wizard`) or above risk authority. When guardrails are missing, call the Skill tool with "tdd" and write behavior plus negative cases first, and do not implement. Never quietly change a guardrail to fit a wrong implementation; that decision belongs to the user.
 
 ## 5. Autonomy
 
@@ -73,7 +85,8 @@ Reversible work proceeds without asking: branches, worktrees, commits, pushing y
 
 Always pause for the human, and keep building everything else meanwhile:
 
-- Merging, marking a PR ready, enabling auto-merge.
+- Merging, marking a PR ready, or enabling auto-merge above your risk authority: low-risk PASS PRs and qualifying medium PRs per [RISK.md](RISK.md) may land; everything else waits.
+- A `figure-it-out` design: present the phase list and wait for approval before executing.
 - Force-pushing a branch someone else works on.
 - Deploying, deleting data, touching secrets or production config.
 - Closing an issue, messaging anyone outside the repo.
@@ -92,9 +105,9 @@ On OMP, read `VIBE-MAPPING.md` first and follow it on every run: director toolse
 
 ## 7. Verify, gate, open the draft
 
-Verify on the matching surface. Verdicts are VERIFIED, NOT VERIFIED, or INCONCLUSIVE, and inconclusive is not a pass. CI green is an input, not a verdict. Evidence-free work returns to a fresh fix agent, never to the same worker by resume chain.
+Verify on the matching surface. Verdicts are VERIFIED, NOT VERIFIED, or INCONCLUSIVE, and inconclusive is not a pass. CI green is an input, not a verdict. Evidence-free work returns to a fresh fix agent, never to the same worker by resume chain. Strategic track: nominate at most one environment improvement this task suggested (a repeated manual step, a missing check, a confusing doc) as a `/retro` candidate with its evidence. Never fix it mid-run; the list goes to retro.
 
-Open the closing PR per `playbooks/opening-a-pr.md`: always a draft, one risk label plus a `## Risk` paragraph per [RISK.md](RISK.md), `Closes #N` when an issue exists, body shaped with the `pr` skill (summary visual, before/after evidence, merge danger). The human marks it ready and merges; agents never do. Visible changes add the ATTACHMENTS.md pair: before/after table, native 1x, matched viewport and crop, video when motion matters, never inside `<details>`. On a PR, agents never add themselves as collaborator, assignee, or reviewer. Claiming an issue by assignment, per the Claim step in `docs/agents/issue-tracker.md`, is allowed. Tools are not people, so they only author the body and request review from humans.
+Open the closing PR per `playbooks/opening-a-pr.md`: always a draft, one risk label plus a `## Risk` paragraph per [RISK.md](RISK.md), `Closes #N` when an issue exists, body shaped with the `pr` skill (summary visual, before/after evidence, merge danger). Landing follows the risk tier per [RISK.md](RISK.md): low-risk PRs land immediately in the same run on an independent PASS (no draft pile, no human touch, never self-reported); qualifying medium PRs may be marked ready and merged by the agent; high-risk PRs wait for the human. Human review time is for high-risk only. Visible changes add the ATTACHMENTS.md pair: before/after table, native 1x, matched viewport and crop, video when motion matters, never inside `<details>`. On a PR, agents never add themselves as collaborator, assignee, or reviewer. Claiming an issue by assignment, per the Claim step in `docs/agents/issue-tracker.md`, is allowed. Tools are not people, so they only author the body and request review from humans.
 
 ## 8. Reply
 

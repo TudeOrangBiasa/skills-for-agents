@@ -11,6 +11,8 @@ Each folder has a `README.md` that lists every skill in the folder with a one-li
 
 Every `SKILL.md` carries its invocation in frontmatter. See [.agents/invocation.md](./.agents/invocation.md).
 
+User-facing changes (`skills/`, top-level `README.md`) each bring a changeset file under `.changeset/` describing the change in one paragraph (`minor` for features, `patch` for fixes). `CHANGELOG.md` is generated from them by `npm run version`, never hand-edited; version bumps ride the same command. No release leaves pending changesets behind.
+
 [`guide`](./skills/user-invoked/guide/SKILL.md) is the router that maps every user-reachable skill and how they relate. Whenever you add, rename, remove, or change how a user-reachable skill fits the flows, re-read `guide`'s `SKILL.md` and update it so the map stays accurate: a new skill it never mentions, or a stale one it still routes to, is a router that lies.
 
 Install skills into harnesses only via `npx skills` as described in [.agents/install-block.md](./.agents/install-block.md). There is no local symlink script. Pull the latest changes when you want them with `npx skills update`.

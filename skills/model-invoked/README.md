@@ -2,18 +2,31 @@
 
 Skills the agent can fire on its own when the task fits, or the human can type by name. They hold reusable discipline and shared reference. Model-invoked skills may be invoked by other skills.
 
+- **[architect](./architect/SKILL.md)**: Settle types, signatures, and module shape before code: ground, sketch twice, agree, implement, scrap when wrong.
+- **[arena](./arena/SKILL.md)**: Parallel design bakeoff: N candidates on one brief, cross-judge, pick a base, graft the best parts.
+- **[benchmark-checklist](./benchmark-checklist/SKILL.md)**: Vet a perf measurement (limiter, tuning, limits, errors, repeatability, relevance) before reporting or acting.
+- **[blast-radius](./blast-radius/SKILL.md)**: Find what a change could break outside itself and prove the one safety fact by running code.
 - **[break](./break/SKILL.md)**: Stress-test one component against worst-case content and states on a throwaway page.
+- **[correct](./correct/SKILL.md)**: Eliminate repeated agent mistakes at the highest level that works: architecture, types, lint, tests, docs last.
 - **[codebase-design](./codebase-design/SKILL.md)**: Shared vocabulary for designing deep modules.
 - **[code-review](./code-review/SKILL.md)**: Review the changes since a fixed point along two axes: Standards and Spec.
 - **[diagnose](./diagnose/SKILL.md)**: Diagnosis loop for hard bugs and performance regressions.
 - **[domain-modeling](./domain-modeling/SKILL.md)**: Build and sharpen a project's domain model.
+- **[how](./how/SKILL.md)**: Explain how a subsystem works with complexity triage and fixed output sections.
+- **[interrogate](./interrogate/SKILL.md)**: Adversarial multi-model review with rubric and bucketed verdict.
 - **[interview](./interview/SKILL.md)**: Interview the user relentlessly about a plan, decision, or idea. The reusable interview primitive behind `discuss`, `discuss-with-docs`, `triage`, `wayfinder` and `deepen`.
 - **[pr](./pr/SKILL.md)**: The mandatory PR body shape: summary visual, before/after evidence with UI tables, merge danger. Captures visuals with `agent-browser`; attachment method packed in the skill.
 - **[prototype](./prototype/SKILL.md)**: Build a throwaway prototype to answer a design question.
 - **[research](./research/SKILL.md)**: Investigate a question against high-trust primary sources and capture the findings as a cited Markdown file in the repo.
 - **[merge-fix](./merge-fix/SKILL.md)**: Use when you need to resolve an in-progress git merge/rebase conflict.
+- **[no-comments](./no-comments/SKILL.md)**: Kill needless comments plus the dead code they protect, fix root causes, encode constraints.
 - **[setup-pre-commit](./setup-pre-commit/SKILL.md)**: Set up Husky pre-commit hooks with lint-staged (Prettier), type checking, and tests in the current repo.
+- **[show-me-your-work](./show-me-your-work/SKILL.md)**: Keep a reviewable TSV decision trail for long or unattended work, with end audit and attention flags.
+- **[swarm](./swarm/SKILL.md)**: Parallel worker fan-out for coverage, races, and gauntlets with one report.
 - **[tdd](./tdd/SKILL.md)**: Test-driven development with a red-green-refactor loop.
+- **[technical-writing](./technical-writing/SKILL.md)**: Write docs, RFCs, readmes, and commit messages to a layered standard.
+- **[ui-recording-timeline](./ui-recording-timeline/SKILL.md)**: Turn a UI screen recording into an interactive paint timeline page for motion proof.
 - **[unslop](./unslop/SKILL.md)**: Cut AI tells from prose before it ships.
 - **[wizard](./wizard/SKILL.md)**: Generate an interactive bash wizard that walks a human through steps only they can perform.
 - **[writing-for-agents](./writing-for-agents/SKILL.md)**: Writing documents for agents: skills, AGENTS.md, and any doc an agent reaches by a pointer.
+- **[why](./why/SKILL.md)**: Find why code is shaped this way with fan-out investigators and confidence tiers.

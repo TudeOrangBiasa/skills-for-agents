@@ -1,6 +1,6 @@
 ---
 name: setup-pre-commit
-description: Set up Husky pre-commit hooks with lint-staged (Prettier), type checking, and tests in the current repo. Use when user wants to add pre-commit hooks, set up Husky, configure lint-staged, or add commit-time formatting/typechecking/testing.
+description: Set up Husky pre-commit hooks with lint-staged (Prettier), type checking, tests, and a token-size gate in the current repo. Use when user wants to add pre-commit hooks, set up Husky, configure lint-staged, or add commit-time formatting/typechecking/testing.
 ---
 
 # Setup Pre-Commit Hooks
@@ -11,6 +11,7 @@ description: Set up Husky pre-commit hooks with lint-staged (Prettier), type che
 - **lint-staged** running Prettier on all staged files
 - **Prettier** config (if missing)
 - **typecheck** and **test** scripts in the pre-commit hook
+- **token-size gate**: staged text files stay under ~5,000 tokens so no file grows past reviewable size
 
 ## Steps
 
@@ -70,15 +71,31 @@ Only create if no Prettier config exists. Use these defaults:
 }
 ```
 
-### 7. Verify
+### 7. Token-size gate
+
+Refuse staged files over ~5,000 tokens (tokens = bytes/4), so nothing grows past agent-reviewable size. Append to `.husky/pre-commit`:
+
+```bash
+# token budget: staged text files stay under ~5000 tokens
+oversize="$(git diff --cached --name-only --diff-filter=ACM | grep -vE '(\.lock$|lock\.yaml$|lockb$|\.min\.|/dist/|/build/|CHANGELOG\.md$|package-lock\.json$)' | while read -r f; do
+  [ -f "$f" ] || continue
+  bytes=$(wc -c <"$f"); [ "$bytes" -gt 20000 ] && echo "$f ($((bytes / 4)) tokens)";
+done)"
+[ -z "$oversize" ] || { echo "oversized staged files (split first, then commit):"; echo "$oversize"; exit 1; }
+```
+
+Lockfiles, minified bundles, build output, and the generated changelog are exempt (not agent-authored). The error names the files plus token counts so the split is obvious.
+
+### 8. Verify
 
 - [ ] `.husky/pre-commit` exists and is executable
 - [ ] `.lintstagedrc` exists
 - [ ] `prepare` script in package.json is `"husky"`
 - [ ] `prettier` config exists
+- [ ] token gate rejects a staged text file over 20k bytes (test once with a scratch file, then unstage it)
 - [ ] Run `npx lint-staged` to verify it works
 
-### 8. Commit
+### 9. Commit
 
 Stage all changed/created files and commit with message: `Add pre-commit hooks (husky + lint-staged + prettier)`
 

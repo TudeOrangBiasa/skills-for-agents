@@ -1,0 +1,5 @@
+interface:
+  display_name: "Showcase"
+  short_description: "Demo the work itself"
+policy:
+  allow_implicit_invocation: false

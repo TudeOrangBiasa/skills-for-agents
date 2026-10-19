@@ -1,0 +1,3 @@
+# Credits
+
+Independent reviewers with the same brief, the six-lens rubric (correctness, root cause vs symptom, structural integrity, verification, complexity budget, security), finding merge with agreement weighting, and the Act/Consider/Noted/Dismissed buckets adapted from the pstack skill set by poteto ([Lauren Tan](https://x.com/poteto), MIT). Rewritten to this repo conventions: reviewers follow the repo model map with a two-pass fallback on single-model harnesses, cross-references point at our principle rules. Copied in, not depended on, so standalone installs keep working without the upstream repo.

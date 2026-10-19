@@ -24,10 +24,10 @@ Rule numbers are stable ids that other skills may cite. A removed rule leaves a 
 
 ### Words
 
-4. **AI vocabulary.** Additionally, crucial, delve, enhance, fostering, garner, intricate, landscape (abstract), pivotal, robust, seamless, showcase, testament, underscore, vibrant. Use the plain word.
+4. **AI vocabulary.** Additionally, crucial, delve, enduring, enhance, fostering, garner, intricate, interplay, landscape (abstract), pivotal, robust, seamless, showcase, testament, underscore, vibrant. Use the plain word.
 5. **Fancy "is".** "serves as", "stands as", "boasts", "features". Write "is" or "has".
 6. **Plain words over fancy ones.** Use, help, many, if, not utilize, facilitate, numerous, in the event that.
-7. **Abstract metaphor nouns.** Substrate, wedge, vector, north star, flywheel, paradigm, scaffolding (as a metaphor). Name the concrete thing.
+7. **Abstract metaphor nouns.** Substrate, wedge, vector, north star, flywheel, paradigm, scaffolding (as a metaphor), gold-plating (more than the job needs), ratchet (the mechanism's real name), evacuate for moving code (move out), endgame (the last phase). Name the concrete thing.
 8. **Filler.** "In order to" is "to". "Due to the fact that" is "because". "It is important to note that" goes.
 9. **Hedging stacks.** "could potentially possibly" is "may".
 10. **Adverb props.** "runs quickly" is the number or "is fast". "Significantly improves" is the measured change.
@@ -37,11 +37,13 @@ Rule numbers are stable ids that other skills may cite. A removed rule leaves a 
 11. **"Not just X, but Y."** State the point directly.
 12. **Forced threes.** Use the natural count of items.
 13. **Synonym cycling.** Pick one name for a thing and repeat it.
-14. **Em dashes.** None. Rewrite with a comma, colon, period, parentheses, or a conjunction, whichever the sentence wants.
+14. **Em dashes.** None. Rewrite with a comma, colon, or period, or a conjunction, whichever the sentence wants. Parentheses are not a dash substitute: if the thought needs separation, end the sentence or use a comma.
 15. **Colon as a mid-sentence connector.** Fine before a list or example; elsewhere, let the sentence stand.
 16. **Bold everywhere.** Bold only a label that starts a list item and ends in a period, or a term being defined.
 17. **Title Case Headings.** Use sentence case.
 18. **Decorative emoji and curly quotes.** Remove emoji; use straight quotes.
+25. **False ranges.** "from X to Y" where X and Y are not on a meaningful scale. List the topics directly.
+26. **Inline-header restatement.** A bold label plus colon that restates the line ("**Performance:** Performance improved...") becomes prose. A bold lead-in that ends in a period and adds genuinely new detail stays (see rule 16).
 
 ### Talking to the reader
 

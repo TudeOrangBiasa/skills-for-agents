@@ -57,6 +57,7 @@ Do not force a test when it would be impractical. If the available test would re
 - **One slice at a time.** One seam, one test, one minimal implementation per cycle.
 - **Do not change tests to match a wrong implementation.** Do not weaken existing assertions unless the expected behavior has genuinely changed and the reason is clear.
 - **Keep the test focused.** Avoid broad fixture churn or unrelated coverage expansion. If the bug exposes a broader class of failures, land the focused regression first, then consider sibling coverage.
+- **Deterministic before kept.** A flaky test is not a kept test. Rerun until the flake shows, fix the nondeterminism (seed, clock, ordering, shared state), and document the signal the test guards. A test that cannot fail the same way twice proves nothing.
 - **Refactoring is not part of the loop.** It belongs to the review stage (see the `code-review` skill), not the red → green implementation cycle.
 
 ## Final response

@@ -10,6 +10,7 @@ The skills speak in terms of five canonical triage roles. This file maps those r
 | `ready-for-human`          | `ready-for-human`    | Requires human implementation            |
 | `wontfix`                  | `wontfix`            | Will not be actioned                     |
 | `risk-low`                 | `risk:low`           | Agent PR safe to merge in a quick batch  |
+| `risk-medium`              | `risk:medium`        | Agent PR merges only when every landing condition holds |
 | `risk-high`                | `risk:high`          | Agent PR needs a real human review first |
 
 When a skill mentions a role (e.g. "apply the AFK-ready triage label"), use the corresponding label string from this table.

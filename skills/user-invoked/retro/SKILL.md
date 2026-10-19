@@ -10,7 +10,7 @@ The user has asked for a **retrospective**. You are suggesting improvements to t
 
 1. Call the Skill tool with `writing-for-agents` for the writing style guide.
 
-2. Read the primary sources for the session the user specifies. This may mean searching through session logs on this machine. If the user doesn't specify a session, default to the current one.
+2. Read the primary sources for the session the user specifies. This may mean searching through session logs on this machine. Pull the PR review comments on the session's PRs alongside the logs: recurring reviewer objections are standards proposals waiting to happen. If the user doesn't specify a session, default to the current one.
 
 3. Look for candidates for improvement in these categories.
 
@@ -18,7 +18,7 @@ The user has asked for a **retrospective**. You are suggesting improvements to t
 - **Automated checks**: are there automated checks that could catch errors the agent made? Linting, typing, tests, filesystem linters? Read the repo's own check command first (its `package.json`/build-tool `lint`/`check` scripts, its CI workflow), so a check that already exists but sits unwired or silently broken is the finding, not a reinvention. A repo with no **guardrail** (no pre-commit hook and no CI job running its lint/typecheck/test command) is itself a finding: an un-linted repo is a standing missed opportunity, not a neutral default. _Use when_ the agent made a mistake an automated check could have caught, or the repo has no guardrail at all.
 - **Coding standards**: should the **reviewer agent** be given a new rule to enforce? Should an existing rule be removed or clarified? Classify the violation first: a **mechanical** one (a fixed syntactic pattern, a banned API, an import shape, a file-location rule) gets a deterministic check, full stop: a custom rule in the repo's own linter, a new pre-commit hook, or a new CI job, whichever the repo's language and existing guardrail make cheapest. Default to building the check over writing the rule. Reserve `CODING_STANDARDS.md` for genuine **judgement calls** (cross-file consistency, "matches the surrounding style," anything no guardrail could ever substitute for). _Use when_ the reviewer agent failed to catch a mistake.
 - **Global AGENTS.md**: are there any steering instructions that should be moved to coding standards (or automated checks) instead? _Use when_ the AGENTS.md file is particularly large - in the repo OR the user's global scope.
-- **Tool economy**: did the agent make expensive tool calls that could be streamlined? Is there any custom tooling (CLI's, MCP's) that is particularly token-inefficient? _Use when_ the agent made an expensive tool call.
+- **Tool economy**: did the agent make expensive tool calls that could be streamlined? Is there any custom tooling (CLI's, MCP's) that is particularly token-inefficient? A task the agent repeated by hand is a custom-tooling candidate: propose a CLI the agent owns plus a skill driving it, which means fewer tokens and fewer hallucinations. _Use when_ the agent made an expensive tool call, or did the same task by hand more than once.
 - **No-ops**: look for instructions in steering files that don't modify the agent's behavior. _Use when_ the steering files are large and unwieldy.
 - **Information access**: look for opportunities to increase the agent's access to information. Teeing dev server logs, readonly access to third-party services. _Use when_ a crucial piece of information was not available to the agent.
 
@@ -35,8 +35,13 @@ Write nothing yet. Collect every proposal for step 6.
 - A mistake that keeps recurring becomes a deterministic rule or automated check proposal. Never a prose reminder where a check is possible.
 - A decision re-litigated becomes an ADR proposal.
 - Friction in the flow itself (repeated clarifications, rework loops) becomes a skill or router proposal.
+- A reviewer objection that recurs across PRs becomes a CODING_STANDARDS.md proposal (splitting files as needed) or a deterministic check. PR comments inform the code going forward.
 
 Each pattern names the repeats it stands on. No pattern from a single occurrence, unless the cost was severe.
+
+## Deep mode (multi-lens review)
+
+For sessions worth a harder look, run three parallel reviewers over the session before step 6: judgment (do the findings hold, what contradicts them), tooling (which findings a lint, script, flag, or check would enforce more reliably), divergent (what the first two missed or dismissed too fast). A synthesizer merges them into Accepted, Rejected, and Backlog rows; structural findings move to Backlog per rule 13. Present all three lists; write only approved Accepted rows, file Backlog without waiting. Skip for trivial sessions and one-offs.
 
 6. Present all candidates (environment improvements from step 3, meta-docs updates from step 4, patterns from step 5) in order of severity. Write only what the user approves, file by file.
 
