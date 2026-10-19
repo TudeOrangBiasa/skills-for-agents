@@ -1,0 +1,5 @@
+interface:
+  display_name: "Judgment Drill"
+  short_description: "Train taste with A/B picks"
+policy:
+  allow_implicit_invocation: false

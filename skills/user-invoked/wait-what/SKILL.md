@@ -4,7 +4,7 @@ description: "Lost in what the agent just said or built: hear your goals restate
 disable-model-invocation: true
 ---
 
-Fire this the moment an agent message does not land: jargon you do not follow, a decision whose premise you never saw, work you watched happen but cannot picture. First restate in your own words what you think the user goals are and what problem they are trying to solve, then re-pitch the confusing thing visually instead of repeating it in words. Skip the preamble and keep prose brief. Use the user domain language from `GLOSSARY.md`.
+Fire this the moment an agent message does not land: jargon you do not follow, a decision whose premise you never saw, work you watched happen but cannot picture. Order matters: text first, diagram only when earned. First restate in your own words what you think the user goals are and what problem they are trying to solve, then explain plainly in words. A diagram renders only when something needs showing: a relation, an attachment, a structure words cannot carry. Never decorate prose with a diagram. Skip the preamble and keep prose brief. Use the user domain language from `GLOSSARY.md`.
 
 ## The report
 

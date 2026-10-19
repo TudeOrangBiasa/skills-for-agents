@@ -92,7 +92,7 @@ A **phase** is a chunk of work inside a session: the interview, the implementati
 
 - **Continue**: stay put. Costs nothing, loses nothing.
 - **`/clear`**: empty the window, when nothing here matters to what's next.
-- **Portable note**: write a short markdown file by hand. Narrow: only for a **new harness**, a **new directory**, a **colleague**, or forking a side task **mid-phase**. What it buys is portability.
+- **Portable note**: write a short markdown file by hand. Narrow: only for a **new harness**, a **new directory**, a **colleague**, or forking a side task **mid-phase**. What it buys is portability. Use `/handoff` to write it.
 - **Subagent**: send a tightly-scoped task to its own window and get a report back.
 - **`/compact`** compresses this context and seeds a fresh session with it. The **default**, at the bottom of the tree rather than the first reach.
 
@@ -114,6 +114,10 @@ Off the main flow entirely.
 - **`/ketchup`** catches you up after a long agent run: everything since your last message in plain words, each action item with an executive summary so you can decide. Use it mid-conversation, inside any other skill.
 - **`/recall`** rebuilds recent working context across chats into a tight capsule brief before you start or resume. One specific run, branch, or draft PR is whips pickup instead; this chat alone is `/ketchup`.
 - **`/teach`**: learn a concept over multiple sessions, using the current directory as a stateful workspace.
+- **`/handoff`**: compact the conversation into a handoff doc for another session (grill-to-teach and back, cross-harness, side tasks). Suggested skills ride along; secrets stay out.
+- **`/explain-diff-before-merge`**: merge gate for learning: explain the diff yourself, survive correction plus three why questions, then merge.
+- **`/judgment-drill`**: train taste with A/B picks against a hidden rubric.
+- **`/learn-while-delegating`**: delegate beyond your reach and learn it in the passing, with teach handoff plus LEARNED.md log.
 - **`/retro`**: retrospective on a session, successful or not: refresh meta docs, kill rot, surface patterns, propose tooling. Run it in the main flow after every build, not only failures. Point it at the last 10 sessions to mine navigability (where agents take too long finding info or trust outdated docs): improving navigation is the cheapest token saver there is.
 - **`/retro`**: retrospective on a session (real or trial): refresh meta docs, kill rot, surface patterns, propose tooling. Writes only what you approve. Deep mode runs three review lenses for sessions worth a harder look.
 - **`/setup-ts-deep-modules`**: one-time wiring so every TypeScript package exposes only root entry points, enforced by dependency-cruiser. Run before agents start importing across packages.

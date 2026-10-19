@@ -1,0 +1,5 @@
+interface:
+  display_name: "Explain Diff Before Merge"
+  short_description: "Prove understanding, then merge"
+policy:
+  allow_implicit_invocation: false

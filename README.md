@@ -56,8 +56,12 @@ Skills for daily work, fired by hand. Full list in [skills/user-invoked/](skills
 - **[discuss](./skills/user-invoked/discuss/SKILL.md)**: Get relentlessly interviewed about a plan or design until every branch of the design tree is resolved.
 - **[create-verification](./skills/user-invoked/create-verification/SKILL.md)**: Generate a project-local skill that drives the app like a user, with feature map, proven once.
 - **[discuss-with-docs](./skills/user-invoked/discuss-with-docs/SKILL.md)**: Interview session that also builds your project's domain model, sharpening terminology and updating `GLOSSARY.md` and ADRs inline.
+- **[explain-diff-before-merge](./skills/user-invoked/explain-diff-before-merge/SKILL.md)**: Merge gate for learning: explain the diff yourself, survive correction plus three why questions, then merge.
 - **[guide](./skills/user-invoked/guide/SKILL.md)**: Ask which skill or flow fits your situation. A router over the skills in this repo. Prefer reading: [COOKBOOK.md](./COOKBOOK.md) shows every common flow as a recipe with diagrams.
+- **[handoff](./skills/user-invoked/handoff/SKILL.md)**: Compact the conversation into a handoff doc for another session to continue.
+- **[judgment-drill](./skills/user-invoked/judgment-drill/SKILL.md)**: Train taste with A/B picks: choose with reasons, rubric grades you.
 - **[ketchup](./skills/user-invoked/ketchup/SKILL.md)**: Catch up on everything in this chat since your last message, with an executive summary for each action item.
+- **[learn-while-delegating](./skills/user-invoked/learn-while-delegating/SKILL.md)**: Delegate beyond your reach and learn it: noted gaps, sliced diffs, three concepts, teach handoff.
 - **[recall](./skills/user-invoked/recall/SKILL.md)**: Rebuild recent working context across chats into a tight capsule brief.
 - **[maintain-verification](./skills/user-invoked/maintain-verification/SKILL.md)**: Periodic upkeep for a project's verification skill: source wave plus live pass, at most one PR.
 - **[retro](./skills/user-invoked/retro/SKILL.md)**: Conduct a retrospective on a coding session: refresh meta docs, kill rot, surface patterns.
