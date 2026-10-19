@@ -1,5 +1,17 @@
 # skills-for-agents
 
+## 0.3.0
+
+### Minor Changes
+
+- Root `COOKBOOK.md` with flow recipes, diagrams, worked examples, and a growing FAQ (English); `/implement` alias deleted; whips drive-through policy for thin fog.
+- Goal mode rename (`autonomous-run` to `goal.md`); new `/showcase` demo skill; `wait-what` tightened to text-first with diagrams only for relations.
+- Junior learning batch: `explain-diff-before-merge`, `judgment-drill`, `learn-while-delegating`, ported `handoff`; token-size gate in `setup-pre-commit`.
+- Phase A autonomy: squashed contiguous ready-check runs, scheduled landing, multi-day program recipe, autonomy plan.
+- Full pstack closure: `architect`, `blast-radius`, `correct`, `recall`, `technical-writing`, `benchmark-checklist`, `show-me-your-work` plus log script; `reflect` folded into retro Deep mode.
+- Relaxed HIT (low-risk PASS auto-lands on independent verdicts), opening-a-pr gates step, setup-meta autonomy tier plus scheduled retro and verification upkeep.
+- `create-verification` and `maintain-verification` skills, `orchestrate` playbook, `nightshift` renamed to `runner` with legacy fallback, guide overhaul (retro, setup-ts, method skills, fixed landing text).
+
 ## 0.2.0
 
 ### Minor Changes
