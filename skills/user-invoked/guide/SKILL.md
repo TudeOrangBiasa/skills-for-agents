@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Guide
 
-You don't remember every skill, so ask. Prefer reading over asking: [COOKBOOK.md](../../../COOKBOOK.md) shows every common flow as a recipe with diagrams.
+You don't remember every skill, so ask. Prefer reading over asking: [COOKBOOK.md](COOKBOOK.md) shows every common flow as a recipe with diagrams.
 
 A **flow** is a path through the skills. Most paths run along one **main flow**, and two **on-ramps** merge onto it. Everything else is standalone, or a vocabulary layer that runs underneath.
 

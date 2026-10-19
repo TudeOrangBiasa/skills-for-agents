@@ -4,6 +4,13 @@
 
 Agent skills for real engineering: small, composable, human-in-the-loop. Forked from [mattpocock/skills](https://github.com/mattpocock/skills) and reworked around a HIT flow (Have a Map, Install Guardrails, Take a Walk), a UI sub-flow for interface tickets, memorable skill names, and per-skill credits. MIT licensed; every skill carries its own `CREDITS.md`.
 
+## TL;DR
+
+- 53 skills (25 user-invoked, 28 model-invoked) plus 24 `/whips` playbooks: one entry routes any task, the rest fire on triggers.
+- Start with `/guide` (router) or [COOKBOOK.md](./skills/user-invoked/guide/COOKBOOK.md) (recipes with diagrams); build with `/whips`; configure a repo once with `/setup-meta`.
+- Landing is tiered: low-risk PASS lands untouched on an independent verdict, high-risk waits for a human. Only high-risk spends review time.
+- Proof is mandatory (screenshots, video, timeline pages), prose passes `unslop`, changes ship with changesets.
+
 ## Installation (30-second setup)
 
 One install story. **[skills.sh](https://skills.sh/TudeOrangBiasa/skills-for-agents)** copies editable skill files into your project, so you can hack on them and make them your own. They work the same in any universal agent (Codex, pi, oh-my-pi, agy, and the rest).
@@ -57,7 +64,7 @@ Skills for daily work, fired by hand. Full list in [skills/user-invoked/](skills
 - **[create-verification](./skills/user-invoked/create-verification/SKILL.md)**: Generate a project-local skill that drives the app like a user, with feature map, proven once.
 - **[discuss-with-docs](./skills/user-invoked/discuss-with-docs/SKILL.md)**: Interview session that also builds your project's domain model, sharpening terminology and updating `GLOSSARY.md` and ADRs inline.
 - **[explain-diff-before-merge](./skills/user-invoked/explain-diff-before-merge/SKILL.md)**: Merge gate for learning: explain the diff yourself, survive correction plus three why questions, then merge.
-- **[guide](./skills/user-invoked/guide/SKILL.md)**: Ask which skill or flow fits your situation. A router over the skills in this repo. Prefer reading: [COOKBOOK.md](./COOKBOOK.md) shows every common flow as a recipe with diagrams.
+- **[guide](./skills/user-invoked/guide/SKILL.md)**: Ask which skill or flow fits your situation. A router over the skills in this repo. Prefer reading: [COOKBOOK.md](./skills/user-invoked/guide/COOKBOOK.md) shows every common flow as a recipe with diagrams.
 - **[handoff](./skills/user-invoked/handoff/SKILL.md)**: Compact the conversation into a handoff doc for another session to continue.
 - **[judgment-drill](./skills/user-invoked/judgment-drill/SKILL.md)**: Train taste with A/B picks: choose with reasons, rubric grades you.
 - **[ketchup](./skills/user-invoked/ketchup/SKILL.md)**: Catch up on everything in this chat since your last message, with an executive summary for each action item.
