@@ -72,6 +72,30 @@ while IFS= read -r f; do
 done <<< "$(git diff --name-only --diff-filter=ACMR "$RANGE" -- '*.md' || true)"
 [[ "$dead_links" == "0" ]] && pass "no dead internal links in added lines"
 
+
+# 3. Changeset for user-facing changes (skills/ or top-level README).
+needs_changeset=0
+if grep -qx "README.md" <<< "$changed"; then needs_changeset=1; fi
+while IFS= read -r f; do
+  [[ "$f" == skills/* ]] && needs_changeset=1
+done <<< "$changed"
+if [[ "$needs_changeset" == "1" ]]; then
+  if git diff --name-only --diff-filter=A "$RANGE" -- '.changeset/*.md' | grep -qv '^.changeset/README.md$'; then
+    pass "changeset present"
+  else
+    fail "skills/ or README.md changed but no .changeset/*.md added (run: npx changeset)"
+  fi
+else
+  pass "no user-facing changes, changeset not required"
+fi
+
+# 4. No em dashes in added markdown lines (repo rule).
+if git diff -U0 "$RANGE" -- '*.md' | grep '^+' | grep -v '^+++' | grep -q '—'; then
+  fail "em dash found in added markdown lines (rewrite with comma, colon, period, or parens)"
+else
+  pass "no em dashes in added lines"
+fi
+
 if [[ "$failures" -gt 0 ]]; then
   echo "check-docs: $failures check(s) failed."
   exit 1
