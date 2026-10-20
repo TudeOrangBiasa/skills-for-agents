@@ -1,5 +1,14 @@
 # skills-for-agents
 
+## 0.4.0
+
+### Minor Changes
+
+- Move COOKBOOK.md into the guide skill so it ships on install, with README pointers updated. AGENTS.md gains the changelog discipline and the mandatory public-release rule.
+- Docs hygiene gate `check-docs.sh` (README sync, dead internal links, changeset presence, em-dash rule) with pre-commit hook and CI workflow. `setup-meta` timing split and `wait-what` text-first rule. Retro recipe gains multi-session navigability mining and main-flow placement.
+- `setup-pre-commit` detects toolchain (oxlint/oxfmt first, then Biome, then Prettier), splits fast pre-commit from pre-push checks, and adds a token-size gate.
+- AGENTS.md gains changelog discipline, mandatory public releases, and semver versioning rules.
+
 ## 0.3.0
 
 ### Minor Changes

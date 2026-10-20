@@ -15,6 +15,8 @@ User-facing changes (`skills/`, top-level `README.md`) each bring a changeset fi
 
 This repo is public: every merged batch of user-facing changes ships as a versioned GitHub Release (merge to main, tag the version, publish release notes from the changelog). Main never sits on unreleased user-facing changes; cut the release when the batch lands.
 
+Versioning follows semver. Patch (0.0.x): fixes with no behavior change (typos, wording, internal bugfixes). Minor (0.x.0): new skills, playbooks, triggers, policy changes. Major (1.0.0 and up): renames, deletions, invocation changes, anything breaking existing installs. Pre-1.0 breaking changes ride minors. The 1.0.0 bar: vibe-tested skills, a working npm flow, no pending renames or deletions.
+
 [`guide`](./skills/user-invoked/guide/SKILL.md) is the router that maps every user-reachable skill and how they relate. Whenever you add, rename, remove, or change how a user-reachable skill fits the flows, re-read `guide`'s `SKILL.md` and update it so the map stays accurate: a new skill it never mentions, or a stale one it still routes to, is a router that lies.
 
 Install skills into harnesses only via `npx skills` as described in [.agents/install-block.md](./.agents/install-block.md). There is no local symlink script. Pull the latest changes when you want them with `npx skills update`.

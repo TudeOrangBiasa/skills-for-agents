@@ -1,6 +1,6 @@
 ---
 name: setup-pre-commit
-description: Set up Husky pre-commit hooks with lint-staged (Prettier), type checking, tests, and a token-size gate in the current repo. Use when user wants to add pre-commit hooks, set up Husky, configure lint-staged, or add commit-time formatting/typechecking/testing.
+description: Set up fast hooks with the repo's own toolchain (oxlint/oxfmt, Biome, or Prettier), type checking, tests, and a token-size gate. Use when user wants commit-time formatting/linting/typechecking/testing.
 ---
 
 # Setup Pre-Commit Hooks
@@ -8,24 +8,22 @@ description: Set up Husky pre-commit hooks with lint-staged (Prettier), type che
 ## What This Sets Up
 
 - **Husky** pre-commit hook
-- **lint-staged** running Prettier on all staged files
-- **Prettier** config (if missing)
-- **typecheck** and **test** scripts in the pre-commit hook
+- **Toolchain detection first**: oxlint plus oxfmt when the repo already uses them ( configs `oxlintrc.json`, oxfmt devDependency), else Biome on `biome.json`, else Prettier with lint-staged. Rust toolchains run whole-repo in milliseconds, so they need no staged runner.
+- **typecheck** and **test** scripts in a pre-push hook (never pre-commit: slow gates flood agents with known-broken state)
+- **timing split**: pre-commit stays under 3 seconds (format, token gate, staged-file checks); everything slower goes to pre-push plus CI
 - **token-size gate**: staged text files stay under ~5,000 tokens so no file grows past reviewable size
 
 ## Steps
 
-### 1. Detect package manager
+### 1. Detect package manager and toolchain
 
 Check for `package-lock.json` (npm), `pnpm-lock.yaml` (pnpm), `yarn.lock` (yarn), `bun.lockb` (bun). Use whichever is present. Default to npm if unclear.
 
+Then detect the lint/format toolchain in this order: oxlint (`oxlintrc.json` or an `oxlint` devDependency) plus oxfmt (devDependency) wins first; else Biome (`biome.json`); else Prettier (config file or devDependency); else nothing yet, which means proposing oxlint plus oxfmt (official migrate guides from ESLint and Prettier exist, 10-40x faster, our own repos already run them). Record the choice: every step below branches on it.
+
 ### 2. Install dependencies
 
-Install as devDependencies:
-
-```
-husky lint-staged prettier
-```
+Always: `husky`. Plus per toolchain: oxlint path means `oxlint` and `oxfmt` devDependencies; Biome path means `biome`; Prettier path means `lint-staged` and `prettier`.
 
 ### 3. Initialize Husky
 
@@ -37,17 +35,38 @@ This creates `.husky/` dir and adds `prepare: "husky"` to package.json.
 
 ### 4. Create `.husky/pre-commit`
 
-Write this file (no shebang needed for Husky v9+):
+Write this file (no shebang needed for Husky v9+), branching on the detected toolchain:
 
 ```
+# oxlint/oxfmt path (whole repo, milliseconds, no staged runner needed)
+npx oxlint --deny-warnings
+npx oxfmt --check .
+```
+
+```
+# Biome path
+npx biome check --write .
+```
+
+```
+# Prettier path
 npx lint-staged
+```
+
+Pre-commit runs format plus lint plus the token gate only: batch the feedback at commit time, never per edit (per-edit checks flood the agent with tokens about breakage it already knows). Typecheck and tests do not belong here.
+
+### 4b. Create `.husky/pre-push`
+
+Slow gates live here and in CI, never in pre-commit:
+
+```
 npm run typecheck
 npm run test
 ```
 
 **Adapt**: Replace `npm` with detected package manager. If repo has no `typecheck` or `test` script in package.json, omit those lines and tell the user.
 
-### 5. Create `.lintstagedrc`
+### 5. Create `.lintstagedrc` (Prettier path only; oxlint, oxfmt, and Biome run whole-repo fast enough to skip staged runners)
 
 ```json
 {
@@ -88,7 +107,7 @@ Lockfiles, minified bundles, build output, and the generated changelog are exemp
 
 ### 8. Verify
 
-- [ ] `.husky/pre-commit` exists and is executable
+- [ ] `.husky/pre-commit` exists and is executable, running the detected toolchain's fast gate
 - [ ] `.lintstagedrc` exists
 - [ ] `prepare` script in package.json is `"husky"`
 - [ ] `prettier` config exists
@@ -105,4 +124,4 @@ This will run through the new pre-commit hooks: a good smoke test that everythin
 
 - Husky v9+ doesn't need shebangs in hook files
 - `prettier --ignore-unknown` skips files Prettier can't parse (images, etc.)
-- The pre-commit runs lint-staged first (fast, staged-only), then full typecheck and tests
+- The pre-commit runs lint-staged plus the token gate only (fast, staged-only, under 3 seconds); full typecheck and tests run at pre-push and CI
