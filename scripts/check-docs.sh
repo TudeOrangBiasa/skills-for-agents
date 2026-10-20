@@ -31,7 +31,7 @@ if ! git rev-parse --verify --quiet "$BASE" >/dev/null; then
   exit 1
 fi
 
-RANGE="$BASE...HEAD"
+RANGE="${DOCS_RANGE:-$BASE...HEAD}"
 failures=0
 fail() { echo "check-docs: FAIL: $1"; failures=$((failures + 1)); }
 pass() { echo "check-docs: ok: $1"; }

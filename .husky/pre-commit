@@ -1,0 +1,10 @@
+#!/bin/sh
+# pre-commit gate for skills-for-agents: docs hygiene on staged content.
+#
+# Enable once per clone:
+#   git config core.hooksPath .husky
+#
+# Compares the worktree against HEAD (DOCS_RANGE), so staged-but-uncommitted
+# changes are gated before they land. CI runs the same script against the
+# PR base ref as the backstop.
+DOCS_RANGE=HEAD exec scripts/check-docs.sh
