@@ -29,4 +29,4 @@ Runs on an open agent PR when the user asks you to address its review or bot com
    - `ask`: security, privacy, auth, data, migration, schema, permission boundaries, high severity, novel, or ambiguous. Ask the human, leave the thread open.
 3. When in doubt, ask. Skipping a noisy style comment is cheap; skipping a real data or security bug is not.
 4. Verify a claim that one command can settle (rerun the cited test on the tip) before you classify it.
-5. Push the fixes, keep the PR a draft, and report the fix, dismiss, and ask counts with the open asks listed.
+5. Push the fixes, keep the PR ready (never move it to draft), and report the fix, dismiss, and ask counts with the open asks listed.

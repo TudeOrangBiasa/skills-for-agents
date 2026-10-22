@@ -18,6 +18,6 @@ No narrower playbook fits, but the task is real work: a large migration, an ambi
 
 ## C. Land
 
-Close each unit via `playbooks/opening-a-pr.md`: draft always, landing per risk tier. Opening a PR does not start a babysit; review comments go through `playbooks/triage.md` review mode, and stacks waiting on CI or conflicts through `playbooks/babysit.md`, only when asked.
+Close each unit via `playbooks/opening-a-pr.md`: always ready, landing per risk tier. Opening a PR does not start a babysit; review comments go through `playbooks/triage.md` review mode, and stacks waiting on CI or conflicts through `playbooks/babysit.md`, only when asked.
 
 **Reply:** the approved design, per-unit predicate results, PRs opened with their risk labels, what was reverted, and what is waiting on the human.

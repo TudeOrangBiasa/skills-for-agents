@@ -24,7 +24,7 @@ Start here with `/whips`: it matches your task to a playbook below, opens its st
    - **Yes** → **`/to-spec`** (turn the thread into a spec), then **`/to-tickets`** to split it into tracer-bullet tickets, each declaring its **blocking edges**. On a local tracker that's one file per ticket under `.scratch/<feature>/issues/`, worked blockers-first by hand; on a real tracker the edges become native blocking links, so any ticket whose blockers are done can be grabbed: kick off **`/whips`** per ticket, **`/clear`ing context between each one**. Each ticket is self-contained, so the last one's context is disposable.
    - **No** → **`/whips`** right here, in the same context window.
 
-   Either way, **`/whips`** builds each issue through its feature or bug playbook, driving **`/tdd`** internally (one red-green slice at a time), then closes out with **`/code-review`**, a two-axis review (Standards + Spec) of the diff, and a draft PR. Reach for **`/tdd`** on its own when you just want to build a concrete behaviour test-first without a full spec, and **`/code-review`** on its own whenever you want to review a branch or PR against a fixed point.
+   Either way, **`/whips`** builds each issue through its feature or bug playbook, driving **`/tdd`** internally (one red-green slice at a time), then closes out with **`/code-review`**, a two-axis review (Standards + Spec) of the diff, and a ready PR. Reach for **`/tdd`** on its own when you just want to build a concrete behaviour test-first without a full spec, and **`/code-review`** on its own whenever you want to review a branch or PR against a fixed point.
 
 
 ### HIT: the three phases
@@ -52,7 +52,7 @@ A starting situation that generates work, then merges onto the main flow.
 
   Triage is only for issues **you didn't create**: bug reports, incoming feature requests, anything that arrives raw. Tickets that `/to-tickets` produced are already agent-ready, so **don't triage them**.
 
-  To build an agent-ready issue, `/whips` picks up one `ready-for-agent` issue, checks its brief, routes it to the bug or feature playbook, and opens a draft PR that links it. A thin brief goes back to `needs-info` instead.
+  To build an agent-ready issue, `/whips` picks up one `ready-for-agent` issue, checks its brief, routes it to the bug or feature playbook, and opens a ready PR that links it. A thin brief goes back to `needs-info` instead.
 
   To work that queue unattended, **`/runner`** claims each `ready-for-agent` issue, hands it to `/whips` intake in a fresh worktree on any schedule, and lands per the risk tier. You pick the agent and model once; any scheduler can call it.
 
@@ -112,7 +112,7 @@ Off the main flow entirely.
 - **`/showcase`** demos the work itself: diff, running result, and proof in one visual pass. The demo to ketchup's news, wait-what's re-pitch, and recall's brief.
 - **`/wait-what`** is the visual re-pitch for a message that didn't land. Use it mid-conversation, inside any other skill, and the agent re-pitches what it just said as a visual plus plain sentences, using the `GLOSSARY.md` vocabulary. It works after the fact; `/discuss-with-docs` is the upfront cure, because a shared language agreed early is what stops the jargon arriving at all.
 - **`/ketchup`** catches you up after a long agent run: everything since your last message in plain words, each action item with an executive summary so you can decide. Use it mid-conversation, inside any other skill.
-- **`/recall`** rebuilds recent working context across chats into a tight capsule brief before you start or resume. One specific run, branch, or draft PR is whips pickup instead; this chat alone is `/ketchup`.
+- **`/recall`** rebuilds recent working context across chats into a tight capsule brief before you start or resume. One specific run, branch, or open PR is whips pickup instead; this chat alone is `/ketchup`.
 - **`/teach`**: learn a concept over multiple sessions, using the current directory as a stateful workspace.
 - **`/handoff`**: compact the conversation into a handoff doc for another session (grill-to-teach and back, cross-harness, side tasks). Suggested skills ride along; secrets stay out.
 - **`/explain-diff-before-merge`**: merge gate for learning: explain the diff yourself, survive correction plus three why questions, then merge.

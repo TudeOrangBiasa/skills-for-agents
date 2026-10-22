@@ -18,7 +18,7 @@ flowchart TD
     Q2 -->|"yes, one session"| IDEA["/discuss-with-docs, /to-spec, /to-tickets, /whips per ticket"]
     Q2 -->|"very foggy"| WAY["/wayfinder into a map, then main flow"]
     Q2 -->|"real work, no playbook"| FIG["/whips routes to figure-it-out: design, approve, run"]
-    ONE --> PR["Draft PR, landing follows risk tier"]
+    ONE --> PR["Ready PR, landing follows risk tier"]
     IDEA --> PR
     WAY --> PR
     FIG --> PR
@@ -32,7 +32,7 @@ When: one line, a symlink, a config flag, a copy typo.
 
 ```mermaid
 flowchart LR
-    T["Fix in"] --> W["/whips or direct"] --> V["Verify on the same surface"] --> P["Draft PR, low-risk lands"]
+    T["Fix in"] --> W["/whips or direct"] --> V["Verify on the same surface"] --> P["Ready PR, low-risk lands"]
 ```
 
 No interview: it costs more than the work.
@@ -217,9 +217,9 @@ Example: navbar variants scattered across 4 files, same assumption repeated. `/d
 
 **Multi-day program with one approval up front?** → `figure-it-out` for the designed phase list (approve once), `runner` or goal mode to execute, scheduled `ready-check` to land qualifying batches. Review high-risk only; the design approval plus tiered landing carry the rest.
 
-**Must AFK with a deadline near, parallel tickets, no QA time?** → split first: frontier tickets (behavior already answers every open question) run now; tickets genuinely needing you wait with an explicit "needs decision X" note. Frontier goes to `/runner` before you leave (fresh worktree each, draft PRs only, set max-issues). QA does not vanish, it compacts: per-slice tests plus verification evidence ride in each PR, and your morning is `/ketchup` plus `/ready-check` (independent verdicts, merge the low batch, review high). Decisions the requested behavior already answers are not decisions: say so in the ticket and let them run.
+**Must AFK with a deadline near, parallel tickets, no QA time?** → split first: frontier tickets (behavior already answers every open question) run now; tickets genuinely needing you wait with an explicit "needs decision X" note. Frontier goes to `/runner` before you leave (fresh worktree each, ready PRs only, set max-issues). QA does not vanish, it compacts: per-slice tests plus verification evidence ride in each PR, and your morning is `/ketchup` plus `/ready-check` (independent verdicts, merge the low batch, review high). Decisions the requested behavior already answers are not decisions: say so in the ticket and let them run.
 
-**Overnight run missed the spec, start over in a new session?** → no. Morning `/ketchup`, then check the Spec axis (`/code-review` Standards + Spec, or the ready-check verdict). Then `/whips` pickup on the draft PR with the spec plus the missed point: small miss means a fix round on the same PR, big miss means a fresh ticket. Either way it runs fresh by design, never as a resume-chain of the night session.
+**Overnight run missed the spec, start over in a new session?** → no. Morning `/ketchup`, then check the Spec axis (`/code-review` Standards + Spec, or the ready-check verdict). Then `/whips` pickup on the open PR with the spec plus the missed point: small miss means a fix round on the same PR, big miss means a fresh ticket. Either way it runs fresh by design, never as a resume-chain of the night session.
 
 **Frontend refactor with a stack change, design stays?** → `visual-parity`: screenshot baseline first (blocking prerequisite), migrate component by component, zero image diff to pass, behavior pinned throughout. Same look, new guts.
 
