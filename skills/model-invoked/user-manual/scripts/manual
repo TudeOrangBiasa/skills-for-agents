@@ -13,7 +13,7 @@ const path = require("path");
 const zlib = require("zlib");
 const { execSync } = require("child_process");
 
-const VIEWPORTS = { mobile: { w: 390, h: 844 }, desktop: { w: 1440, h: 900 } };
+const VIEWPORTS = { mobile: { width: 390, height: 844 }, desktop: { width: 1440, height: 900 } };
 const DPR = 2;
 const MARGIN_CSS = 16;
 const BLANK_BAND_MAX = 0.15;
@@ -159,12 +159,37 @@ function measureBlank(img, bg, tol) {
   return { band: h ? best / h : 1, ratio: h ? total / h : 1 };
 }
 
-// Page-box (CSS px, pre-crop) to crop-relative device px. Pure: unit-testable.
-function toCropCoords(pageBox, crop, dpr) {
+// Uniform prefix/suffix within rows [y0, y1): padding at the content edges.
+// Interior gaps are normal typography; the defect class this gate hunts is
+// the trailing (or leading) canvas dump below/above the content.
+// Pure: unit-testable.
+function edgeBlank(img, bg, tol, y0, y1) {
+  y0 = Math.max(0, Math.floor(y0)); y1 = Math.min(img.h, Math.ceil(y1));
+  if (y1 <= y0) return { edge: 1, lead: 1, trail: 1 };
+  let lead = 0;
+  while (y0 + lead < y1 && isUniformRow(img, y0 + lead, bg, tol)) lead++;
+  let trail = 0;
+  while (y1 - 1 - trail >= y0 && isUniformRow(img, y1 - 1 - trail, bg, tol)) trail++;
+  const n = y1 - y0;
+  return { edge: Math.max(lead, trail) / n, lead: lead / n, trail: trail / n };
+}
+
+// Page-box (CSS px, document coords) to crop-relative device px. The screenshot
+// origin is the TARGET box, so it is subtracted first. Pure: unit-testable.
+function toCropCoords(pageBox, targetBox, crop, dpr) {
   return {
-    x: pageBox.x * dpr - crop.x, y: pageBox.y * dpr - crop.y,
+    x: (pageBox.x - targetBox.x) * dpr - crop.x, y: (pageBox.y - targetBox.y) * dpr - crop.y,
     w: pageBox.width * dpr, h: pageBox.height * dpr,
   };
+}
+
+// Intersection-over-union of two {x,y,w,h} boxes. Pure: unit-testable.
+function iou(a, b) {
+  const x0 = Math.max(a.x, b.x), y0 = Math.max(a.y, b.y);
+  const x1 = Math.min(a.x + a.w, b.x + b.w), y1 = Math.min(a.y + a.h, b.y + b.h);
+  const inter = Math.max(0, x1 - x0) * Math.max(0, y1 - y0);
+  if (!inter) return 0;
+  return inter / (a.w * a.h + b.w * b.h - inter);
 }
 
 function inCrop(rel, crop) {
@@ -265,6 +290,24 @@ async function captureShot(pw, shot, baseUrl, rawDir) {
   } finally { await browser.close(); }
 }
 
+// Hide `hide` selectors plus fixed/sticky elements outside the target so
+// layout matches capture. Shared by capture and verify.
+async function applyVisibility(page, shot) {
+  if (shot.hide && shot.hide.length) {
+    await page.addStyleTag({ content: shot.hide.map((s) => `${s}{display:none !important}`).join("\n") });
+  }
+  const keepSel = (shot.keep || []).join(",");
+  await page.evaluate(({ target, keepSel }) => {
+    const t = document.querySelector(target);
+    const keep = keepSel ? [...document.querySelectorAll(keepSel)] : [];
+    const kept = (el) => keep.some((k) => k === el || k.contains(el) || el.contains(k));
+    document.querySelectorAll("*").forEach((el) => {
+      const pos = getComputedStyle(el).position;
+      if ((pos === "fixed" || pos === "sticky") && !kept(el) && t && !t.contains(el) && !el.contains(t)) el.style.display = "none";
+    });
+  }, { target: shot.target, keepSel });
+}
+
 async function captureOnPage(page, shot, baseUrl, rawDir, nav) {
   if (nav) await page.goto(baseUrl + (shot.route || "/"), { waitUntil: "networkidle" });
     for (const a of shot.actions || []) {
@@ -273,26 +316,15 @@ async function captureOnPage(page, shot, baseUrl, rawDir, nav) {
       else if (a.wait) await page.waitForTimeout(a.wait);
       else if (a.scroll) await page.evaluate((y) => window.scrollBy(0, y), a.scroll);
     }
-    if (shot.hide && shot.hide.length) {
-      await page.addStyleTag({ content: shot.hide.map((s) => `${s}{display:none !important}`).join("\n") });
-    }
-    const keepSel = (shot.keep || []).join(",");
-    // Hide fixed/sticky elements outside the target so they never double or cover scrolled content.
-    // Selectors in `keep` (and their subtrees) are left alone.
-    await page.evaluate(({ target, keepSel }) => {
-      const t = document.querySelector(target);
-      const keep = keepSel ? [...document.querySelectorAll(keepSel)] : [];
-      const kept = (el) => keep.some((k) => k === el || k.contains(el) || el.contains(k));
-      document.querySelectorAll("*").forEach((el) => {
-        const pos = getComputedStyle(el).position;
-        if ((pos === "fixed" || pos === "sticky") && !kept(el) && t && !t.contains(el) && !el.contains(t)) el.style.display = "none";
-      });
-    }, { target: shot.target, keepSel });
+    await applyVisibility(page, shot);
     await page.waitForSelector(shot.target, { state: "visible" });
     const loc = page.locator(shot.target).first();
-    const rawPath = path.join(rawDir, `${shot.id}.raw.png`);
-    await loc.screenshot({ path: rawPath });
-    const sidecar = { id: shot.id, boxes: [] };
+    // Measure boxes BEFORE the screenshot so both share one scroll position.
+    // The screenshot origin is the target box, not the page: annotation math
+    // must subtract it (otherwise boxes drift by the target offset).
+    const targetBox = await loc.boundingBox();
+    if (!targetBox) throw new Error(`shot ${shot.id}: no bounding box for target ${shot.target}`);
+    const sidecar = { id: shot.id, targetBox, boxes: [] };
     for (const a of shot.annotations || []) {
       const el = page.locator(a.selector).first();
       if ((await el.count()) === 0) throw new Error(`shot ${shot.id}: annotation selector not found: ${a.selector}`);
@@ -300,6 +332,29 @@ async function captureOnPage(page, shot, baseUrl, rawDir, nav) {
       if (!box) throw new Error(`shot ${shot.id}: no bounding box for ${a.selector}`);
       sidecar.boxes.push({ n: a.n, label: a.label || "", selector: a.selector, pageBox: box });
     }
+    // Content box: union of visible descendants, clipped to the target.
+    // Padding owned by the target is design, not blankness; the QA band is
+    // measured inside this box so deliberate padding never fails the build.
+    sidecar.contentBox = await page.evaluate((target) => {
+      const t = document.querySelector(target);
+      if (!t) return null;
+      const tr = t.getBoundingClientRect();
+      const tx = tr.left + window.scrollX, ty = tr.top + window.scrollY;
+      let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+      t.querySelectorAll("*").forEach((el) => {
+        const r = el.getBoundingClientRect();
+        if (r.width < 1 || r.height < 1) return;
+        const st = getComputedStyle(el);
+        if (st.display === "none" || st.visibility === "hidden" || parseFloat(st.opacity || "1") === 0) return;
+        x0 = Math.min(x0, r.left + window.scrollX); y0 = Math.min(y0, r.top + window.scrollY);
+        x1 = Math.max(x1, r.right + window.scrollX); y1 = Math.max(y1, r.bottom + window.scrollY);
+      });
+      if (x1 < x0) return null;
+      const cx = Math.max(x0, tx), cy = Math.max(y0, ty);
+      return { x: cx, y: cy, w: Math.min(x1, tx + tr.width) - cx, h: Math.min(y1, ty + tr.height) - cy };
+    }, shot.target);
+    const rawPath = path.join(rawDir, `${shot.id}.raw.png`);
+    await loc.screenshot({ path: rawPath });
     return { rawPath, sidecar };
 }
 
@@ -317,7 +372,7 @@ function buildHtml(manifest, shotsDir, outHtml) {
       if (st.shot) {
         const shot = manifest.shots.find((s) => s.id === st.shot);
         const sidecar = JSON.parse(fs.readFileSync(path.join(shotsDir, `${st.shot}.sidecar.json`), "utf8"));
-        const imgFile = `${st.shot}.png`;
+        const imgFile = `shots/${st.shot}.png`;
         const seen = used.get(imgFile) || { n: 0, declared: false };
         seen.n++;
         if (st.reuse) seen.declared = true;
@@ -357,19 +412,28 @@ function processShot(shot, rawPath, sidecar, shotsDir, failures) {
   const { img, crop } = trimImage(raw, MARGIN_CSS * DPR, 4);
   fs.writeFileSync(path.join(shotsDir, `${shot.id}.png`), encodePng(img));
   const trimmed = decodePng(fs.readFileSync(path.join(shotsDir, `${shot.id}.png`)));
-  const fin = measureBlank(trimmed, edgeColor(trimmed), 4);
+  const bg = edgeColor(trimmed);
+  // Gate band measured inside the content box, not the target padding.
+  let y0 = 0, y1 = trimmed.h;
+  const cc = sidecar.contentBox, tb = sidecar.targetBox;
+  if (cc && cc.w > 0 && cc.h > 0) {
+    y0 = Math.max(0, Math.round((cc.y - tb.y) * DPR - crop.y));
+    y1 = Math.min(trimmed.h, Math.round((cc.y + cc.h - tb.y) * DPR - crop.y));
+    if (y1 <= y0) { y0 = 0; y1 = trimmed.h; }
+  }
+  const fin = edgeBlank(trimmed, bg, 4, y0, y1);
   for (const b of sidecar.boxes) {
-    const rel = toCropCoords(b.pageBox, crop, DPR);
+    const rel = toCropCoords(b.pageBox, sidecar.targetBox, crop, DPR);
     if (!inCrop(rel, crop)) throw new Error(`shot ${shot.id}: annotation ${b.n} (${b.selector}) outside the crop`);
     b.cropBox = rel;
     delete b.pageBox;
   }
   sidecar.crop = crop;
   fs.writeFileSync(path.join(shotsDir, `${shot.id}.sidecar.json`), JSON.stringify(sidecar, null, 2));
-  const v = blankVerdict(fin.band, shot.allowBlank, shot.id);
+  const v = blankVerdict(fin.edge, shot.allowBlank, shot.id);
   if (!v.ok) failures.push(v.msg);
   else console.log(v.msg);
-  return { id: shot.id, band: fin.band, annotations: sidecar.boxes.length };
+  return { id: shot.id, band: fin.edge, annotations: sidecar.boxes.length };
 }
 
 // A4 content height at 96dpi minus print margins, in px. Print layout is
@@ -417,6 +481,7 @@ async function qaPrintLayout(pw, htmlPath) {
       });
       return {
         figs,
+        broken: [...document.images].filter((i) => !i.complete || i.naturalWidth === 0).map((i) => i.getAttribute("src") || "(inline)"),
         warnings: pages.filter((pg) => pg.coverage < 0.4 && !chapterLast.has(pg.page)).map((pg) => ({ page: pg.page, coverage: pg.coverage })),
       };
     }, PRINT_PAGE_H);
@@ -495,6 +560,7 @@ async function cmdBuild(opts) {
     if (botPg !== topPg || capPg !== topPg) failures.push(`figure ${f.shot} splits across print pages (starts page ${topPg})`);
     figurePages[f.shot] = topPg;
   }
+  for (const src of layout.broken) failures.push(`image failed to load in manual.html: ${src}`);
   for (const w of layout.warnings) console.log(`warn: page ${w.page} under 40% full (${Math.round(w.coverage * 100)}% content, not a chapter end)`);
   if (failures.length) { console.error("QA FAILED:\n- " + failures.join("\n- ")); process.exitCode = 1; return; }
   const prevDir = path.join(outDir, ".prev");
@@ -513,9 +579,17 @@ async function cmdBuild(opts) {
     await page.goto("file://" + htmlPath, { waitUntil: "networkidle" });
     const pgWord = (STR[manifest.locale] || STR.id).pageOf("1", "2").replace(/1.*2/, "").trim();
     const pdfOpts = { path: pdfPath, format: "A4", printBackground: true, displayHeaderFooter: true, margin: { bottom: "24mm" } };
+    pdfOpts.headerTemplate = "<span></span>";
     pdfOpts["f" + "ooterTemplate"] = `<div style="width:100%;font-size:9px;text-align:center;">${esc(manifest.app.name || "")} &middot; ${esc(pgWord)} <span class="pageNumber"></span> / <span class="totalPages"></span></div>`;
     await page.pdf(pdfOpts);
   } finally { await browser.close(); }
+  // Determinism: Chromium stamps run timestamps. Normalize the fixed-length
+  // date strings in place so byte offsets (and the xref table) stay valid.
+  {
+    const raw = fs.readFileSync(pdfPath, "latin1");
+    const fixed = raw.replace(/\/(CreationDate|ModDate) \(D:[^)]*\)/g, (m, k) => (`/${k} (D:20000101000000+00'00')` + "0".repeat(m.length)).slice(0, m.length));
+    fs.writeFileSync(pdfPath, fixed, "latin1");
+  }
   const pdfSize = fs.statSync(pdfPath).size;
   if (pdfSize > PDF_MAX_BYTES) { console.error(`QA FAILED: PDF ${(pdfSize / 1048576).toFixed(1)} MB exceeds 15 MB`); process.exitCode = 1; return; }
   // Record freshness state.
@@ -525,6 +599,63 @@ async function cmdBuild(opts) {
   fs.mkdirSync(prevDir, { recursive: true });
   for (const m of metas) fs.copyFileSync(path.join(shotsDir, `${m.id}.sidecar.json`), path.join(prevDir, `${m.id}.sidecar.json`));
   console.log(`built ${manifest.chapters.length} chapters, ${manifest.shots.length} shots -> ${outDir}`);
+}
+
+// Re-check annotations against the live app: each sidecar box must still
+// overlap the selector it names (IoU >= 0.5). Catches boxes that drifted
+// after a UI change, including shifted layouts. Pure geometry plus browser.
+async function cmdVerify(opts) {
+  const manifestPath = path.resolve(opts.manifest || "manual.json");
+  const outDir = path.resolve(opts.out || "dist");
+  const manifest = loadManifest(manifestPath);
+  const shotsDir = path.join(outDir, "shots");
+  const pw = await needPlaywright();
+  const failures = [];
+  const browser = await pw.chromium.launch();
+  try {
+    // One context per shot with the shot viewport: layout must match capture.
+    let ctx = null, page = null, ctxVp = "";
+    const ensurePage = async (shot) => {
+      if (ctxVp !== shot.viewport) {
+        if (ctx) await ctx.close();
+        ctx = await browser.newContext({ viewport: VIEWPORTS[shot.viewport], deviceScaleFactor: DPR });
+        page = await ctx.newPage();
+        ctxVp = shot.viewport;
+      }
+      return page;
+    };
+    for (const shot of manifest.shots) {
+      const scPath = path.join(shotsDir, `${shot.id}.sidecar.json`);
+      if (!fs.existsSync(scPath)) { failures.push(`${shot.id}: missing sidecar (run build first)`); continue; }
+      const sc = JSON.parse(fs.readFileSync(scPath, "utf8"));
+      const vpage = await ensurePage(shot);
+      await vpage.goto(manifest.app.baseUrl + (shot.route || "/"), { waitUntil: "networkidle" });
+      for (const a of shot.actions || []) {
+        if (a.click) await vpage.click(a.click);
+        else if (a.fill) await vpage.fill(a.fill[0], a.fill[1]);
+        else if (a.wait) await vpage.waitForTimeout(a.wait);
+        else if (a.scroll) await vpage.evaluate((y) => window.scrollBy(0, y), a.scroll);
+      }
+      await applyVisibility(vpage, shot);
+      for (const b of sc.boxes || []) {
+        const el = vpage.locator(b.selector).first();
+        if ((await el.count()) === 0) { failures.push(`${shot.id}: selector gone: ${b.selector}`); continue; }
+        const nowRaw = await el.boundingBox();
+        if (!nowRaw) { failures.push(`${shot.id}: no box for ${b.selector}`); continue; }
+        const now = { x: nowRaw.x, y: nowRaw.y, w: nowRaw.width, h: nowRaw.height };
+        const was = {
+          x: sc.targetBox.x + (b.cropBox.x + sc.crop.x) / DPR,
+          y: sc.targetBox.y + (b.cropBox.y + sc.crop.y) / DPR,
+          w: b.cropBox.w / DPR, h: b.cropBox.h / DPR,
+        };
+        const score = iou(was, now);
+        if (score < 0.5) failures.push(`${shot.id} #${b.n} (${b.selector}): overlap ${Math.round(score * 100)}% < 50%`);
+        else console.log(`ok ${shot.id} #${b.n}: overlap ${Math.round(score * 100)}%`);
+      }
+    }
+  } finally { await browser.close(); }
+  if (failures.length) { console.error("VERIFY FAILED:\n- " + failures.join("\n- ")); process.exitCode = 1; }
+  else console.log("verify: all annotations overlap their selectors");
 }
 
 function cmdCheck(opts) {
@@ -592,12 +723,24 @@ function cmdSelftest() {
   const md = measureBlank(td, edgeColor(td), 4);
   eq("trimmed passes", md.band > BLANK_BAND_MAX, false);
   // 6. Annotation coords follow the selector: 40px shift moves the box 40*DPR.
+  // Screenshot origin is the target box (main at 24,24 here: the old offset bug).
+  const tb6 = { x: 24, y: 24, width: 500, height: 400 };
   const crop6 = { x: 10, y: 20, w: 400, h: 300 };
-  const r1 = toCropCoords({ x: 100, y: 100, width: 50, height: 20 }, crop6, DPR);
-  const r2 = toCropCoords({ x: 140, y: 100, width: 50, height: 20 }, crop6, DPR);
+  const r1 = toCropCoords({ x: 100, y: 100, width: 50, height: 20 }, tb6, crop6, DPR);
+  const r2 = toCropCoords({ x: 140, y: 100, width: 50, height: 20 }, tb6, crop6, DPR);
   eq("shift moves box", r2.x - r1.x, 40 * DPR);
+  eq("target offset subtracted", r1.x, (100 - 24) * DPR - 10);
   eq("shifted in crop", inCrop(r2, crop6), true);
   eq("outside crop fails", inCrop({ x: -5, y: 0, w: 10, h: 10 }, crop6), false);
+  eq("iou identical", iou(r1, { ...r1 }), 1);
+  eq("iou disjoint", iou(r1, { x: 1000, y: 1000, w: 5, h: 5 }), 0);
+  // 6b. Content-box band: padding owned by the target does not count.
+  const pad = synthImage(100, 200, (x, y) => (y >= 100 && y < 150 ? INK : GREY));
+  eq("full band counts padding", Math.round(measureBlank(pad, GREY, 4).band * 100) > 15, true);
+  eq("edge dump caught on full range", edgeBlank(pad, GREY, 4, 0, 200).edge > BLANK_BAND_MAX, true);
+  eq("content edges pass", edgeBlank(pad, GREY, 4, 100, 150).edge, 0);
+  const trail = synthImage(100, 200, (x, y) => (y >= 20 && y < 60 ? INK : GREY));
+  eq("trailing dump fails", edgeBlank(trail, GREY, 4, 0, 200).edge > BLANK_BAND_MAX, true);
   // 7. Blank gate verdicts: artificial >15% band fails, allowBlank needs a reason.
   eq("band fails no allow", blankVerdict(0.5, undefined, "s").ok, false);
   eq("allow no reason fails", blankVerdict(0.5, { ratio: 0.6 }, "s").ok, false);
@@ -611,7 +754,7 @@ function cmdSelftest() {
 }
 
 function help() {
-  console.log(`manual: deterministic user-manual builder\n\n  manual build [--manifest manual.json] [--only <shot-id>] [--out dist/]\n  manual check [--manifest manual.json]\n  manual selftest\n  manual --help`);
+  console.log(`manual: deterministic user-manual builder\n\n  manual build [--manifest manual.json] [--only <shot-id>] [--out dist/]\n  manual check [--manifest manual.json] [--out dist/]\n  manual verify [--manifest manual.json] [--out dist/]\n  manual selftest\n  manual --help`);
 }
 
 async function main() {
@@ -627,6 +770,7 @@ async function main() {
   try {
     if (cmd === "build") await cmdBuild(opts);
     else if (cmd === "check") cmdCheck(opts);
+    else if (cmd === "verify") await cmdVerify(opts);
     else if (cmd === "selftest") cmdSelftest();
     else { help(); process.exitCode = cmd ? 2 : 0; }
   } catch (e) { console.error(`error: ${e.message}`); process.exitCode = 1; }
