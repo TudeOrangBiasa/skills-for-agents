@@ -6,7 +6,7 @@ Agent skills for real engineering: small, composable, human-in-the-loop. Forked 
 
 ## TL;DR
 
-- 54 skills (26 user-invoked, 28 model-invoked) plus 24 `/whips` playbooks: one entry routes any task, the rest fire on triggers.
+- 54 skills (26 user-invoked, 28 model-invoked) plus 25 `/whips` playbooks: one entry routes any task, the rest fire on triggers.
 - Start with `/guide` (router) or [COOKBOOK.md](./skills/user-invoked/guide/COOKBOOK.md) (recipes with diagrams); build with `/whips`; configure a repo once with `/setup-meta`.
 - Landing is tiered: low-risk PASS lands untouched on an independent verdict, high-risk waits for a human. Only high-risk spends review time.
 - Proof is mandatory (screenshots, video, timeline pages), prose passes `unslop`, changes ship with changesets.

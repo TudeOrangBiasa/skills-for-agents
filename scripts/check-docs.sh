@@ -109,6 +109,18 @@ else
   pass "no draft-PR instruction in skills/"
 fi
 
+# 6. Skill frontmatter name equals the folder name (issue #21). Full-tree
+#    scan: a renamed skill that forgot its frontmatter breaks installs.
+name_mismatch=0
+while IFS= read -r skill_file; do
+  dir="$(dirname "$skill_file")"
+  folder="$(basename "$dir")"
+  fname="$(sed -n '/^---$/,/^---$/p' "$skill_file" | grep -m1 '^name:' | sed 's/^name:[[:space:]]*//;s/^[\"'"']//;s/[\"'"']$//')"
+  if [[ -z "$fname" ]]; then fail "missing frontmatter name in $skill_file"; name_mismatch=1;
+  elif [[ "$fname" != "$folder" ]]; then fail "frontmatter name '$fname' != folder '$folder' in $skill_file"; name_mismatch=1; fi
+done < <(find skills -name SKILL.md)
+[[ "$name_mismatch" == "0" ]] && pass "skill names match folders"
+
 if [[ "$failures" -gt 0 ]]; then
   echo "check-docs: $failures check(s) failed."
   exit 1
