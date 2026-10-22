@@ -88,7 +88,7 @@ Reversible work proceeds without asking: branches, worktrees, commits, pushing y
 
 Always pause for the human, and keep building everything else meanwhile:
 
-- Merging or enabling auto-merge above your risk authority: low-risk PASS PRs and qualifying medium PRs per [RISK.md](RISK.md) may land; everything else waits. (Marking a legacy draft PR ready counts as a merge step under the same authority.)
+- Merging or enabling auto-merge above your risk authority: low-risk PASS PRs and qualifying medium PRs per [RISK.md](RISK.md) may land; everything else waits.
 - A `figure-it-out` design: present the phase list and wait for approval before executing.
 - Force-pushing a branch someone else works on.
 - Deploying, deleting data, touching secrets or production config.
