@@ -1,0 +1,78 @@
+name: user-manual e2e
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "skills/model-invoked/user-manual/**"
+      - ".github/workflows/user-manual-e2e.yml"
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: skills/model-invoked/user-manual
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm install --no-audit --no-fund
+        working-directory: skills/model-invoked/user-manual/scripts
+      - run: ./node_modules/.bin/playwright-core install --with-deps chromium
+        working-directory: skills/model-invoked/user-manual/scripts
+      - name: Serve fixture
+        run: |
+          mkdir -p site && cp fixture/demo-page.html site/done.html
+          printf 'import http.server, socketserver\nclass H(http.server.SimpleHTTPRequestHandler):\n    def do_GET(self):\n        if self.path == '\''/done'\'': self.path = '\''/done.html'\''\n        return super().do_GET()\nsocketserver.TCPServer(("", 3100), H).serve_forever()\n' > site/server.py
+          (cd site && nohup python3 server.py &)
+          sleep 1
+          curl -s -o /dev/null -w "%{http_code}\n" http://localhost:3100/done
+      - name: Build twice
+        run: |
+          node scripts/manual build --manifest fixture/manual.json --out dist1
+          node scripts/manual build --manifest fixture/manual.json --out dist2
+      - name: Assert determinism, images, and gate
+        run: |
+          node -e '
+          const fs = require("fs"), crypto = require("crypto");
+          const h = (f) => crypto.createHash("md5").update(fs.readFileSync(f)).digest("hex");
+          const eq = (n, a, b) => { if (a !== b) { console.error(`DIFFER: ${n}`); process.exitCode = 1; } else console.log(`same: ${n}`); };
+          for (const f of ["manual.html", "review.html", "shots/c10-done.png", "shots/c10-done.sidecar.json"]) eq(f, h("dist1/" + f), h("dist2/" + f));
+          eq("manual.pdf md5", h("dist1/manual.pdf"), h("dist2/manual.pdf"));
+          const html = fs.readFileSync("dist1/manual.html", "utf8");
+          const imgs = [...html.matchAll(/<img src="([^"]+)"/g)].map((m) => m[1]);
+          if (!imgs.length) { console.error("no images in manual.html"); process.exitCode = 1; }
+          for (const src of imgs) if (!fs.existsSync("dist1/" + src)) { console.error("missing image: " + src); process.exitCode = 1; }
+          console.log(`images ok: ${imgs.join(", ")}`);
+          const sc = JSON.parse(fs.readFileSync("dist1/shots/c10-done.sidecar.json", "utf8"));
+          if (!sc.targetBox || !sc.contentBox || !sc.crop) { console.error("sidecar missing target/content/crop boxes"); process.exitCode = 1; }
+          console.log("sidecar boxes ok");
+          '
+      - name: Verify annotations overlap live selectors
+        run: node scripts/manual verify --manifest fixture/manual.json --out dist1
+      - name: Shifted layout still verifies
+        run: |
+          sed -i 's/margin: 24px auto/margin: 64px auto/' fixture/demo-page.html
+          node scripts/manual build --manifest fixture/manual.json --out dist-shift
+          node scripts/manual verify --manifest fixture/manual.json --out dist-shift
+          git checkout -- fixture/demo-page.html
+      - name: Missing selector fails the build
+        run: |
+          node -e 'const fs=require("fs");const m=JSON.parse(fs.readFileSync("fixture/manual.json","utf8"));m.shots[0].annotations=[{n:1,selector:"[data-nope]",label:"x"}];fs.writeFileSync("/tmp/bad-manifest.json",JSON.stringify(m));'
+          if node scripts/manual build --manifest /tmp/bad-manifest.json --out dist-bad; then echo "expected failure, got success"; exit 1; fi
+          echo "missing selector correctly failed the build"
+      - name: Freshness check fails on stale UI, passes after rebuild
+        run: |
+          echo "<!-- dummy ui change -->" >> fixture/demo-page.html
+          git add fixture/demo-page.html
+          git -c user.email=ci@local -c user.name=ci -c commit.gpgsign=false commit -qm "ci dummy ui touch"
+          if node scripts/manual check --manifest fixture/manual.json --out dist1; then echo "expected stale failure, got pass"; exit 1; fi
+          echo "stale UI correctly failed check"
+          git reset --hard HEAD~1
+          node scripts/manual build --manifest fixture/manual.json --out dist1
+          node scripts/manual check --manifest fixture/manual.json --out dist1

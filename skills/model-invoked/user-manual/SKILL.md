@@ -26,7 +26,7 @@ One `manual.json` defines chapters, steps, and shots. A shot names a content tar
 }
 ```
 
-File names equal shot ids, no combined suffixes. A `sequence` id groups shots that run in manifest order on one page: later shots inherit earlier state unless they set their own `route`. `--only <id>` rebuilds one shot.
+File names equal shot ids, no combined suffixes. A `sequence` id groups shots that run in manifest order on one page: later shots inherit earlier state unless they set their own `route`. `--only <id>` rebuilds one shot. Actions are Playwright ops (`goto`, `click`, `fill`, `select`, `press`, `wait`, `waitFor`, `eval`, `scroll`); a shot with a live clock takes `freezeClock` (ISO time) so two builds byte-match.
 
 ## Capture
 
@@ -34,11 +34,12 @@ The target selector is captured (`locator.screenshot()` or the union clip of vis
 
 ## Trim and QA gates
 
-After capture, uniform edge rows and columns are trimmed to a fixed 16px CSS margin; the background color is read from the edge pixels, never hardcoded. Then every final PNG is measured (longest contiguous uniform band over height, plus total ratio). The build fails when:
+After capture, uniform edge rows and columns are trimmed to a fixed 16px CSS margin; the background color is read from the edge pixels, never hardcoded. Then the blank band is measured inside the content box (union of visible descendants, clipped to the target), not the target padding: padding owned by the target is a design decision, interior gaps are normal typography, and the gate hunts the leading or trailing canvas dump. The build fails when:
 
-- A PNG blank band exceeds 15 percent of height (`allowBlank` per shot with a written reason overrides).
+- A content edge band exceeds 15 percent of content height (`allowBlank` per shot with a written reason overrides).
 - An annotation selector is missing or its box falls outside the crop.
-- A figure or its caption splits across print pages (checked in Chromium with print media; estimates match the PDF closely).
+- Any image in the built HTML fails to load (shot id reported).
+- A figure taller than a print page (checked in Chromium with print media). Print CSS caps figure art at 225mm so whole figures ride to the next page instead of splitting; `break-inside: avoid` keeps each caption with its figure.
 - A print page under 40 percent full that is not a chapter end (warning, with page number and coverage).
 - A shot reused without `"reuse": true` on the step (declared reuse is reported, silent duplication fails).
 - Any output exceeds its budget (PDF over 15 MB).
@@ -46,7 +47,7 @@ After capture, uniform edge rows and columns are trimmed to a fixed 16px CSS mar
 
 ## Annotations
 
-Boxes are `{ n, selector, label, pad? }` resolved with `boundingBox()` at capture time, stored relative to the crop in a sidecar JSON. No hand-written pixel coordinates in the manifest, ever.
+Boxes are `{ n, selector, label, pad? }` resolved with `boundingBox()` at capture time, stored relative to the crop in a sidecar JSON. Boxes are measured before the screenshot on the same scroll position, and the screenshot origin (the target box) is subtracted, so boxes track their selectors. No hand-written pixel coordinates in the manifest, ever. `manual verify` re-checks every box against the live app (IoU >= 0.5, same viewport and visibility as capture), so drifted boxes fail instead of shipping.
 
 ## Build
 

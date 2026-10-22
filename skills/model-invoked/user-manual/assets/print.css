@@ -4,3 +4,13 @@ figcaption { break-before: avoid; }
 .chapter { break-before: page; }
 .cover, .toc { break-after: page; }
 img { max-width: 100%; }
+
+/* Print frames keep the crop but cap tall figures to one page: without this,
+/* a full-length desktop shot would fragment no matter what. Screen keeps
+/* the natural size; only print shrinks, preserving aspect via width:auto. */
+figure.desk .shot img,
+figure.phone .shot img {
+  max-height: 225mm;
+  width: auto;
+  margin: 0 auto;
+}
