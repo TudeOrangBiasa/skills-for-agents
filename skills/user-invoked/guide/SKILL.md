@@ -77,7 +77,7 @@ You never type these; `/whips` fires them when their trigger holds. Know they ex
 - Challenge and prove: `/interrogate` (adversarial multi-model review), `/no-comments` (kill needless comments plus guarded dead code), `/blast-radius` (what breaks outside the diff, proven by running).
 - Numbers and trails: `/benchmark-checklist` (vet a measurement before reporting), `/show-me-your-work` (TSV decision trail with end audit).
 - Harden: `/correct` (eliminate repeated repo mistakes at the highest level).
-- Write and prove visuals: `/technical-writing` (layered docs standard), `/ui-recording-timeline` (paint timeline from a screen recording).
+- Write and prove visuals: `/technical-writing` (layered docs standard), `/ui-recording-timeline` (paint timeline from a screen recording), `/user-manual` (guide book from a running web app, with QA gates).
 
 ## Vocabulary underneath
 

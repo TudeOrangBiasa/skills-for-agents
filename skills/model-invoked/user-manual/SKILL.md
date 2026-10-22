@@ -26,11 +26,11 @@ One `manual.json` defines chapters, steps, and shots. A shot names a content tar
 }
 ```
 
-File names equal shot ids, no combined suffixes. A `sequence` id groups shots that share one browser context in order. `--only <id>` rebuilds one shot.
+File names equal shot ids, no combined suffixes. A `sequence` id groups shots that run in manifest order on one page: later shots inherit earlier state unless they set their own `route`. `--only <id>` rebuilds one shot.
 
 ## Capture
 
-The target selector is captured (`locator.screenshot()` or the union clip of visible boxes inside it), never the full viewport or full page. Each shot runs in a fresh browser context (clean localStorage), `reducedMotion`, DPR 2. Presets: `mobile` (390x844), `desktop` (1440x900). Elements with `position: fixed` or `sticky` outside the target are hidden unless listed in `keep`; dialogs capture with their scrim, cropped to dialog plus margin.
+The target selector is captured (`locator.screenshot()` or the union clip of visible boxes inside it), never the full viewport or full page. Each shot runs in a fresh browser context (clean localStorage), `reducedMotion`, DPR 2; shots in one `sequence` share a context and run in order instead. Exploration may use `agent-browser`; regeneration always runs the bundled script, or two runs would never match. Presets: `mobile` (390x844), `desktop` (1440x900). Elements with `position: fixed` or `sticky` outside the target are hidden unless listed in `keep`; dialogs capture with their scrim, cropped to dialog plus margin.
 
 ## Trim and QA gates
 
@@ -38,7 +38,9 @@ After capture, uniform edge rows and columns are trimmed to a fixed 16px CSS mar
 
 - A PNG blank band exceeds 15 percent of height (`allowBlank` per shot with a written reason overrides).
 - An annotation selector is missing or its box falls outside the crop.
-- A caption is orphaned from its figure, or a figure breaks across pages.
+- A figure or its caption splits across print pages (checked in Chromium with print media; estimates match the PDF closely).
+- A print page under 40 percent full that is not a chapter end (warning, with page number and coverage).
+- A shot reused without `"reuse": true` on the step (declared reuse is reported, silent duplication fails).
 - Any output exceeds its budget (PDF over 15 MB).
 - `manual check` finds commits touching the configured UI paths after the capture SHA (stale captures listed per shot).
 
@@ -48,10 +50,14 @@ Boxes are `{ n, selector, label, pad? }` resolved with `boundingBox()` at captur
 
 ## Build
 
-HTML frames follow the cropped image (phone frame for mobile, desktop frame for desktop), never a forced viewport ratio. Figures keep captions together (`break-inside: avoid`). Locales `id` and `en` switch template labels (Langkah, Tips, page X of Y, contents). Two runs at the same commit produce the same file set. Every figure carries an `<!-- SHOT id | route | actions -->` trace comment.
+HTML frames follow the cropped image (phone frame for mobile, desktop frame for desktop), never a forced viewport ratio. Figures keep captions together (`break-inside: avoid`). Locales `id` and `en` switch template labels (Langkah, Tips, page X of Y, contents). Shots reused across steps declare `"reuse": true` on the reusing step. Two runs at the same commit produce the same file set. Every figure carries an `<!-- SHOT id | route | actions -->` trace comment.
 
 ## Freshness
 
 The manifest records the app commit SHA and the UI source paths at capture. `manual check` fails when any commit touches those paths after the SHA and names the affected shots. Wire it into CI.
 
-**Reply:** what was built (page count, shot count, locales), the QA numbers that passed, and anything waiting on the human (stale shots, overridden blanks with reasons).
+## Review
+
+After the build, open `review.html`: every final shot with its blank ratio and print page, sorted worst first, plus the must-watch list (top blank ratios, most annotations, shots changed since the last build). The agent views the must-watch shots before calling the manual done. Gate numbers alone are never enough.
+
+**Reply:** what was built (page count, shot count, locales), the QA numbers that passed, the must-watch pages reviewed, and anything waiting on the human (stale shots, overridden blanks with reasons).
