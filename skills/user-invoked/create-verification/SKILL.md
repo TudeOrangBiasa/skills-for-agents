@@ -29,6 +29,13 @@ Write `skills/verify-<app>/SKILL.md` in the target repo with frontmatter (`name:
 - **Evidence:** what to capture and where. Exercise the real user path, never internal setters or test-only endpoints; capture action plus resulting state, not the final screen alone; verify side effects (files, rows, messages) with the visible; mocks only where a production boundary already isolates. Dry-run or test modes get their skips verified by observation, never trusted by name.
 - **Cleanup:** tear down created instances (kill what was started, never by process name). Cleanup removes instances and scratch, never evidence: proof survives at its named location.
 - **Helpers:** shipped scripts stay executable with invocations shown in the body.
+- **CLI lever:** when no harness exists yet, generate a small CLI that scripts interaction and debugging (Build the Lever), instead of prose alone. It carries six agent-friendly properties, each verified by running, not claimed:
+  1. Composable API (deep module: one small interface the agent combines freely).
+  2. Destructive commands take `--dry-run`, and the dry run is verified by observation under the existing Evidence rule.
+  3. Subcommands that open up gradually, including a `dev-env` subcommand (seed database, test user and auth, bring up and down).
+  4. Descriptive errors that tell the agent what to do next, e.g. `Error: no server on :3000. Start it with 'app dev-env up', then rerun this command.`
+  5. Complete `--help` covering every subcommand and flag.
+  6. Machine-readable output, e.g. `app drive checkout --json` prints `{"feature": "checkout", "ok": true, "evidence": "shots/checkout.png"}`.
 
 ## 3. Seed the feature map
 
