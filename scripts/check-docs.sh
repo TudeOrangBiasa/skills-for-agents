@@ -96,6 +96,19 @@ else
   pass "no em dashes in added lines"
 fi
 
+# 5. PRs open ready, never as a draft (issue #15). Ban the create-as-draft
+#    flag and the "always a draft" instruction anywhere under skills/.
+#    Allowed: the word "draft" for prose drafts, and legacy-draft handling
+#    (`gh pr ready`, pickup/runner notes). Full-tree scan so the rule
+#    cannot slide back in outside the diff.
+if grep -rn --include='*.md' -E 'gh pr create --draft|glab mr create .*--draft' skills/ >/dev/null 2>&1; then
+  fail "draft-PR flag found in skills/ (open every PR ready: \`gh pr create\` with no --draft)"
+elif grep -rni --include='*.md' -E 'always a.? draft' skills/ >/dev/null 2>&1; then
+  fail "'always (a) draft' instruction found in skills/ (PRs open ready; the verdict gates the merge)"
+else
+  pass "no draft-PR instruction in skills/"
+fi
+
 if [[ "$failures" -gt 0 ]]; then
   echo "check-docs: $failures check(s) failed."
   exit 1

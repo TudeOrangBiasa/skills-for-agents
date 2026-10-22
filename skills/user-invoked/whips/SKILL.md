@@ -1,6 +1,6 @@
 ---
 name: whips
-description: "Route any non-trivial task through one entry: match a playbook, drive HIT skills plus subagents, open a reviewed draft PR with pr-shaped evidence."
+description: "Route any non-trivial task through one entry: match a playbook, drive HIT skills plus subagents, open a reviewed ready PR with pr-shaped evidence."
 disable-model-invocation: true
 ---
 # Whips
@@ -16,7 +16,7 @@ Read the task and match exactly one row. First match wins.
 | The task | Playbook |
 | --- | --- |
 | Pause, stop for now, the laptop is closing | `playbooks/pause.md` |
-| Resume or take over a prior run, branch, or draft PR | `playbooks/pickup.md` |
+| Resume or take over a prior run, branch, or open PR | `playbooks/pickup.md` |
 | A goal to pursue until its predicate holds, unattended | `playbooks/goal.md` |
 | Pick up the next agent-ready issue | `playbooks/triage.md` intake |
 | Review or bot comments on an open agent PR | `playbooks/triage.md` review mode |
@@ -81,11 +81,11 @@ Map before Guardrails, Guardrails before Walk. When the map is vague, return to 
 
 ## 5. Autonomy
 
-Reversible work proceeds without asking: branches, worktrees, commits, pushing your own branches, draft PRs, rebasing your own stack, tracker labels, comments that carry the AI disclaimer, and review fixes classified `fix`.
+Reversible work proceeds without asking: branches, worktrees, commits, pushing your own branches, opening PRs, rebasing your own stack, tracker labels, comments that carry the AI disclaimer, and review fixes classified `fix`.
 
 Always pause for the human, and keep building everything else meanwhile:
 
-- Merging, marking a PR ready, or enabling auto-merge above your risk authority: low-risk PASS PRs and qualifying medium PRs per [RISK.md](RISK.md) may land; everything else waits.
+- Merging or enabling auto-merge above your risk authority: low-risk PASS PRs and qualifying medium PRs per [RISK.md](RISK.md) may land; everything else waits. (Marking a legacy draft PR ready counts as a merge step under the same authority.)
 - A `figure-it-out` design: present the phase list and wait for approval before executing.
 - Force-pushing a branch someone else works on.
 - Deploying, deleting data, touching secrets or production config.
@@ -103,11 +103,11 @@ Pick each subagent's model by role from `docs/agents/models.md` when the repo ha
 
 On OMP, read `VIBE-MAPPING.md` first and follow it on every run: director toolset and vow, the `vibe_send` truth table, advisor severities, drain discipline, and the hooks evidence gate. Never rely on mid-turn steering; steer inline in briefs plus standing orders and at drain points.
 
-## 7. Verify, gate, open the draft
+## 7. Verify, gate, open the PR ready
 
 Verify on the matching surface. Verdicts are VERIFIED, NOT VERIFIED, or INCONCLUSIVE, and inconclusive is not a pass. CI green is an input, not a verdict. Evidence-free work returns to a fresh fix agent, never to the same worker by resume chain. Strategic track: nominate at most one environment improvement this task suggested (a repeated manual step, a missing check, a confusing doc) as a `/retro` candidate with its evidence. Never fix it mid-run; the list goes to retro.
 
-Open the closing PR per `playbooks/opening-a-pr.md`: always a draft, one risk label plus a `## Risk` paragraph per [RISK.md](RISK.md), `Closes #N` when an issue exists, body shaped with the `pr` skill (summary visual, before/after evidence, merge danger). Landing follows the risk tier per [RISK.md](RISK.md): low-risk PRs land immediately in the same run on an independent PASS (no draft pile, no human touch, never self-reported); qualifying medium PRs may be marked ready and merged by the agent; high-risk PRs wait for the human. Human review time is for high-risk only. Visible changes add the ATTACHMENTS.md pair: before/after table, native 1x, matched viewport and crop, video when motion matters, never inside `<details>`. On a PR, agents never add themselves as collaborator, assignee, or reviewer. Claiming an issue by assignment, per the Claim step in `docs/agents/issue-tracker.md`, is allowed. Tools are not people, so they only author the body and request review from humans.
+Open the closing PR per `playbooks/opening-a-pr.md`: always ready, one risk label plus a `## Risk` paragraph per [RISK.md](RISK.md), `Closes #N` when an issue exists, body shaped with the `pr` skill (summary visual, before/after evidence, merge danger). Landing follows the risk tier per [RISK.md](RISK.md): low-risk PRs land immediately in the same run on an independent PASS (no human touch, never self-reported); qualifying medium PRs may be merged by the agent; high-risk PRs wait for an independent verdict plus a human merge. Human review time is for high-risk only. Visible changes add the ATTACHMENTS.md pair: before/after table, native 1x, matched viewport and crop, video when motion matters, never inside `<details>`. On a PR, agents never add themselves as collaborator, assignee, or reviewer. Claiming an issue by assignment, per the Claim step in `docs/agents/issue-tracker.md`, is allowed. Tools are not people, so they only author the body and request review from humans.
 
 ## 8. Reply
 

@@ -111,7 +111,7 @@ f_ready_issues() { # dir label -> "createdAt number" for open, unassigned issues
   esac
 }
 
-f_linked_pr() { # dir n -> "number url isDraft" of an open PR/MR whose body closes #n
+f_linked_pr() { # dir n -> "number url isDraft" of an open PR/MR whose body closes #n (PRs open ready; isDraft is informational for legacy drafts only)
   local re='(?i)\b(close[sd]?|fix(e[sd])?|resolve[sd]?) #'"$2"'\b'
   case "$FORGE" in
     gh) (cd "$1" && gh pr list --state open --limit 100 --json number,url,isDraft,body) |

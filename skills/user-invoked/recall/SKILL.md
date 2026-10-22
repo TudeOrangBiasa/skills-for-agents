@@ -3,7 +3,7 @@ description: Rebuild recent working context across chats into a tight capsule br
 disable-model-invocation: true
 name: recall
 ---
-Before starting or resuming work, rebuild recent working context and hand back a tight capsule of where things stand and what to do next. One specific run, branch, or draft PR to resume is the `pickup` playbook instead; this chat since your last message is `/ketchup` instead. Recall covers recent work across chats.
+Before starting or resuming work, rebuild recent working context and hand back a tight capsule of where things stand and what to do next. One specific run, branch, or open PR to resume is the `pickup` playbook instead; this chat since your last message is `/ketchup` instead. Recall covers recent work across chats.
 
 ## Scope first
 
