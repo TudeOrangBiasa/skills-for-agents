@@ -1,0 +1,3 @@
+# Credits
+
+Built from a measured case study: a 68-page, 86-screenshot HTML plus PDF manual where 7 shots carried blank bands over 50 percent of the frame (viewport capture of short pages) and 14 of 68 PDF pages sat over 40 percent empty. Every gate in this skill traces to one of those failures: target-clip capture, edge trim, the 15 percent blank-band gate, orphan-caption rules, stable manifest ids, selector annotations, and freshness checks against UI commits.

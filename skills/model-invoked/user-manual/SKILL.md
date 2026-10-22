@@ -1,0 +1,57 @@
+---
+description: "Generate a user manual from a running web app: content-cropped screenshots, selector annotations, HTML plus PDF build with QA gates. Use for user manual, guide book, panduan pengguna, end-user docs with screenshots, PDF guide."
+name: user-manual
+---
+# User manual
+
+Generate a user manual (guide book, panduan pengguna) from a running web app: deterministic screenshots cropped to content, selector-based annotations, and an HTML plus PDF build that fails on blank screenshots, orphan captions, or stale captures. Use when asked for a user manual, guide book, end-user documentation with screenshots, or a PDF guide.
+
+One command regenerates everything: `scripts/manual build`. The build fails (nonzero exit plus the shot id, page, and percentage) instead of shipping a manual with long blank areas.
+
+## Manifest
+
+One `manual.json` defines chapters, steps, and shots. A shot names a content target, never a viewport dump:
+
+```json
+{
+  "app": { "name": "Shop", "baseUrl": "http://localhost:3000", "locale": "id" },
+  "shots": [
+    {
+      "id": "c10-done", "route": "/checkout/done", "target": "main",
+      "viewport": "mobile", "hide": ["header.site", ".toast"],
+      "annotations": [{ "n": 1, "selector": "[data-manual=receipt]", "label": "Nomor struk" }]
+    }
+  ],
+  "chapters": [{ "title": "Pelanggan", "steps": [{ "n": 1, "title": "Selesai", "body": "...", "shot": "c10-done" }] }]
+}
+```
+
+File names equal shot ids, no combined suffixes. A `sequence` id groups shots that share one browser context in order. `--only <id>` rebuilds one shot.
+
+## Capture
+
+The target selector is captured (`locator.screenshot()` or the union clip of visible boxes inside it), never the full viewport or full page. Each shot runs in a fresh browser context (clean localStorage), `reducedMotion`, DPR 2. Presets: `mobile` (390x844), `desktop` (1440x900). Elements with `position: fixed` or `sticky` outside the target are hidden unless listed in `keep`; dialogs capture with their scrim, cropped to dialog plus margin.
+
+## Trim and QA gates
+
+After capture, uniform edge rows and columns are trimmed to a fixed 16px CSS margin; the background color is read from the edge pixels, never hardcoded. Then every final PNG is measured (longest contiguous uniform band over height, plus total ratio). The build fails when:
+
+- A PNG blank band exceeds 15 percent of height (`allowBlank` per shot with a written reason overrides).
+- An annotation selector is missing or its box falls outside the crop.
+- A caption is orphaned from its figure, or a figure breaks across pages.
+- Any output exceeds its budget (PDF over 15 MB).
+- `manual check` finds commits touching the configured UI paths after the capture SHA (stale captures listed per shot).
+
+## Annotations
+
+Boxes are `{ n, selector, label, pad? }` resolved with `boundingBox()` at capture time, stored relative to the crop in a sidecar JSON. No hand-written pixel coordinates in the manifest, ever.
+
+## Build
+
+HTML frames follow the cropped image (phone frame for mobile, desktop frame for desktop), never a forced viewport ratio. Figures keep captions together (`break-inside: avoid`). Locales `id` and `en` switch template labels (Langkah, Tips, page X of Y, contents). Two runs at the same commit produce the same file set. Every figure carries an `<!-- SHOT id | route | actions -->` trace comment.
+
+## Freshness
+
+The manifest records the app commit SHA and the UI source paths at capture. `manual check` fails when any commit touches those paths after the SHA and names the affected shots. Wire it into CI.
+
+**Reply:** what was built (page count, shot count, locales), the QA numbers that passed, and anything waiting on the human (stale shots, overridden blanks with reasons).

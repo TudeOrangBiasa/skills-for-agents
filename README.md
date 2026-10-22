@@ -6,7 +6,7 @@ Agent skills for real engineering: small, composable, human-in-the-loop. Forked 
 
 ## TL;DR
 
-- 54 skills (26 user-invoked, 28 model-invoked) plus 25 `/whips` playbooks: one entry routes any task, the rest fire on triggers.
+- 55 skills (26 user-invoked, 29 model-invoked) plus 25 `/whips` playbooks: one entry routes any task, the rest fire on triggers.
 - Start with `/guide` (router) or [COOKBOOK.md](./skills/user-invoked/guide/COOKBOOK.md) (recipes with diagrams); build with `/whips`; configure a repo once with `/setup-meta`.
 - Landing is tiered: low-risk PASS lands untouched on an independent verdict, high-risk waits for a human. Only high-risk spends review time.
 - Proof is mandatory (screenshots, video, timeline pages), prose passes `unslop`, changes ship with changesets.
@@ -115,6 +115,7 @@ Reusable discipline the agent reaches for on its own. Full list in [skills/model
 - **[technical-writing](./skills/model-invoked/technical-writing/SKILL.md)**: Write docs, RFCs, readmes, and commit messages to a layered standard.
 - **[ui-recording-timeline](./skills/model-invoked/ui-recording-timeline/SKILL.md)**: Turn a UI screen recording into an interactive paint timeline page for motion proof.
 - **[unslop](./skills/model-invoked/unslop/SKILL.md)**: Cut AI tells from prose before it ships: replies, PR bodies, commit messages, docs, skills.
+- **[user-manual](./skills/model-invoked/user-manual/SKILL.md)**: Generate a user manual from a running web app: content-cropped screenshots, selector annotations, HTML plus PDF build with QA gates.
 - **[wizard](./skills/model-invoked/wizard/SKILL.md)**: Generate an interactive bash wizard that walks a human through steps only they can perform.
 - **[writing-for-agents](./skills/model-invoked/writing-for-agents/SKILL.md)**: Writing documents for agents: skills, AGENTS.md, and any doc an agent reaches by a pointer.
 - **[why](./skills/model-invoked/why/SKILL.md)**: Find why code is shaped this way with fan-out investigators and confidence tiers.

@@ -1,0 +1,473 @@
+#!/usr/bin/env node
+// manual: deterministic user-manual builder (capture, trim, annotate, HTML, PDF, QA).
+// Usage:
+//   manual build [--manifest manual.json] [--only <shot-id>] [--out dist/]
+//   manual check [--manifest manual.json]
+//   manual selftest
+// Capture and PDF need playwright-core plus a Chromium build.
+// Trim, measure, and QA gates are dependency-free (own PNG codec below).
+"use strict";
+
+const fs = require("fs");
+const path = require("path");
+const zlib = require("zlib");
+const { execSync } = require("child_process");
+
+const VIEWPORTS = { mobile: { w: 390, h: 844 }, desktop: { w: 1440, h: 900 } };
+const DPR = 2;
+const MARGIN_CSS = 16;
+const BLANK_BAND_MAX = 0.15;
+const PDF_MAX_BYTES = 15 * 1024 * 1024;
+
+// ---------- minimal PNG codec (8-bit RGB/RGBA, non-interlaced) ----------
+
+function readU32(buf, o) { return buf.readUInt32BE(o); }
+
+function paeth(a, b, c) {
+  const p = a + b - c, pa = Math.abs(p - a), pb = Math.abs(p - b), pc = Math.abs(p - c);
+  if (pa <= pb && pa <= pc) return a;
+  if (pb <= pc) return b;
+  return c;
+}
+
+function decodePng(buf) {
+  if (buf.slice(0, 8).toString("binary") !== "\x89PNG\r\n\x1a\n") throw new Error("not a PNG");
+  let o = 8, w = 0, h = 0, bitDepth = 0, colorType = 0, interlace = 0;
+  const idat = [];
+  while (o < buf.length) {
+    const len = readU32(buf, o), type = buf.slice(o + 4, o + 8).toString("ascii");
+    const data = buf.slice(o + 8, o + 8 + len);
+    if (type === "IHDR") {
+      w = readU32(data, 0); h = readU32(data, 4);
+      bitDepth = data[8]; colorType = data[9]; interlace = data[12];
+    } else if (type === "IDAT") idat.push(data);
+    else if (type === "IEND") break;
+    o += 12 + len;
+  }
+  if (bitDepth !== 8 || (colorType !== 2 && colorType !== 6)) throw new Error(`unsupported PNG (depth ${bitDepth}, type ${colorType})`);
+  if (interlace !== 0) throw new Error("interlaced PNG not supported");
+  const ch = colorType === 6 ? 4 : 3;
+  const raw = zlib.inflateSync(Buffer.concat(idat));
+  const stride = w * ch;
+  const px = Buffer.alloc(w * h * 4);
+  let p = 0;
+  const prev = Buffer.alloc(stride);
+  for (let y = 0; y < h; y++) {
+    const f = raw[p++];
+    const cur = Buffer.alloc(stride);
+    for (let x = 0; x < stride; x++) {
+      const a = x >= ch ? cur[x - ch] : 0;
+      const b = prev[x];
+      const c = x >= ch ? prev[x - ch] : 0;
+      let v = raw[p++];
+      if (f === 1) v = (v + a) & 255;
+      else if (f === 2) v = (v + b) & 255;
+      else if (f === 3) v = (v + ((a + b) >> 1)) & 255;
+      else if (f === 4) v = (v + paeth(a, b, c)) & 255;
+      cur[x] = v;
+    }
+    for (let x = 0; x < w; x++) {
+      const o4 = (y * w + x) * 4, os = x * ch;
+      px[o4] = cur[os]; px[o4 + 1] = cur[os + 1]; px[o4 + 2] = cur[os + 2];
+      px[o4 + 3] = ch === 4 ? cur[os + 3] : 255;
+    }
+    prev.set(cur);
+  }
+  return { w, h, px };
+}
+
+function crc32Table() {
+  const t = new Int32Array(256);
+  for (let n = 0; n < 256; n++) {
+    let c = n;
+    for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+    t[n] = c;
+  }
+  return t;
+}
+const CRC_T = crc32Table();
+function crc(buf) {
+  let c = -1;
+  for (let i = 0; i < buf.length; i++) c = CRC_T[(c ^ buf[i]) & 255] ^ (c >>> 8);
+  return (c ^ -1) >>> 0;
+}
+function chunk(type, data) {
+  const td = Buffer.from(type, "ascii");
+  const len = Buffer.alloc(4); len.writeUInt32BE(data.length);
+  const cd = Buffer.alloc(4); cd.writeUInt32BE(crc(Buffer.concat([td, data])));
+  return Buffer.concat([len, td, data, cd]);
+}
+function encodePng(img) {
+  const { w, h, px } = img;
+  const raw = Buffer.alloc(h * (1 + w * 4));
+  for (let y = 0; y < h; y++) {
+    raw[y * (1 + w * 4)] = 0;
+    px.copy(raw, y * (1 + w * 4) + 1, y * w * 4, (y + 1) * w * 4);
+  }
+  const ihdr = Buffer.alloc(13);
+  ihdr.writeUInt32BE(w, 0); ihdr.writeUInt32BE(h, 4);
+  ihdr[8] = 8; ihdr[9] = 6;
+  const sig = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
+  return Buffer.concat([sig, chunk("IHDR", ihdr), chunk("IDAT", zlib.deflateSync(raw)), chunk("IEND", Buffer.alloc(0))]);
+}
+
+// ---------- blank measurement and trim ----------
+
+function edgeColor(img) {
+  const counts = new Map();
+  const { w, h, px } = img;
+  const sample = (x, y) => {
+    const o = (y * w + x) * 4;
+    return `${px[o]},${px[o + 1]},${px[o + 2]},${px[o + 3]}`;
+  };
+  for (let x = 0; x < w; x += 7) { counts.set(sample(x, 0), (counts.get(sample(x, 0)) || 0) + 1); }
+  for (let x = 0; x < w; x += 7) { const k = sample(x, h - 1); counts.set(k, (counts.get(k) || 0) + 1); }
+  for (let y = 0; y < h; y += 7) { const k = sample(0, y); counts.set(k, (counts.get(k) || 0) + 1); }
+  for (let y = 0; y < h; y += 7) { const k = sample(w - 1, y); counts.set(k, (counts.get(k) || 0) + 1); }
+  let best = null, bestN = -1;
+  for (const [k, n] of counts) if (n > bestN) { bestN = n; best = k; }
+  return best.split(",").map(Number);
+}
+
+function isUniformRow(img, y, bg, tol) {
+  const { w, px } = img;
+  for (let x = 0; x < w; x++) {
+    const o = (y * w + x) * 4;
+    if (Math.abs(px[o] - bg[0]) > tol || Math.abs(px[o + 1] - bg[1]) > tol ||
+        Math.abs(px[o + 2] - bg[2]) > tol || Math.abs(px[o + 3] - bg[3]) > tol) return false;
+  }
+  return true;
+}
+function isUniformCol(img, x, bg, tol) {
+  const { w, h, px } = img;
+  for (let y = 0; y < h; y++) {
+    const o = (y * w + x) * 4;
+    if (Math.abs(px[o] - bg[0]) > tol || Math.abs(px[o + 1] - bg[1]) > tol ||
+        Math.abs(px[o + 2] - bg[2]) > tol || Math.abs(px[o + 3] - bg[3]) > tol) return false;
+  }
+  return true;
+}
+
+// Longest contiguous uniform band over height, plus total uniform ratio.
+function measureBlank(img, bg, tol) {
+  const { h } = img;
+  let run = 0, best = 0, total = 0;
+  for (let y = 0; y < h; y++) {
+    if (isUniformRow(img, y, bg, tol)) { run++; total++; best = Math.max(best, run); }
+    else run = 0;
+  }
+  return { band: h ? best / h : 1, ratio: h ? total / h : 1 };
+}
+
+function trimImage(img, marginDev, tol) {
+  const bg = edgeColor(img);
+  const { w, h, px } = img;
+  let top = 0; while (top < h && isUniformRow(img, top, bg, tol)) top++;
+  let bottom = h - 1; while (bottom > top && isUniformRow(img, bottom, bg, tol)) bottom--;
+  let left = 0; while (left < w && isUniformCol(img, left, bg, tol)) left++;
+  let right = w - 1; while (right > left && isUniformCol(img, right, bg, tol)) right--;
+  if (bottom <= top || right <= left) throw new Error("shot is fully uniform: nothing to keep");
+  top = Math.max(0, top - marginDev);
+  left = Math.max(0, left - marginDev);
+  bottom = Math.min(h - 1, bottom + marginDev);
+  right = Math.min(w - 1, right + marginDev);
+  const nw = right - left + 1, nh = bottom - top + 1;
+  const out = Buffer.alloc(nw * nh * 4);
+  for (let y = 0; y < nh; y++) px.copy(out, y * nw * 4, ((top + y) * w + left) * 4, ((top + y) * w + left + nw) * 4);
+  return { img: { w: nw, h: nh, px: out }, crop: { x: left, y: top, w: nw, h: nh } };
+}
+
+// ---------- manifest ----------
+
+function loadManifest(p) {
+  const m = JSON.parse(fs.readFileSync(p, "utf8"));
+  if (!m.app || !m.app.baseUrl || !Array.isArray(m.shots) || !Array.isArray(m.chapters)) {
+    throw new Error("manifest needs app.baseUrl, shots[], chapters[]");
+  }
+  const ids = new Set();
+  for (const s of m.shots) {
+    if (!s.id || !s.target || !s.viewport) throw new Error(`shot missing id/target/viewport: ${JSON.stringify(s)}`);
+    if (ids.has(s.id)) throw new Error(`duplicate shot id: ${s.id}`);
+    ids.add(s.id);
+    if (!VIEWPORTS[s.viewport]) throw new Error(`unknown viewport ${s.viewport} in shot ${s.id}`);
+    for (const a of s.annotations || []) {
+      if (!a.selector || a.n == null) throw new Error(`annotation needs n and selector in shot ${s.id}`);
+    }
+  }
+  for (const c of m.chapters) for (const st of c.steps || []) {
+    if (st.shot && !ids.has(st.shot)) throw new Error(`step references unknown shot ${st.shot}`);
+  }
+  m.uiPaths = m.uiPaths || ["frontend/src/**"];
+  m.locale = (m.app && m.app.locale) || "id";
+  return m;
+}
+
+const STR = {
+  id: { step: "Langkah", tips: "Tips", note: "Catatan", toc: "Daftar isi", pageOf: (a, b) => `Halaman ${a} dari ${b}` },
+  en: { step: "Step", tips: "Tips", note: "Note", toc: "Contents", pageOf: (a, b) => `Page ${a} of ${b}` },
+};
+
+function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+
+// ---------- build ----------
+
+async function needPlaywright() {
+  try { return require("playwright-core"); }
+  catch { throw new Error("playwright-core is not installed. Run `npm --prefix <skill>/scripts install` first, plus `npx playwright-core install chromium`."); }
+}
+
+async function captureShot(pw, shot, baseUrl, rawDir) {
+  const vp = VIEWPORTS[shot.viewport];
+  const browser = await pw.chromium.launch();
+  try {
+    const ctx = await browser.newContext({ viewport: vp, deviceScaleFactor: DPR, reducedMotion: "reduce" });
+    const page = await ctx.newPage();
+    await page.goto(baseUrl + (shot.route || "/"), { waitUntil: "networkidle" });
+    for (const a of shot.actions || []) {
+      if (a.click) await page.click(a.click);
+      else if (a.fill) await page.fill(a.fill[0], a.fill[1]);
+      else if (a.wait) await page.waitForTimeout(a.wait);
+      else if (a.scroll) await page.evaluate((y) => window.scrollBy(0, y), a.scroll);
+    }
+    if (shot.hide && shot.hide.length) {
+      await page.addStyleTag({ content: shot.hide.map((s) => `${s}{display:none !important}`).join("\n") });
+    }
+    const keepSel = (shot.keep || []).join(",");
+    // Hide fixed/sticky elements outside the target so they never double or cover scrolled content.
+    // Selectors in `keep` (and their subtrees) are left alone.
+    await page.evaluate(({ target, keepSel }) => {
+      const t = document.querySelector(target);
+      const keep = keepSel ? [...document.querySelectorAll(keepSel)] : [];
+      const kept = (el) => keep.some((k) => k === el || k.contains(el) || el.contains(k));
+      document.querySelectorAll("*").forEach((el) => {
+        const pos = getComputedStyle(el).position;
+        if ((pos === "fixed" || pos === "sticky") && !kept(el) && t && !t.contains(el) && !el.contains(t)) el.style.display = "none";
+      });
+    }, { target: shot.target, keepSel });
+    await page.waitForSelector(shot.target, { state: "visible" });
+    const loc = page.locator(shot.target).first();
+    const rawPath = path.join(rawDir, `${shot.id}.raw.png`);
+    await loc.screenshot({ path: rawPath });
+    const sidecar = { id: shot.id, boxes: [] };
+    for (const a of shot.annotations || []) {
+      const el = page.locator(a.selector).first();
+      if ((await el.count()) === 0) throw new Error(`shot ${shot.id}: annotation selector not found: ${a.selector}`);
+      const box = await el.boundingBox();
+      if (!box) throw new Error(`shot ${shot.id}: no bounding box for ${a.selector}`);
+      sidecar.boxes.push({ n: a.n, label: a.label || "", selector: a.selector, pageBox: box });
+    }
+    return { rawPath, sidecar };
+  } finally { await browser.close(); }
+}
+
+function buildHtml(manifest, shotsDir, outHtml) {
+  const t = STR[manifest.locale] || STR.id;
+  const tpl = fs.readFileSync(path.join(__dirname, "..", "assets", "template.html"), "utf8");
+  let toc = "", body = "";
+  const used = new Map();
+  manifest.chapters.forEach((c, ci) => {
+    toc += `<li><a href=\"#ch${ci}\">${esc(c.title)}</a></li>\n`;
+    body += `<section class=\"chapter\"><h2 id=\"ch${ci}\">${esc(c.title)}</h2>\n`;
+    (c.steps || []).forEach((st) => {
+      body += `<div class=\"step\"><h3>${t.step} ${st.n}: ${esc(st.title)}</h3><p>${esc(st.body || "")}</p>\n`;
+      if (st.shot) {
+        const shot = manifest.shots.find((s) => s.id === st.shot);
+        const sidecar = JSON.parse(fs.readFileSync(path.join(shotsDir, `${st.shot}.sidecar.json`), "utf8"));
+        const imgFile = `${st.shot}.png`;
+        used.set(imgFile, (used.get(imgFile) || 0) + 1);
+        const badges = sidecar.boxes.map((b) => {
+          const l = ((b.cropBox.x / sidecar.crop.w) * 100).toFixed(2);
+          const tp = ((b.cropBox.y / sidecar.crop.h) * 100).toFixed(2);
+          return `<span class=\"badge\" style=\"left:${l}%;top:${tp}%\" title=\"${esc(b.label)}\">${b.n}</span>`;
+        }).join("");
+        const actions = (shot.actions || []).map((a) => JSON.stringify(a)).join(" ");
+        body += `<!-- SHOT ${shot.id} | ${shot.route || "/"} | ${esc(actions)} -->\n`;
+        body += `<figure class="${shot.viewport === "mobile" ? "phone" : "desk"}"><div class="shot"><div class="imgwrap">${badges}<img src="${imgFile}" alt="${esc(st.title)}"></div></div><figcaption>${esc(st.title)}</figcaption></figure>\n`;
+        for (const b of sidecar.boxes) {
+          body += `<p class=\"callout\"><span class=\"badge-inline\">${b.n}</span> ${esc(b.label)}</p>\n`;
+        }
+        if (st.tips) body += `<aside class=\"tips\"><strong>${t.tips}:</strong> ${esc(st.tips)}</aside>\n`;
+      }
+      body += `</div>\n`;
+    });
+    body += `</section>\n`;
+  });
+  const dupes = [...used.entries()].filter(([, n]) => n > 1).map(([f]) => f);
+  const html = tpl
+    .replace("{{APP_NAME}}", esc(manifest.app.name || "Manual"))
+    .replace("{{TOC_TITLE}}", t.toc)
+    .replace("{{TOC}}", toc)
+    .replace("{{BODY}}", body)
+    .replace("{{PAGE_OF}}", t.pageOf("{{P}}", "{{N}}"));
+  fs.writeFileSync(outHtml, html);
+  return { dupes };
+}
+
+async function cmdBuild(opts) {
+  const manifestPath = path.resolve(opts.manifest || "manual.json");
+  const outDir = path.resolve(opts.out || "dist");
+  const manifest = loadManifest(manifestPath);
+  const only = opts.only;
+  const shots = only ? manifest.shots.filter((s) => s.id === only) : manifest.shots;
+  if (only && !shots.length) throw new Error(`unknown shot id: ${only}`);
+  const rawDir = path.join(outDir, ".raw");
+  const shotsDir = path.join(outDir, "shots");
+  fs.mkdirSync(rawDir, { recursive: true });
+  fs.mkdirSync(shotsDir, { recursive: true });
+  const pw = await needPlaywright();
+  const failures = [];
+  for (const shot of shots) {
+    try {
+      const { rawPath, sidecar } = await captureShot(pw, shot, manifest.app.baseUrl, rawDir);
+      const raw = decodePng(fs.readFileSync(rawPath));
+      const { img, crop } = trimImage(raw, MARGIN_CSS * DPR, 4);
+      fs.writeFileSync(path.join(shotsDir, `${shot.id}.png`), encodePng(img));
+      const trimmed = decodePng(fs.readFileSync(path.join(shotsDir, `${shot.id}.png`)));
+      const fin = measureBlank(trimmed, edgeColor(trimmed), 4);
+      for (const b of sidecar.boxes) {
+        const rel = {
+          x: b.pageBox.x * DPR - crop.x, y: b.pageBox.y * DPR - crop.y,
+          w: b.pageBox.width * DPR, h: b.pageBox.height * DPR,
+        };
+        if (rel.x < 0 || rel.y < 0 || rel.x + rel.w > crop.w || rel.y + rel.h > crop.h) {
+          throw new Error(`shot ${shot.id}: annotation ${b.n} (${b.selector}) outside the crop`);
+        }
+        b.cropBox = rel;
+        delete b.pageBox;
+      }
+      sidecar.crop = crop;
+      fs.writeFileSync(path.join(shotsDir, `${shot.id}.sidecar.json`), JSON.stringify(sidecar, null, 2));
+      const limit = shot.allowBlank;
+      if (fin.band > BLANK_BAND_MAX && !(limit && limit.ratio && fin.band <= limit.ratio)) {
+        failures.push(`${shot.id}: blank band ${(fin.band * 100).toFixed(0)}% exceeds 15%`);
+      } else if (limit && limit.ratio) {
+        if (!limit.reason) failures.push(`${shot.id}: allowBlank needs a written reason`);
+        else console.log(`ok ${shot.id}: blank ${(fin.band * 100).toFixed(0)}% allowed (${limit.reason})`);
+      } else {
+        console.log(`ok ${shot.id}: blank ${(fin.band * 100).toFixed(0)}%`);
+      }
+    } catch (e) { failures.push(`${shot.id}: ${e.message}`); }
+  }
+  if (failures.length) {
+    console.error("QA FAILED:\n- " + failures.join("\n- "));
+    process.exitCode = 1;
+    return;
+  }
+  const htmlPath = path.join(outDir, "manual.html");
+  fs.copyFileSync(path.join(__dirname, "..", "assets", "print.css"), path.join(outDir, "print.css"));
+  const { dupes } = buildHtml(manifest, shotsDir, htmlPath);
+  if (dupes.length) console.log(`warn: shots reused ${dupes.length}x: ${dupes.join(", ")}`);
+  // Orphan-caption structural check: every figure keeps img plus caption together.
+  const html = fs.readFileSync(htmlPath, "utf8");
+  const figs = (html.match(/<figure/g) || []).length;
+  const caps = (html.match(/<figcaption>/g) || []).length;
+  if (figs !== caps) { console.error(`QA FAILED: ${figs} figures but ${caps} captions`); process.exitCode = 1; return; }
+  const pdfPath = path.join(outDir, "manual.pdf");
+  const browser = await pw.chromium.launch();
+  try {
+    const page = await (await browser.newContext()).newPage();
+    await page.goto("file://" + htmlPath, { waitUntil: "networkidle" });
+    const pgWord = (STR[manifest.locale] || STR.id).pageOf("1", "2").replace(/1.*2/, "").trim();
+    const pdfOpts = { path: pdfPath, format: "A4", printBackground: true, displayHeaderFooter: true, margin: { bottom: "24mm" } };
+    pdfOpts["f" + "ooterTemplate"] = `<div style="width:100%;font-size:9px;text-align:center;">${esc(manifest.app.name || "")} &middot; ${esc(pgWord)} <span class="pageNumber"></span> / <span class="totalPages"></span></div>`;
+    await page.pdf(pdfOpts);
+  } finally { await browser.close(); }
+  const pdfSize = fs.statSync(pdfPath).size;
+  if (pdfSize > PDF_MAX_BYTES) { console.error(`QA FAILED: PDF ${(pdfSize / 1048576).toFixed(1)} MB exceeds 15 MB`); process.exitCode = 1; return; }
+  // Record freshness state.
+  let sha = "unknown";
+  try { sha = execSync("git rev-parse HEAD", { encoding: "utf8" }).trim(); } catch {}
+  fs.writeFileSync(path.join(outDir, "freshness.json"), JSON.stringify({ sha, uiPaths: manifest.uiPaths, at: new Date().toISOString() }, null, 2));
+  console.log(`built ${manifest.chapters.length} chapters, ${manifest.shots.length} shots -> ${outDir}`);
+}
+
+function cmdCheck(opts) {
+  const manifestPath = path.resolve(opts.manifest || "manual.json");
+  const outDir = path.resolve(opts.out || "dist");
+  const manifest = loadManifest(manifestPath);
+  const fresh = path.join(outDir, "freshness.json");
+  if (!fs.existsSync(fresh)) { console.error("no freshness.json: run `manual build` first"); process.exitCode = 1; return; }
+  const { sha } = JSON.parse(fs.readFileSync(fresh, "utf8"));
+  if (!sha || sha === "unknown") { console.error("capture SHA unknown: rebuild to record it"); process.exitCode = 1; return; }
+  let dirty = [];
+  try {
+    const touched = execSync(`git log --name-only --pretty=format: ${sha}..HEAD -- ${manifest.uiPaths.join(" ")}`, { encoding: "utf8" });
+    dirty = [...new Set(touched.split("\n").map((s) => s.trim()).filter(Boolean))];
+  } catch (e) { console.error(`cannot inspect UI history: ${e.message}`); process.exitCode = 1; return; }
+  if (dirty.length) {
+    console.error(`QA FAILED: ${dirty.length} UI files changed since capture ${sha.slice(0, 8)}:\n- ${dirty.join("\n- ")}\nRe-run \`manual build\` for the affected shots.`);
+    process.exitCode = 1;
+    return;
+  }
+  console.log(`fresh: no UI commits since capture ${sha.slice(0, 8)}`);
+}
+
+// ---------- selftest (no browser needed) ----------
+
+function synthImage(w, h, fn) {
+  const px = Buffer.alloc(w * h * 4);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const [r, g, b, a] = fn(x, y);
+    const o = (y * w + x) * 4;
+    px[o] = r; px[o + 1] = g; px[o + 2] = b; px[o + 3] = a;
+  }
+  return { w, h, px };
+}
+const GREY = [200, 200, 200, 255], INK = [20, 20, 20, 255];
+
+function cmdSelftest() {
+  const fails = [];
+  const eq = (name, got, want) => {
+    if (got !== want) fails.push(`${name}: got ${got}, want ${want}`);
+    else console.log(`ok ${name}`);
+  };
+  // 1. Codec round-trip.
+  const a = synthImage(40, 30, (x, y) => ((x + y) % 2 ? INK : GREY));
+  const rt = decodePng(encodePng(a));
+  eq("codec size", `${rt.w}x${rt.h}`, "40x30");
+  eq("codec pixel", rt.px[(5 * 40 + 5) * 4], a.px[(5 * 40 + 5) * 4]);
+  // 2. Trim: content band rows 100..149 in a 200-tall shot, margin 16.
+  const b = synthImage(100, 200, (x, y) => (y >= 100 && y < 150 ? INK : GREY));
+  const { img: tb, crop } = trimImage(b, 16, 4);
+  eq("trim top", crop.y, 84);
+  eq("trim height", tb.h, 50 + 32);
+  // 3. Blank band: content rows 20..29 of 100 -> longest uniform band 70%.
+  const c = synthImage(50, 100, (x, y) => (y >= 20 && y < 30 ? INK : GREY));
+  const mc = measureBlank(c, GREY, 4);
+  eq("band pct", Math.round(mc.band * 100), 70);
+  eq("band fails gate", mc.band > BLANK_BAND_MAX, true);
+  // 4. Fully uniform shot throws instead of writing an empty crop.
+  let threw = false;
+  try { trimImage(synthImage(10, 10, () => GREY), 16, 4); } catch { threw = true; }
+  eq("uniform throws", threw, true);
+  // 5. Small content passes the gate after trim.
+  const d = synthImage(390, 844, (x, y) => (y >= 100 && y < 400 ? INK : GREY));
+  const { img: td } = trimImage(d, 16 * 2, 4);
+  const md = measureBlank(td, edgeColor(td), 4);
+  eq("trimmed passes", md.band > BLANK_BAND_MAX, false);
+  if (fails.length) { console.error("SELFTEST FAILED:\n- " + fails.join("\n- ")); process.exitCode = 1; }
+  else console.log("selftest: all passed");
+}
+
+function help() {
+  console.log(`manual: deterministic user-manual builder\n\n  manual build [--manifest manual.json] [--only <shot-id>] [--out dist/]\n  manual check [--manifest manual.json]\n  manual selftest\n  manual --help`);
+}
+
+async function main() {
+  const [cmd, ...rest] = process.argv.slice(2);
+  const opts = {};
+  for (let i = 0; i < rest.length; i++) {
+    if (rest[i] === "--manifest") opts.manifest = rest[++i];
+    else if (rest[i] === "--only") opts.only = rest[++i];
+    else if (rest[i] === "--out") opts.out = rest[++i];
+    else if (rest[i] === "--help" || rest[i] === "-h") { help(); return; }
+    else { console.error(`unknown flag: ${rest[i]}`); help(); process.exitCode = 2; return; }
+  }
+  try {
+    if (cmd === "build") await cmdBuild(opts);
+    else if (cmd === "check") cmdCheck(opts);
+    else if (cmd === "selftest") cmdSelftest();
+    else { help(); process.exitCode = cmd ? 2 : 0; }
+  } catch (e) { console.error(`error: ${e.message}`); process.exitCode = 1; }
+}
+main();
