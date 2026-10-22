@@ -1,10 +1,23 @@
 #!/bin/sh
-# pre-commit gate for skills-for-agents: docs hygiene on staged content.
+# pre-commit gate for skills-for-agents: docs hygiene on the work about to land.
 #
 # Enable once per clone:
 #   git config core.hooksPath .husky
 #
-# Compares the worktree against HEAD (DOCS_RANGE), so staged-but-uncommitted
-# changes are gated before they land. CI runs the same script against the
-# PR base ref as the backstop.
-DOCS_RANGE=HEAD exec scripts/check-docs.sh
+# Compares the worktree against the branch point (merge-base with origin/main),
+# so a stacked second commit does not fail checks its branch already satisfies
+# (e.g. the changeset committed earlier on the same branch). On main itself,
+# or when origin/main is unavailable, falls back to HEAD (worktree vs HEAD).
+# CI runs the same script against the PR base ref as the backstop.
+if git rev-parse --verify --quiet origin/main >/dev/null 2>&1; then
+  MB="$(git merge-base HEAD origin/main 2>/dev/null || true)"
+  if [ -n "$MB" ] && [ "$MB" != "$(git rev-parse HEAD)" ]; then
+    DOCS_RANGE="$MB"
+  else
+    DOCS_RANGE=HEAD
+  fi
+else
+  DOCS_RANGE=HEAD
+fi
+export DOCS_RANGE
+exec scripts/check-docs.sh
