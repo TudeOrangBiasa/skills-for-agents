@@ -42,5 +42,6 @@ Run `scripts/runner.sh check`, then one `scripts/runner.sh run` while the user w
 - A claim left by a run that died is released at the next start, so a missed run is picked up by the next one.
 - Landing follows the risk tier: low-risk PASS lands in the run, the rest wait for `ready-check` or the human.
 - Every issue appends one line to `runs.jsonl`; every run prints a one-line summary.
+- The closing summary of a batch follows the ketchup shape ([ketchup](../ketchup/SKILL.md)): how many action items there are, what landed, and each item waiting on the human as a short executive summary.
 
 Never prompt during `run` or `check`; a missing config fails with a pointer to setup. Never enable auto-merge or close an issue.
