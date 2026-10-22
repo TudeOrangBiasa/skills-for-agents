@@ -2,7 +2,7 @@
 
 Resume or take over another run's in-flight work: a branch, an open PR (a legacy draft PR included), a run log, a pause note, or a transcript the user points at. You own the resume point. The prior trail is the input, not something to redo.
 
-1. Find the trail: the pause note or run log (`.scratch/whips/<run>/`), the branch and its open PR, the linked issue and its comments. If the PR is still a legacy draft, mark it ready with `gh pr ready <number>` once you resume it. A long transcript goes to a subagent that returns a short timeline of decisions and state.
+1. Find the trail: the pause note or run log (`.scratch/whips/<run>/`), the branch and its open PR, the linked issue and its comments. If the PR is still a legacy draft, mark it ready with `gh pr ready <number>` once you resume it (flag only; landing still follows the verdict per `RISK.md`). A long transcript goes to a subagent that returns a short timeline of decisions and state.
 2. Rebuild the state: branch and worktree, what already landed (`git log` and `git diff` against the base), open todos, decisions made and why.
 3. Diff done against pending and name the resume point. Do not rerun work the trail shows finished.
 4. Check the inherited claims that the next step depends on, on the real artifact: rerun the cited test or repro once. A prior "done" without evidence is unverified, not done.

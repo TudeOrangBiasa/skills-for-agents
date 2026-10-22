@@ -8,7 +8,7 @@ Writing or changing a skill (SKILL.md plus its folder). This repo is skills, so 
    - Every file the skill references exists in the folder; every link between skills resolves. Run the full gate: `scripts/check-docs.sh origin/main` (exit 0, all checks ok).
    - `agents/openai.yaml` matches the repo pattern (`display_name`, `short_description`).
    - New skill: registered in `skills/<bucket>/README.md` and the top-level `README.md` (the docs gate enforces this), plus the `guide` when a user-reachable flow changes.
-   - Changed skill that alters agent behavior: add or update the `eval.md` case that would catch a regression.
+   - Changed skill that alters agent behavior: run the Eval playbook (`playbooks/eval.md`) on the change before promoting it.
 3. Ship the metadata with the skill: `CREDITS.md` naming the source when adapted, a changeset file, and README counts kept in sync.
 4. Close via `playbooks/opening-a-pr.md`: always ready, landing per risk tier. Opening a PR does not start a babysit.
 

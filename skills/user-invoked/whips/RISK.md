@@ -12,7 +12,7 @@ A PR is `risk:high` when any rule below matches. Check each against the diff, no
 2. **Money.** Prices, totals, discounts, invoices, payments, refunds, balances, payment gateway calls or webhooks.
 3. **Data.** Schema migrations, data backfills, deletes or truncates, changes to soft-delete or cascade rules, jobs that rewrite many rows, seeders that can run in production.
 4. **Secrets and config.** `.env.example`, config files, deploy or container files, infrastructure, anything that reads a new secret or changes a default that production relies on.
-5. **CI and workflows.** CI workflow files, release scripts, git hooks, branch protection or required checks.
+5. **CI and workflows.** CI workflow files, release scripts, git hooks (including `.husky/`), branch protection or required checks. The docs gate (`scripts/check-docs.sh`) counts here: a PR that teaches the gate a new rule changes what every future PR must pass.
 6. **Public contract break.** A removed or renamed endpoint, route, field, status code, event, CLI flag, or exported function that a client or another repo calls. A breaking OpenAPI diff counts.
 7. **Dependencies.** A major version bump, a new runtime dependency, or lockfile churn beyond the packages the PR names.
 8. **Large diff.** More than 400 changed lines or 15 files, not counting lockfiles, generated files, snapshots, and fixtures.

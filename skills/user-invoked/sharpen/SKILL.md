@@ -13,16 +13,17 @@ The task text plus whatever backs it: the issue, the thread, the brief, the link
 
 ## Sharpen, don't widen
 
-1. Name the real goal in one sentence, in your own words.
-2. List the acceptance criteria a run must satisfy to count as done. Testable, each one checkable on the real artifact.
-3. Surface the hidden assumptions: what the request takes for granted that could be wrong. Mark each as holds, verify-first, or ask-the-human.
-4. State what is out of scope, explicitly. Sharpening adds depth (criteria, constraints, edge cases), never breadth (new features, new areas).
-5. Push back when the goal itself is wrong: no is an acceptable answer, with the evidence and the alternative.
+Answer four questions before touching the prompt:
+
+1. What would a top professional do that was not asked for.
+2. What is the rawest material they would start from.
+3. Which specific methods and tools they would use.
+4. What, besides you or the user, shows the result is right.
+
+Keep the goal and the acceptance criteria, stated briefly. Choices that belong to the user stay visibly open, never silently settled. Push back when the goal itself is wrong: no is an acceptable answer, with the evidence and the alternative.
 
 ## Rewrite the prompt
 
-Hand back the sharpened prompt: goal, context pointers (files, issues, docs read this session), acceptance criteria, out of scope, and the first step. Written so a fresh agent can run it with no extra questions, unless a marked ambiguity genuinely needs the human.
+Hand back only the rewritten prompt: goal, context pointers (files, issues, docs read this session), acceptance criteria, out of scope, and the first step. No commentary around it; the prompt itself carries the sharpening, with user-owned choices left marked as choices. Thin fog means a few lines inline; thick fog means a short doc the run reads first.
 
-Thin fog means a few lines inline; thick fog means a short doc the run reads first.
-
-**Reply:** the sharpened prompt, what got sharper versus the original, and any ambiguity that still needs a human.
+**Reply:** only the rewritten prompt.
