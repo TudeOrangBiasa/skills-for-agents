@@ -19,6 +19,7 @@ Skills that fire only when the human types their name. They orchestrate; they ne
 - **[retro](./retro/SKILL.md)**: Conduct a retrospective on a coding session: refresh meta docs, kill rot, surface patterns.
 - **[setup-meta](./setup-meta/SKILL.md)**: Configure this repo for the skills: tracker, labels, domain docs, DESIGN.md, coding standards, commit/PR formats, pre-commit tooling. Run once per repo.
 - **[setup-ts-deep-modules](./setup-ts-deep-modules/SKILL.md)**: Wire dependency-cruiser into a TypeScript repo so each package is a deep module, with implementation hidden in subfolders and reachable only through its entry-point files.
+- **[sharpen](./sharpen/SKILL.md)**: Sharpen a task, issue, or prompt before work starts: deeper, not bigger, then a rewritten prompt ready to run.
 - **[showcase](./showcase/SKILL.md)**: Show me what you built: diff, running result, and proof in one visual pass.
 - **[teach](./teach/SKILL.md)**: Teach the user a new skill or concept, within this workspace.
 - **[to-spec](./to-spec/SKILL.md)**: Turn the current conversation into a spec and publish it to the project issue tracker: no interview, just synthesis of what you've already discussed.

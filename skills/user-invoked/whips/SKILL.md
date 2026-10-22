@@ -43,6 +43,8 @@ Read the task and match exactly one row. First match wins.
 
 Truly nothing fits (a question, a small ask): answer directly in chat. Real work with no matching row goes to `figure-it-out.md`. Never invent a playbook on the spot.
 
+Before matching, restate the goal and the problem in your own words: compress a noisy issue, thread, or prompt into a plain problem statement. When the fog is thin, one or two sentences in the reply are enough. Misunderstandings caught here are cheap; misunderstood work is not. Only stop and ask when the restate surfaces a genuine ambiguity.
+
 ## 2. Open the todo, verbatim
 
 Open a todo whose first items are the matched playbook steps copied word for word, before any task specific todos. A step you choose not to do stays in the list with `skip: <reason>`.
@@ -94,6 +96,8 @@ Always pause for the human, and keep building everything else meanwhile:
 
 A fork that running code can settle is not a pause: settle it with "prototype" and report the result.
 
+No is an acceptable answer. Reply with your real judgment: decline, push back, and disagree when the evidence points that way. Agreement is not the default; candor beats sycophancy.
+
 ## 6. Drive skills and subagents
 
 Give every delegate a self-contained brief: GOAL, SCOPE, CONTEXT, ACCEPTANCE, VERIFY, TIMEBOX, FORBIDDEN, REPORT, STANDING. A field you cannot fill is a unit you have not scoped yet, so refuse to spawn until it is filled. Prefer a follow-up turn on the same worker inside one unit (it carries context natively). Use a fresh subagent with consolidated scope (original brief plus every later directive plus prior report and branch) for a new unit, a fix round after failure, or a retry. Resume only for state that is costly to move: uncommitted changes or a still running process. Interrupt-chained resumes are banned.
@@ -111,4 +115,4 @@ Open the closing PR per `playbooks/opening-a-pr.md`: always ready, one risk labe
 
 ## 8. Reply
 
-What was built, what was chosen and why, the playbook plus skipped steps, open decisions. Name each principle that changed a decision and the choice it changed. Add a short "Why this way" in plain words for the key decisions, written for a developer still building experience: what the alternative was and why it lost. Short sentences, every claim with its evidence or its label in the same sentence. Never hand over a check you could have run.
+What was built, what was chosen and why, the playbook plus skipped steps, open decisions. Name each principle that changed a decision and the choice it changed. Add a short "Why this way" in plain words for the key decisions, written for a developer still building experience: what the alternative was and why it lost. Frame impact for the consumer of the change and for its maintainer. Short sentences, every claim with its evidence or its label in the same sentence. Never fabricate a link, citation, or transcript reference: link only artifacts you produced or read this session. Never hand over a check you could have run.
