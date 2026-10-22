@@ -191,7 +191,7 @@ Example: navbar variants scattered across 4 files, same assumption repeated. `/d
 
 **MVP scoped but deploy target unknown?** → `/discuss-with-docs` for constraints (budget, traffic, region, ops appetite) plus `/research` for platform facts, decided into an ADR. Deploy wiring itself is repo work: `/whips` feature once the target is locked.
 
-**Sharpening a plan with no repo under it?** → `/discuss` (stateless interview, saves nothing). In a working directory, `/discuss-with-docs` instead: same interview plus the paper trail.
+**Sharpening a task or ticket before a run?** → `/sharpen`: deeper, not bigger, then a rewritten prompt. **Sharpening a plan with no repo under it?** → `/discuss` (stateless interview, saves nothing). In a working directory, `/discuss-with-docs` instead: same interview plus the paper trail.
 
 **Learning something over multiple sessions?** → `/teach`: mission, lessons, and reference sheets in a stateful workspace, paced to your zone of proximal development. Not repo work, not a flow step.
 

@@ -1,0 +1,5 @@
+interface:
+  display_name: "Sharpen"
+  short_description: "Sharpen a task prompt before running it"
+policy:
+  allow_implicit_invocation: false

@@ -6,7 +6,7 @@ Agent skills for real engineering: small, composable, human-in-the-loop. Forked 
 
 ## TL;DR
 
-- 53 skills (25 user-invoked, 28 model-invoked) plus 24 `/whips` playbooks: one entry routes any task, the rest fire on triggers.
+- 54 skills (26 user-invoked, 28 model-invoked) plus 24 `/whips` playbooks: one entry routes any task, the rest fire on triggers.
 - Start with `/guide` (router) or [COOKBOOK.md](./skills/user-invoked/guide/COOKBOOK.md) (recipes with diagrams); build with `/whips`; configure a repo once with `/setup-meta`.
 - Landing is tiered: low-risk PASS lands untouched on an independent verdict, high-risk waits for a human. Only high-risk spends review time.
 - Proof is mandatory (screenshots, video, timeline pages), prose passes `unslop`, changes ship with changesets.
@@ -75,6 +75,7 @@ Skills for daily work, fired by hand. Full list in [skills/user-invoked/](skills
 - **[runner](./skills/user-invoked/runner/SKILL.md)**: Run `ready-for-agent` issue queues on any schedule through `/whips` intake, landing per risk tier, with the agent and model you pick at setup.
 - **[setup-meta](./skills/user-invoked/setup-meta/SKILL.md)**: Configure this repo for the skills: tracker, labels, domain docs, DESIGN.md, coding standards, commit/PR formats, pre-commit tooling. Run once per repo.
 - **[setup-ts-deep-modules](./skills/user-invoked/setup-ts-deep-modules/SKILL.md)**: Wire dependency-cruiser into a TypeScript repo so each package is a deep module.
+- **[sharpen](./skills/user-invoked/sharpen/SKILL.md)**: Sharpen a task, issue, or prompt before work starts: deeper, not bigger, then a rewritten prompt ready to run.
 - **[showcase](./skills/user-invoked/showcase/SKILL.md)**: Show me what you built: diff, running result, and proof in one visual pass.
 - **[teach](./skills/user-invoked/teach/SKILL.md)**: Teach the user a new skill or concept, within this workspace.
 - **[to-spec](./skills/user-invoked/to-spec/SKILL.md)**: Turn the current conversation into a spec and publish it to the issue tracker. No interview, just synthesizes what you've already discussed.
