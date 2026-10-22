@@ -26,7 +26,7 @@ One `manual.json` defines chapters, steps, and shots. A shot names a content tar
 }
 ```
 
-File names equal shot ids, no combined suffixes. A `sequence` id groups shots that run in manifest order on one page: later shots inherit earlier state unless they set their own `route`. `--only <id>` rebuilds one shot.
+File names equal shot ids, no combined suffixes. A `sequence` id groups shots that run in manifest order on one page: later shots inherit earlier state unless they set their own `route`. `--only <id>` rebuilds one shot. Actions are Playwright ops (`goto`, `click`, `fill`, `select`, `press`, `wait`, `waitFor`, `eval`, `scroll`); a shot with a live clock takes `freezeClock` (ISO time) so two builds byte-match.
 
 ## Capture
 
@@ -39,7 +39,7 @@ After capture, uniform edge rows and columns are trimmed to a fixed 16px CSS mar
 - A content edge band exceeds 15 percent of content height (`allowBlank` per shot with a written reason overrides).
 - An annotation selector is missing or its box falls outside the crop.
 - Any image in the built HTML fails to load (shot id reported).
-- A figure or its caption splits across print pages (checked in Chromium with print media; estimates match the PDF closely).
+- A figure taller than a print page (checked in Chromium with print media). Print CSS caps figure art at 225mm so whole figures ride to the next page instead of splitting; `break-inside: avoid` keeps each caption with its figure.
 - A print page under 40 percent full that is not a chapter end (warning, with page number and coverage).
 - A shot reused without `"reuse": true` on the step (declared reuse is reported, silent duplication fails).
 - Any output exceeds its budget (PDF over 15 MB).

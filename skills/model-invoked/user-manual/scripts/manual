@@ -216,14 +216,16 @@ function trimImage(img, marginDev, tol) {
   let left = 0; while (left < w && isUniformCol(img, left, bg, tol)) left++;
   let right = w - 1; while (right > left && isUniformCol(img, right, bg, tol)) right--;
   if (bottom <= top || right <= left) throw new Error("shot is fully uniform: nothing to keep");
-  top = Math.max(0, top - marginDev);
-  left = Math.max(0, left - marginDev);
-  bottom = Math.min(h - 1, bottom + marginDev);
-  right = Math.min(w - 1, right + marginDev);
+  const padT = Math.min(marginDev, top), padB = Math.min(marginDev, h - 1 - bottom);
+  const padL = Math.min(marginDev, left), padR = Math.min(marginDev, w - 1 - right);
+  top = top - padT;
+  left = left - padL;
+  bottom = bottom + padB;
+  right = right + padR;
   const nw = right - left + 1, nh = bottom - top + 1;
   const out = Buffer.alloc(nw * nh * 4);
   for (let y = 0; y < nh; y++) px.copy(out, y * nw * 4, ((top + y) * w + left) * 4, ((top + y) * w + left + nw) * 4);
-  return { img: { w: nw, h: nh, px: out }, crop: { x: left, y: top, w: nw, h: nh } };
+  return { img: { w: nw, h: nh, px: out }, crop: { x: left, y: top, w: nw, h: nh }, pad: { t: padT, b: padB, l: padL, r: padR } };
 }
 
 // ---------- manifest ----------
@@ -286,6 +288,7 @@ async function captureShot(pw, shot, baseUrl, rawDir) {
   try {
     const ctx = await browser.newContext({ viewport: vp, deviceScaleFactor: DPR, reducedMotion: "reduce" });
     const page = await ctx.newPage();
+    if (shot.freezeClock) await page.clock.install({ time: new Date(shot.freezeClock) });
     return await captureOnPage(page, shot, baseUrl, rawDir, true);
   } finally { await browser.close(); }
 }
@@ -308,17 +311,41 @@ async function applyVisibility(page, shot) {
   }, { target: shot.target, keepSel });
 }
 
+// Action verbs shared by capture and verify.
+async function runActions(page, actions) {
+  for (const a of actions) {
+    if (a.goto) await page.goto(a.goto, { waitUntil: "networkidle" });
+    else if (a.click) await page.click(a.click);
+    else if (a.fill) await page.fill(a.fill[0], a.fill[1]);
+    else if (a.select) await page.locator(a.select[0]).first().selectOption(a.select[1]);
+    else if (a.press) await page.locator(a.press[0]).first().press(a.press[1]);
+    else if (a.wait) await page.waitForTimeout(a.wait);
+    else if (a.waitFor) await page.locator(a.waitFor).first().waitFor({ timeout: 15000 });
+    else if (a.eval) await page.evaluate(new Function(a.eval));
+    else if (a.scroll) await page.evaluate((y) => window.scrollBy(0, y), a.scroll);
+    else throw new Error(`unknown action: ${JSON.stringify(a)}`);
+  }
+}
+
+// Wait until the target box stops moving (entrance animations, late layout).
+// Screenshots, boxes, and crops must share one geometry.
+async function waitStable(page, loc) {
+  let prev = null;
+  for (let i = 0; i < 20; i++) {
+    const b = await loc.boundingBox().catch(() => null);
+    if (b && prev && Math.abs(b.x - prev.x) < 1 && Math.abs(b.y - prev.y) < 1 && Math.abs(b.width - prev.width) < 1 && Math.abs(b.height - prev.height) < 1) return;
+    prev = b;
+    await page.waitForTimeout(150);
+  }
+}
+
 async function captureOnPage(page, shot, baseUrl, rawDir, nav) {
   if (nav) await page.goto(baseUrl + (shot.route || "/"), { waitUntil: "networkidle" });
-    for (const a of shot.actions || []) {
-      if (a.click) await page.click(a.click);
-      else if (a.fill) await page.fill(a.fill[0], a.fill[1]);
-      else if (a.wait) await page.waitForTimeout(a.wait);
-      else if (a.scroll) await page.evaluate((y) => window.scrollBy(0, y), a.scroll);
-    }
+    await runActions(page, shot.actions || []);
     await applyVisibility(page, shot);
     await page.waitForSelector(shot.target, { state: "visible" });
     const loc = page.locator(shot.target).first();
+    await waitStable(page, loc);
     // Measure boxes BEFORE the screenshot so both share one scroll position.
     // The screenshot origin is the target box, not the page: annotation math
     // must subtract it (otherwise boxes drift by the target offset).
@@ -409,18 +436,20 @@ function buildHtml(manifest, shotsDir, outHtml) {
 // Trim, annotate, and gate one captured shot. Returns review metadata.
 function processShot(shot, rawPath, sidecar, shotsDir, failures) {
   const raw = decodePng(fs.readFileSync(rawPath));
-  const { img, crop } = trimImage(raw, MARGIN_CSS * DPR, 4);
+  const { img, crop, pad } = trimImage(raw, MARGIN_CSS * DPR, 4);
   fs.writeFileSync(path.join(shotsDir, `${shot.id}.png`), encodePng(img));
   const trimmed = decodePng(fs.readFileSync(path.join(shotsDir, `${shot.id}.png`)));
   const bg = edgeColor(trimmed);
-  // Gate band measured inside the content box, not the target padding.
-  let y0 = 0, y1 = trimmed.h;
+  // Gate band measured inside the content box, minus the trim margin this tool
+  // added itself. Padding owned by the target never fails the build.
+  let y0 = pad.t, y1 = trimmed.h - pad.b;
   const cc = sidecar.contentBox, tb = sidecar.targetBox;
   if (cc && cc.w > 0 && cc.h > 0) {
-    y0 = Math.max(0, Math.round((cc.y - tb.y) * DPR - crop.y));
-    y1 = Math.min(trimmed.h, Math.round((cc.y + cc.h - tb.y) * DPR - crop.y));
-    if (y1 <= y0) { y0 = 0; y1 = trimmed.h; }
+    y0 = Math.max(y0, Math.round((cc.y - tb.y) * DPR - crop.y));
+    y1 = Math.min(y1, Math.round((cc.y + cc.h - tb.y) * DPR - crop.y));
+    if (y1 <= y0) { y0 = pad.t; y1 = trimmed.h - pad.b; }
   }
+  if (y1 <= y0) { y0 = 0; y1 = trimmed.h; }
   const fin = edgeBlank(trimmed, bg, 4, y0, y1);
   for (const b of sidecar.boxes) {
     const rel = toCropCoords(b.pageBox, sidecar.targetBox, crop, DPR);
@@ -524,6 +553,7 @@ async function cmdBuild(opts) {
     try {
       const ctx = await browser.newContext({ viewport: VIEWPORTS[g.vp], deviceScaleFactor: DPR, reducedMotion: "reduce" });
       const page = await ctx.newPage();
+      if (g.shots[0].freezeClock) await page.clock.install({ time: new Date(g.shots[0].freezeClock) });
       let first = true;
       for (const shot of g.shots) {
         try {
@@ -555,9 +585,11 @@ async function cmdBuild(opts) {
   const figurePages = {};
   for (const f of layout.figs) {
     const topPg = Math.floor(f.top / PRINT_PAGE_H) + 1;
-    const botPg = Math.floor((f.bottom - 1e-6) / PRINT_PAGE_H) + 1;
-    const capPg = Math.floor(f.capTop / PRINT_PAGE_H) + 1;
-    if (botPg !== topPg || capPg !== topPg) failures.push(`figure ${f.shot} splits across print pages (starts page ${topPg})`);
+    // break-inside: avoid pushes whole figures to the next page, so only a
+    // figure taller than the page itself is a guaranteed split. Print CSS caps
+    // figure images at 225mm to keep them whole; this fails when even that
+    // is not enough (e.g. capped art plus a long caption).
+    if (f.bottom - f.top > PRINT_PAGE_H) failures.push(`figure ${f.shot} is taller than a print page and would split`);
     figurePages[f.shot] = topPg;
   }
   for (const src of layout.broken) failures.push(`image failed to load in manual.html: ${src}`);
@@ -613,30 +645,32 @@ async function cmdVerify(opts) {
   const failures = [];
   const browser = await pw.chromium.launch();
   try {
-    // One context per shot with the shot viewport: layout must match capture.
-    let ctx = null, page = null, ctxVp = "";
-    const ensurePage = async (shot) => {
-      if (ctxVp !== shot.viewport) {
+    // Mirror the build: one context per shot group, sequence members share one
+    // page, later members inherit earlier state unless they set their own route.
+    let ctx = null, page = null, ctxKey = "";
+    const ensurePage = async (g, first) => {
+      const key = g.vp + ":" + (g.seq || g.shots[0].id);
+      if (ctxKey !== key || first) {
         if (ctx) await ctx.close();
-        ctx = await browser.newContext({ viewport: VIEWPORTS[shot.viewport], deviceScaleFactor: DPR });
+        ctx = await browser.newContext({ viewport: VIEWPORTS[g.vp], deviceScaleFactor: DPR });
         page = await ctx.newPage();
-        ctxVp = shot.viewport;
+        ctxKey = key;
+        return { page, nav: true };
       }
-      return page;
+      return { page, nav: false };
     };
-    for (const shot of manifest.shots) {
-      const scPath = path.join(shotsDir, `${shot.id}.sidecar.json`);
-      if (!fs.existsSync(scPath)) { failures.push(`${shot.id}: missing sidecar (run build first)`); continue; }
-      const sc = JSON.parse(fs.readFileSync(scPath, "utf8"));
-      const vpage = await ensurePage(shot);
-      await vpage.goto(manifest.app.baseUrl + (shot.route || "/"), { waitUntil: "networkidle" });
-      for (const a of shot.actions || []) {
-        if (a.click) await vpage.click(a.click);
-        else if (a.fill) await vpage.fill(a.fill[0], a.fill[1]);
-        else if (a.wait) await vpage.waitForTimeout(a.wait);
-        else if (a.scroll) await vpage.evaluate((y) => window.scrollBy(0, y), a.scroll);
-      }
+    for (const g of shotGroups(manifest, undefined)) {
+      let first = true;
+      for (const shot of g.shots) {
+        const scPath = path.join(shotsDir, `${shot.id}.sidecar.json`);
+        if (!fs.existsSync(scPath)) { failures.push(`${shot.id}: missing sidecar (run build first)`); continue; }
+        const sc = JSON.parse(fs.readFileSync(scPath, "utf8"));
+        const { page: vpage, nav } = await ensurePage(g, first);
+        first = false;
+        if (nav || shot.route) await vpage.goto(manifest.app.baseUrl + (shot.route || "/"), { waitUntil: "networkidle" });
+      await runActions(vpage, shot.actions || []);
       await applyVisibility(vpage, shot);
+      await waitStable(vpage, vpage.locator(shot.target).first());
       for (const b of sc.boxes || []) {
         const el = vpage.locator(b.selector).first();
         if ((await el.count()) === 0) { failures.push(`${shot.id}: selector gone: ${b.selector}`); continue; }
@@ -651,6 +685,7 @@ async function cmdVerify(opts) {
         const score = iou(was, now);
         if (score < 0.5) failures.push(`${shot.id} #${b.n} (${b.selector}): overlap ${Math.round(score * 100)}% < 50%`);
         else console.log(`ok ${shot.id} #${b.n}: overlap ${Math.round(score * 100)}%`);
+        }
       }
     }
   } finally { await browser.close(); }
@@ -717,11 +752,12 @@ function cmdSelftest() {
   let threw = false;
   try { trimImage(synthImage(10, 10, () => GREY), 16, 4); } catch { threw = true; }
   eq("uniform throws", threw, true);
-  // 5. Small content passes the gate after trim.
+  // 5. Small content passes the gate after trim, margin excluded.
   const d = synthImage(390, 844, (x, y) => (y >= 100 && y < 400 ? INK : GREY));
-  const { img: td } = trimImage(d, 16 * 2, 4);
-  const md = measureBlank(td, edgeColor(td), 4);
-  eq("trimmed passes", md.band > BLANK_BAND_MAX, false);
+  const { img: td, pad: pd } = trimImage(d, 16 * 2, 4);
+  eq("trim adds margin", pd.t, 32);
+  const md = edgeBlank(td, edgeColor(td), 4, pd.t, td.h - pd.b);
+  eq("trimmed passes", md.edge > BLANK_BAND_MAX, false);
   // 6. Annotation coords follow the selector: 40px shift moves the box 40*DPR.
   // Screenshot origin is the target box (main at 24,24 here: the old offset bug).
   const tb6 = { x: 24, y: 24, width: 500, height: 400 };
