@@ -75,7 +75,7 @@ Offer **multi-context** (a root `GLOSSARY-MAP.md` pointing to per-context `GLOSS
 
 > Do you want to pin a model per subagent role? (recommended: **no**, every subagent runs on whatever model you run the parent on)
 
-On **no**, write nothing. On **yes**, read the harness config and environment for the model ids already available (config files, CLI `--help` or model list, provider env var names, never their values), show what you found, and ask which id goes on each role in [models.md](./models.md). Never suggest a model the user did not already have configured.
+On **no**, write nothing. On **yes**, read the harness config and environment for the model ids already available (config files, CLI `--help` or model list, provider env var names, never their values), show what you found, and ask which id goes on each role in [models.md](./models.md). Never suggest a model the user did not already have configured. Ask about Effort and Speed columns only when the harness names effort levels; otherwise leave them blank.
 
 **Section G: Unattended runs.** Ask one question:
 

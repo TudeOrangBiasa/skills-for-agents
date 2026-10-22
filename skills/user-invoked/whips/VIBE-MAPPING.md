@@ -8,7 +8,7 @@ The director uses `read`, an optional parent-owned `todo`, plus `vibe_spawn`, `v
 
 ## M2. Brief is refuse-to-spawn
 
-Every spawn carries GOAL, SCOPE, CONTEXT, ACCEPTANCE, VERIFY, TIMEBOX, FORBIDDEN, REPORT, STANDING (see `/whips` section 4). Workers never see director conversation, so a field missing means the unit is not scoped yet. Fill it or do not spawn. Paste standing orders verbatim into every spawn and every resume, because directives decay across resumes. Vibe workers are keep-alive by design, so follow-up turns on the same worker are preferred inside one unit; fresh spawns are for new units and post-failure fix rounds.
+Every spawn carries GOAL, SCOPE, CONTEXT, ACCEPTANCE, VERIFY, TIMEBOX, FORBIDDEN, REPORT, STANDING (see `/whips` section 6). Workers never see director conversation, so a field missing means the unit is not scoped yet. Fill it or do not spawn. Paste standing orders verbatim into every spawn and every resume, because directives decay across resumes. Vibe workers are keep-alive by design, so follow-up turns on the same worker are preferred inside one unit; fresh spawns are for new units and post-failure fix rounds.
 
 ## M3. vibe_send truth table, no guarantee
 
