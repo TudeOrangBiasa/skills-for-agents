@@ -10,4 +10,4 @@ Goal mode: one goal pursued to its predicate without the user watching. Not a qu
 6. Keep a run log in the worktree (`.scratch/whips/<run>/log.md`): one row per iteration with what changed, the check run, and whether the predicate moved. It is the morning report's source.
 7. Stop when the predicate holds, the budget runs out, or every remaining path needs the pause list. A plateau is not a stop: change approach. Never relax the predicate to declare victory.
 
-**Reply:** the predicate and whether it holds, iterations run, PRs opened with their risk labels (high-risk first), what was reverted, and what is waiting on the human.
+**Reply:** close the run with a catch-up in the ketchup shape ([`../../ketchup/SKILL.md`](../../ketchup/SKILL.md)), built from the run log: open with how many action items there are, then what happened (iterations that changed nothing stay silent), then each item waiting on the human as a short executive summary. A tick that changed something gets caught up; a tick that changed nothing stays quiet.
