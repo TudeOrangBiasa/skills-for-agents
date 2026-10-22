@@ -16,7 +16,7 @@ Read recent commits, reverts, review comments, instruction files, and comments e
 
 1. **Eliminate with architecture.** One owner per state, one supported way per task, internals hidden so the wrong import fails. Replace hand-synced lists with one source of truth. Delete old ways and dead code an agent would copy.
 2. **Enforce with types, then lint.** Unrepresentable bad states first; where the bad code still compiles, add a lint or CI check whose error names the file, type, or function to use instead. Patterns already common fail only on growth (new additions), never the backlog.
-3. **Test the behavior.** Fix or delete tests that would still pass if every called function returned nothing.
+3. **Test the behavior.** Assert what the code's users can observe, so the test fails when that behavior breaks and keeps passing when only the internals change.
 4. **Write docs or agent rules last, only for judgement calls.** Nothing fails when an agent skips them.
 
 ## Fix and prove
