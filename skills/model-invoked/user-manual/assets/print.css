@@ -1,0 +1,6 @@
+@page { size: A4; margin: 20mm 15mm 24mm 15mm; }
+figure { break-inside: avoid; }
+figcaption { break-before: avoid; }
+.chapter { break-before: page; }
+.cover, .toc { break-after: page; }
+img { max-width: 100%; }

@@ -1,0 +1,28 @@
+{
+  "app": { "name": "Demo Shop", "baseUrl": "http://localhost:3100", "locale": "id" },
+  "uiPaths": ["fixture/demo-page.html"],
+  "shots": [
+    {
+      "id": "c10-done",
+      "route": "/done",
+      "target": "main",
+      "viewport": "mobile",
+      "hide": ["header.site", ".toast"],
+      "annotations": [{ "n": 1, "selector": "[data-manual=receipt]", "label": "Nomor struk" }]
+    }
+  ],
+  "chapters": [
+    {
+      "title": "Pelanggan",
+      "steps": [
+        {
+          "n": 1,
+          "title": "Booking dibuat",
+          "body": "Pesanan tercatat dan nomor struk tampil di layar.",
+          "shot": "c10-done",
+          "tips": "Tunjukkan nomor struk saat pengambilan."
+        }
+      ]
+    }
+  ]
+}

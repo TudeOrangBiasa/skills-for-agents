@@ -27,6 +27,7 @@ Skills the agent can fire on its own when the task fits, or the human can type b
 - **[technical-writing](./technical-writing/SKILL.md)**: Write docs, RFCs, readmes, and commit messages to a layered standard.
 - **[ui-recording-timeline](./ui-recording-timeline/SKILL.md)**: Turn a UI screen recording into an interactive paint timeline page for motion proof.
 - **[unslop](./unslop/SKILL.md)**: Cut AI tells from prose before it ships.
+- **[user-manual](./user-manual/SKILL.md)**: Generate a user manual from a running web app: content-cropped screenshots, selector annotations, HTML plus PDF build with QA gates.
 - **[wizard](./wizard/SKILL.md)**: Generate an interactive bash wizard that walks a human through steps only they can perform.
 - **[writing-for-agents](./writing-for-agents/SKILL.md)**: Writing documents for agents: skills, AGENTS.md, and any doc an agent reaches by a pointer.
 - **[why](./why/SKILL.md)**: Find why code is shaped this way with fan-out investigators and confidence tiers.
