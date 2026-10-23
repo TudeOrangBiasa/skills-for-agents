@@ -4,7 +4,7 @@ title: "Cookbook: flows and recipes"
 ---
 # Cookbook: flows and recipes
 
-Each recipe is one complete workflow: when to use it, which skills to type in order, and its diagram. Diagrams render in preview. The interactive router stays in [`SKILL.md`](./SKILL.md); this book is for reading directly.
+Each recipe is one complete workflow: when to use it, which skills to type in order, and its diagram. Diagrams render in preview. The interactive router stays in [`SKILL.md`](./SKILL.md); this book is for reading directly. For the map of why this all works, read [FACTORY.md](./FACTORY.md).
 
 Conventions in every diagram: boxes are skills you type (`/whips`) or playbooks whips runs, diamonds are your decisions, dashed arrows are escalations. Every recipe closes with a real example from recent CMS work.
 
