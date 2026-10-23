@@ -1,5 +1,15 @@
 # skills-for-agents
 
+## 0.5.3
+
+### Patch Changes
+
+- [#45](https://github.com/TudeOrangBiasa/skills-for-agents/pull/45) [`8bae19a`](https://github.com/TudeOrangBiasa/skills-for-agents/commit/8bae19a948526b051736090a0c0cf29483ccb958) Thanks [@TudeOrangBiasa](https://github.com/TudeOrangBiasa)! - Turn the repo AGENTS.md into an index of pointers into .agents/ (invocation, writing, install, releasing, ADR, merge delegation), add the releasing guide, fix two dead links in writing-docs, move the README, docs-tree, and guide-upkeep rules plus install details into their meta-doc homes, delete legacy upstream ADR 0002, retitle ADR 0001 to setup-meta, and mark the FACTORY AGENTS box ada. No rule meaning changes.
+
+- [#43](https://github.com/TudeOrangBiasa/skills-for-agents/pull/43) [`c6e5ce3`](https://github.com/TudeOrangBiasa/skills-for-agents/commit/c6e5ce32137fe01a8f994e5b30073512eea96934) Thanks [@TudeOrangBiasa](https://github.com/TudeOrangBiasa)! - State the blame-free rule in retro: every finding names a gap in the environment, never a person or agent to blame. FACTORY.md marks Maintenance without blame as ada and drops it from the gap list. Wording only, no behavior change.
+
+- [#44](https://github.com/TudeOrangBiasa/skills-for-agents/pull/44) [`a788f3c`](https://github.com/TudeOrangBiasa/skills-for-agents/commit/a788f3c30b63de38ee78d5dfb440c225d3bd613b) Thanks [@TudeOrangBiasa](https://github.com/TudeOrangBiasa)! - Fix stale wording from the docs audit: canonical ready-for-agent label in the glossary, setup-pre-commit blurbs matching its frontmatter, upstream mattpocock/skills#106 attribution, Canonical role header in triage-labels, no personal names in the shipped RISK skill, and one shared merge-rule sentence across RISK, opening-a-pr, and triage-labels. No rule meaning changes.
+
 ## 0.5.2
 
 ### Patch Changes
