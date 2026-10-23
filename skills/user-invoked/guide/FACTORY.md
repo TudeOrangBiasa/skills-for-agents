@@ -92,7 +92,7 @@ flowchart TD
 | Decisions written down | ADRs under .agents/adr, paper trail interviews, decision trail, map decisions, personal loops | [discuss-with-docs](../discuss-with-docs/SKILL.md), [show-me-your-work](../../model-invoked/show-me-your-work/SKILL.md), [wayfinder](../wayfinder/SKILL.md), [worklog](../worklog/SKILL.md) | ada |
 | Planning nerve | One-shot versus grill versus wayfinder rule, recipes 1 and 3, figure-it-out for work with no playbook | [guide](./SKILL.md), [COOKBOOK](./COOKBOOK.md), [figure-it-out](../whips/playbooks/figure-it-out.md) | ada |
 | Sceptical review | Adversarial review, two-axis review, principles, stress page, number check before reporting | [interrogate](../../model-invoked/interrogate/SKILL.md), [code-review](../../model-invoked/code-review/SKILL.md), [PRINCIPLES](../whips/PRINCIPLES.md), [break](../../model-invoked/break/SKILL.md), [benchmark-checklist](../../model-invoked/benchmark-checklist/SKILL.md) | ada |
-| Maintenance without blame | Retro, correction ladder, upkeep playbook, verification upkeep, deslop passes, but no explicit blame-free sentence | [retro](../retro/SKILL.md), [correct](../../model-invoked/correct/SKILL.md), [upkeep](../whips/playbooks/upkeep.md), [maintain-verification](../maintain-verification/SKILL.md), [deepen](../deepen/SKILL.md), [no-comments](../../model-invoked/no-comments/SKILL.md) | sebagian |
+| Maintenance without blame | Retro states the blame-free rule, backed by the correction ladder, upkeep playbook, verification upkeep, and deslop passes | [retro](../retro/SKILL.md), [correct](../../model-invoked/correct/SKILL.md), [upkeep](../whips/playbooks/upkeep.md), [maintain-verification](../maintain-verification/SKILL.md), [deepen](../deepen/SKILL.md), [no-comments](../../model-invoked/no-comments/SKILL.md) | ada |
 
 ## Team layer
 
@@ -110,7 +110,6 @@ flowchart TD
 
 ## Gap list
 
-- **Maintenance without blame (sebagian):** the upkeep loop exists but no skill states the blame-free rule in one sentence. Suggestion: add that sentence to retro or PRINCIPLES in a later ticket.
 - **Leadership that backs it (gap):** team backing is an org concern and this repo ships for solo use. Suggestion: keep it out of scope, revisit only when a team adopts the repo.
 
 ## Next step

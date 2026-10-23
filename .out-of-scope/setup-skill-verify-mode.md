@@ -12,4 +12,4 @@ Keeping configuration management to a single skill also avoids the maintenance c
 
 ## Prior requests
 
-- #106: Feature request: verify/check mode for setup-meta
+- [mattpocock/skills#106](https://github.com/mattpocock/skills/issues/106): Feature request: verify/check mode for setup-meta
