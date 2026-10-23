@@ -20,7 +20,7 @@ Skills the agent can fire on its own when the task fits, or the human can type b
 - **[research](./research/SKILL.md)**: Investigate a question against high-trust primary sources and capture the findings as a cited Markdown file in the repo.
 - **[merge-fix](./merge-fix/SKILL.md)**: Use when you need to resolve an in-progress git merge/rebase conflict.
 - **[no-comments](./no-comments/SKILL.md)**: Kill needless comments plus the dead code they protect, fix root causes, encode constraints.
-- **[setup-pre-commit](./setup-pre-commit/SKILL.md)**: Set up Husky pre-commit hooks with lint-staged (Prettier), type checking, and tests in the current repo.
+- **[setup-pre-commit](./setup-pre-commit/SKILL.md)**: Set up fast hooks with the repo's own toolchain (oxlint/oxfmt, Biome, or Prettier), type checking, tests, and a token-size gate.
 - **[show-me-your-work](./show-me-your-work/SKILL.md)**: Keep a reviewable TSV decision trail for long or unattended work, with end audit and attention flags.
 - **[swarm](./swarm/SKILL.md)**: Parallel worker fan-out for coverage, races, and gauntlets with one report.
 - **[tdd](./tdd/SKILL.md)**: Test-driven development with a red-green-refactor loop.
