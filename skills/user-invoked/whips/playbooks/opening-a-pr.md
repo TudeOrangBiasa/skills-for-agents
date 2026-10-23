@@ -1,6 +1,6 @@
 # Playbook: opening a PR
 
-Invoked at the end of every playbook that changes code. The PR opens ready, never as a draft. Who merges follows the risk tier per `RISK.md`: low may land on a PASS verdict, high waits for an independent verdict plus a human.
+Invoked at the end of every playbook that changes code. The PR opens ready, never as a draft. Who merges follows the risk tier per `RISK.md`: low may land on a PASS verdict, high waits for an independent PASS or PASS+NOTES verdict on the current head, then a human merges.
 
 1. Resolve the forge and labels before the first PR operation: `docs/agents/issue-tracker.md` for the commands (GitHub `gh pr`, GitLab `glab mr`), `docs/agents/triage-labels.md` for the label strings. A missing file means you tell the user to run `/setup-meta`; until then use `gh` and the canonical role names. Keep that forge for create, edit, and view.
 2. Worktree: one worktree and one branch per unit, off main. Subagents inherit it. Two workers on one branch each get their own worktree. A dirty branch with unrelated work: patch it out, open a fresh worktree, apply.
