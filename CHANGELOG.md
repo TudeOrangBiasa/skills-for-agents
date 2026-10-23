@@ -1,5 +1,11 @@
 # skills-for-agents
 
+## 0.5.2
+
+### Patch Changes
+
+- [#38](https://github.com/TudeOrangBiasa/skills-for-agents/pull/38) [`20a8c1c`](https://github.com/TudeOrangBiasa/skills-for-agents/commit/20a8c1cade97bc4e937ca3a77db219b1d8ef3586) Thanks [@TudeOrangBiasa](https://github.com/TudeOrangBiasa)! - Add guide FACTORY.md: a layered TL;DR of how this repo works as a software factory, with Mermaid diagrams and each of the 16 boxes linked to the skill or playbook that runs it, plus an honest gap list. Pointer lines in the guide router, the cookbook intro, the README TL;DR, and a credit entry for the Matt Pocock post.
+
 ## 0.5.1
 
 ### Patch Changes
