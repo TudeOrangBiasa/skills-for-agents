@@ -6,6 +6,8 @@ disable-model-invocation: true
 
 The user has asked for a **retrospective**. You are suggesting improvements to the coding agent's **environment** to improve future runs.
 
+Every finding names a gap in the environment (a missing pointer, check, or rule), never a person or agent to blame: "the agent got it wrong" is answered by what let it happen, never by who to blame.
+
 ## Steps
 
 1. Call the Skill tool with `writing-for-agents` for the writing style guide.
