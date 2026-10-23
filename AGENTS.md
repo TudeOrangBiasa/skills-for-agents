@@ -1,24 +1,13 @@
-Skills are organized into two folders under `skills/`, split by who can invoke them:
+Skills live in `skills/user-invoked/` (human types the name) and `skills/model-invoked/` (agent may fire it). Adding or changing a skill invocation: read [.agents/invocation.md](./.agents/invocation.md).
 
-- `user-invoked/`: fire only when the human types their name (`disable-model-invocation: true` plus `policy.allow_implicit_invocation: false` in `agents/openai.yaml`). They orchestrate; a user-invoked skill may invoke model-invoked skills, but never another user-invoked one.
-- `model-invoked/`: the agent can fire on its own when the task fits, or the human can type by name. They hold reusable discipline and shared reference.
+Writing or editing any SKILL.md, reference file, or README entry: read [.agents/writing-docs.md](./.agents/writing-docs.md) (README entries, guide router upkeep, docs placement).
 
-Every skill must have a reference in the top-level `README.md`, with the skill name linked to its `SKILL.md`.
+Install wording or harness support: copy from [.agents/install-block.md](./.agents/install-block.md), never paraphrase.
 
-Install commands are copied verbatim from [.agents/install-block.md](./.agents/install-block.md). This repo ships plain skill files plus `agents/openai.yaml` per skill, and targets universal agents (Codex, pi, oh-my-pi, agy, and anything that reads skills the same way). There is no Claude Code plugin and no harness-specific packaging: keep every skill harness-agnostic.
+Changesets, releases, and version bumps: follow [.agents/releasing.md](./.agents/releasing.md).
 
-Each folder has a `README.md` that lists every skill in the folder with a one-line description, with the skill name linked to its `SKILL.md`. There is no separate docs tree: each `SKILL.md` plus its co-located reference files is the single source of truth. Never duplicate skill content into a second docs location.
+Hard-to-reverse decisions for this repo live in [.agents/adr/](./.agents/adr/) (skills that say `docs/adr/` mean the user repo; here read `.agents/adr/`).
 
-Every `SKILL.md` carries its invocation in frontmatter. See [.agents/invocation.md](./.agents/invocation.md).
+Merging: in this repo, a `risk:high` PR may be merged by the delegated agent only after an independent PASS or PASS+NOTES verdict on the current head.
 
-User-facing changes (`skills/`, top-level `README.md`) each bring a changeset file under `.changeset/` describing the change in one paragraph (`minor` for features, `patch` for fixes). `CHANGELOG.md` is generated from them by `npm run version`, never hand-edited; version bumps ride the same command. No release leaves pending changesets behind.
-
-This repo is public: every merged batch of user-facing changes ships as a versioned GitHub Release (merge to main, tag the version, publish release notes from the changelog). Main never sits on unreleased user-facing changes; cut the release when the batch lands.
-
-Versioning follows semver. Patch (0.0.x): fixes with no behavior change (typos, wording, internal bugfixes). Minor (0.x.0): new skills, playbooks, triggers, policy changes. Major (1.0.0 and up): renames, deletions, invocation changes, anything breaking existing installs. Pre-1.0 breaking changes ride minors. The 1.0.0 bar: vibe-tested skills, a working npm flow, no pending renames or deletions.
-
-[`guide`](./skills/user-invoked/guide/SKILL.md) is the router that maps every user-reachable skill and how they relate. Whenever you add, rename, remove, or change how a user-reachable skill fits the flows, re-read `guide`'s `SKILL.md` and update it so the map stays accurate: a new skill it never mentions, or a stale one it still routes to, is a router that lies.
-
-Install skills into harnesses only via `npx skills` as described in [.agents/install-block.md](./.agents/install-block.md). There is no local symlink script. Pull the latest changes when you want them with `npx skills update`.
-
-No em-dashes anywhere in this repo's prose (`SKILL.md` files, `README.md`, `CHANGELOG.md`, ADRs, changesets, code comments). Where a sentence reaches for one, rewrite it instead with a comma, colon, period, parentheses, or a conjunction, whichever the sentence actually wants; never do a blind character substitution.
+No em dashes anywhere in this repo prose; rewrite the sentence instead of substituting a character. `scripts/check-docs.sh origin/main` checks this and the rules above before every PR.
