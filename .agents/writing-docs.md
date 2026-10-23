@@ -1,12 +1,14 @@
 # Writing skill content
 
-There is no separate docs tree in this repo: each `SKILL.md` plus its co-located reference files is the single source of truth. Never duplicate skill content into a second location. This file covers how to write the inside of a skill (its body and its reference files). Structure, frontmatter, and invocation mechanics live in [writing-for-agents](./SKILL.md) and [SKILL-MECHANICS.md](./SKILL-MECHANICS.md).
+There is no separate docs tree in this repo: each `SKILL.md` plus its co-located reference files is the single source of truth. Never duplicate skill content into a second location. This file covers how to write the inside of a skill (its body and its reference files). Structure, frontmatter, and invocation mechanics live in [writing-for-agents](../skills/model-invoked/writing-for-agents/SKILL.md) and [SKILL-MECHANICS.md](../skills/model-invoked/writing-for-agents/SKILL-MECHANICS.md).
 
 Most skills are **user-invoked**: the agent will never fire them, so *you* are the index that has to remember they exist and when to reach for them. That memory is **cognitive load**. Clear skill content relieves it: a reader who opens the skill can hold it in their head, know when to reach for it, and see where it sits in the system. The folder `README.md` files are collectively a distributed router; each entry is a node.
 
 Act whenever a skill is added, renamed, or has its behaviour changed: update its `SKILL.md`, its folder `README.md` entry, the top-level `README.md` entry, and `guide` if it is user-reachable. A rename moves the folder too (`skills/<invocation>/<old>` → `skills/<invocation>/<new>`).
 
-Links between skills are repo-relative (`[guide](../user-invoked/guide/SKILL.md)` style). Links to outside this repo stay absolute.
+Every skill keeps a reference in the top-level `README.md`, with the skill name linked to its `SKILL.md`. Each folder `README.md` lists every skill in the folder with a one-line description, the skill name linked to its `SKILL.md`. When a user-reachable skill changes how it fits the flows (added, renamed, removed, or re-scoped), re-read [`guide`](../skills/user-invoked/guide/SKILL.md) and update it: a new skill it never mentions, or a stale one it still routes to, is a router that lies.
+
+Links between skills are repo-relative: from this folder, `[guide](../skills/user-invoked/guide/SKILL.md)`. Links to outside this repo stay absolute.
 
 ## Content structure
 

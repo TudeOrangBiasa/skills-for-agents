@@ -64,7 +64,7 @@ flowchart TD
 | Merge on evidence | PR body with proof, opening checklist, risk tier, explain gate, proof URL check | [pr](../../model-invoked/pr/SKILL.md), [opening-a-pr](../whips/playbooks/opening-a-pr.md), [ready-check](../whips/playbooks/ready-check.md), [RISK](../whips/RISK.md), [explain-diff-before-merge](../explain-diff-before-merge/SKILL.md) | ada |
 | Deep modules | Shared vocabulary, scan for shallow modules, one-time TypeScript wiring, settle shape before code | [codebase-design](../../model-invoked/codebase-design/SKILL.md), [deepen](../deepen/SKILL.md), [setup-ts-deep-modules](../setup-ts-deep-modules/SKILL.md), [architect](../../model-invoked/architect/SKILL.md) | ada |
 | Tests and types as feedback loops | Red-green refactor, hooks and checks, generated verification skill, upkeep, tight diagnose loop, blast radius check | [tdd](../../model-invoked/tdd/SKILL.md), [setup-pre-commit](../../model-invoked/setup-pre-commit/SKILL.md), [create-verification](../create-verification/SKILL.md), [maintain-verification](../maintain-verification/SKILL.md), [diagnose](../../model-invoked/diagnose/SKILL.md), [blast-radius](../../model-invoked/blast-radius/SKILL.md) | ada |
-| AGENTS.md as an index of pointers | Writing guide and setup-meta teach the pointer style, but this repo AGENTS.md still reads as rules | [writing-for-agents](../../model-invoked/writing-for-agents/SKILL.md), [setup-meta](../setup-meta/SKILL.md) | sebagian |
+| AGENTS.md as an index of pointers | Repo [AGENTS.md](../../../AGENTS.md) is a pointer index into [.agents/](../../../.agents/) | [writing-for-agents](../../model-invoked/writing-for-agents/SKILL.md), [setup-meta](../setup-meta/SKILL.md) | ada |
 
 ## Strategic layer
 
@@ -110,7 +110,6 @@ flowchart TD
 
 ## Gap list
 
-- **AGENTS.md as an index of pointers (sebagian):** this repo AGENTS.md still reads as rules instead of pointers. Suggestion: trim it toward pointers in a later ticket, owned by writing-for-agents.
 - **Leadership that backs it (gap):** team backing is an org concern and this repo ships for solo use. Suggestion: keep it out of scope, revisit only when a team adopts the repo.
 
 ## Next step
