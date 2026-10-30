@@ -1,0 +1,43 @@
+name: "🗑️ Deprecation"
+description: "Cabut skill, playbook, atau jalur yang tidak dipakai lagi."
+title: "[deprecate]: "
+labels: ["needs-triage", "risk:low"]
+body:
+  - type: dropdown
+    id: tipe
+    attributes:
+      label: "Tipe"
+      description: "Satu tipe per tiket."
+      options:
+        - deprecation
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: "Apa yang dicabut"
+      description: "Skill, playbook, atau jalur yang dihapus atau dideprecate, plus penggantinya."
+    validations:
+      required: true
+  - type: textarea
+    id: kompleksitas
+    attributes:
+      label: "## Kompleksitas"
+      description: "Satu baris: file docs/skill yang disentuh."
+      placeholder: "Contoh: O(d) docs pointer, 2 file hapus"
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: "Acceptance criteria"
+      description: "Bukti hapus bersih: grep yang harus kosong, link yang harus resolve."
+    validations:
+      required: true
+  - type: input
+    id: parent
+    attributes:
+      label: "Parent epic"
+      description: "Nomor issue epic (mis. #62), kosongkan bila tidak ada."
+    validations:
+      required: false

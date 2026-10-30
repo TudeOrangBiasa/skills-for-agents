@@ -56,7 +56,7 @@ If it is installed, ask exactly one question:
 
 > Do you want to keep the default triage labels? (recommended: **yes**)
 
-The defaults are the five canonical roles, each label string equal to its name: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. Plus three risk rows for agent PRs: `risk-low`, `risk-medium`, `risk-high` (mapped to `risk:low`, `risk:medium`, `risk:high` unless the tracker names them otherwise). Overrides work the same way: collect the tracker's names so `whips` applies existing labels instead of creating duplicates. On **yes**, write them as-is. Only if the user says no, usually because their tracker already uses other names (e.g. `bug:triage` for `needs-triage`), collect the overrides so `triage` applies existing labels instead of creating duplicates.
+On **yes**, write them as-is and create `feature-request` and `deprecation` labels idempotently (`gh label create --force`) alongside the vocab so issue templates resolve. Only if the user says no, usually because their tracker already uses other names (e.g. `bug:triage` for `needs-triage`), collect the overrides.
 
 **Section C: Domain docs.** Default to **single-context** (one `GLOSSARY.md` + `docs/adr/` at the repo root). This fits almost every repo; write it without asking.
 
