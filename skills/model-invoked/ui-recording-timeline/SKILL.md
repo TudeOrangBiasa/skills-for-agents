@@ -1,14 +1,15 @@
 ---
-description: Turn a UI screen recording into an interactive paint timeline page (video, paint ticks, change flashes) for motion proof on a PR. Use for filmstrips, what-painted-when, or load-performance breakdowns.
+description: Turn a UI screen recording into an interactive paint timeline page for motion proof on a PR. Fired by the whips ui playbook when a recording beats stills; otherwise leave it unloaded.
 name: ui-recording-timeline
+disable-model-invocation: true
 ---
 # UI recording timeline
 
-Turn a screen recording of a UI (page load, navigation, redirect/auth flow, app startup) into an interactive paint timeline page: full-window video, a timeline of each visual paint with timestamps and durations, and on-video flashes of what was painted (pink) versus what only moved (blue). The timeline page is the motion proof a PR attaches when a recording shows the change better than stills (see the `pr` skill).
+Turn a screen recording into an interactive paint timeline page (video, paint ticks, change flashes): the motion proof a PR attaches when a recording shows the change better than stills (see the `pr` skill).
 
 Requirements: `ffmpeg`/`ffprobe` and `uv` on PATH. Chrome or Chromium only for `preview`.
 
-Everything needed is in this skill directory: `scripts/timeline.py` (one CLI, all steps; dependencies declared inline, `uv run` installs them) and `assets/template.html` (`build` injects data into it).
+Everything needed is in this skill directory: `scripts/timeline.py` (one CLI, all steps; dependencies declared inline, `uv run` installs them) and `assets/template.html` (`build` injects data into it). The whips `ui` playbook points here with an explicit path; nothing else loads this skill.
 
 Below, `T` means `uv run <this skill dir>/scripts/timeline.py`. Define it as a shell function, not a variable: zsh doesn't word-split variables. Use the absolute path of the skill directory:
 
@@ -61,7 +62,7 @@ T sheet WD --frames 18,19 --crop 0,0,0.25,0.15 --name zoom # zoom into a small c
     {"start": 0.0,   "end": 0.802,  "name": "Dashboard (unauthenticated)"},
     {"start": 0.802, "end": 2.002,  "name": "Vercel SSO gate"},
     {"start": 2.002, "end": 8.468,  "name": "Okta and back"},
-    {"start": 8.468, "end": 10.935, "name": "Idle", "idle": true}
+    {"start": 8.468, "end": 10.935,  "name": "Idle", "idle": true}
   ],
   "paints": [
     {"frame": 0,  "label": "Dashboard shell: sidebar nav and header skeleton (recording start)"},
