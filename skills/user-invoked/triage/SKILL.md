@@ -33,10 +33,10 @@ Five **state** roles:
 - `needs-triage`: maintainer needs to evaluate
 - `needs-info`: waiting on reporter for more information
 - `ready-for-agent`: fully specified, ready for an AFK agent
-- `ready-for-human`: needs human implementation
+- `ready-for-human`: issue needs human implementation. Never applied to a PR (PRs use `needs-human` plus marker instead).
 - `wontfix`: will not be actioned
 
-For a PR, the same states read against the attached code: `ready-for-agent` means a brief is attached and an agent should take the next step on the diff; `ready-for-human` means it's ready for a human to merge.
+For a PR, the same states read against the attached code: `ready-for-agent` means a brief is attached and an agent should take the next step on the diff. A PR that needs a human decision uses `needs-human` with a `<!-- needs-human reason=... -->` marker comment, never `ready-for-human`.
 
 Every triaged issue carries exactly one category role and one state role. If state roles conflict, flag it and ask the maintainer before doing anything else.
 
@@ -79,7 +79,7 @@ Show counts and a one-line summary per item. Let the maintainer pick.
 
 5. **Apply the outcome:**
    - `ready-for-agent`: post an agent brief comment ([AGENT-BRIEF.md](AGENT-BRIEF.md)).
-   - `ready-for-human`: same structure as an agent brief, but note why it can't be delegated (judgment calls, external access, design decisions, manual testing).
+   - `ready-for-human` (issues only, never PRs): same structure as an agent brief, but note why it can't be delegated (judgment calls, external access, design decisions, manual testing).
    - `needs-info`: post triage notes (template below).
    - For `wontfix`, close the issue, with the comment depending on *why*:
      - **Already implemented**: the change already exists in the codebase. Point to where it lives; do **not** write to `.out-of-scope/` (that KB is for *rejected* requests, not built ones).
