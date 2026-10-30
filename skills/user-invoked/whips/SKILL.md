@@ -71,7 +71,6 @@ Each row fires whenever its condition holds, on top of the playbook steps. Call 
 | A perf number you measured | "benchmark-checklist" before reporting or acting on it |
 | A small diff you don't trust | "blast-radius" for what breaks outside it |
 | A step only a human can do (secrets, dashboards) | "wizard" |
-| A nontrivial change, or "are we sure?" | "how" |
 | A rationale or regression question | "why" |
 | Parallel fan-out | "swarm" |
 | A design or code bakeoff | "arena" |
@@ -80,6 +79,7 @@ Each row fires whenever its condition holds, on top of the playbook steps. Call 
 | A UI, IDE, or CLI about to ship | verify on its surface (`create-verification` output) |
 | A PR body | "pr" |
 | A UI change about to ship | "break" |
+| Reading or editing `.ts`/`.tsx` | "typescript-best-practices" |
 
 Every prose surface (reply, PR body, commit message, tracker comment, code comment) passes the unslop gate: call the Skill tool with "unslop". Write comments clean from the start: keep only the *why* invisible from the code, never narrate phases in verify scripts. This holds for delegate diffs too; point at "no-comments". (No `deslop` here: `no-comments` plus `unslop` plus `code-review` cover it.)
 

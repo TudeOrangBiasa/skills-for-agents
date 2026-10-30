@@ -9,7 +9,7 @@ Idea path (grill, spec, tickets) comes from [Matt Pocock skills](https://github.
 
 ## TL;DR
 
-- 79 skills (26 user-invoked, 53 model-invoked, including 24 principle leaves) plus 25 `/whips` playbooks: one entry routes any task, the rest fire on triggers.
+- 80 skills (26 user-invoked, 54 model-invoked, including 24 principle leaves) plus 25 `/whips` playbooks: one entry routes any task, the rest fire on triggers.
 - Start with `/guide` (router) or [COOKBOOK.md](./skills/user-invoked/guide/COOKBOOK.md) (recipes with diagrams); build with `/whips`; configure a repo once with `/setup-meta`.
 - Landing is mode-aware: solo repos merge after the local verifier passes, team repos after required checks pass. Risk tiers scale verification (low verifier, medium fresh-context run, high blast-radius plus adversarial review). Humans decide at triage and on irreversible actions outside the repo.
 - Proof is mandatory (screenshots, video, timeline pages), prose passes `unslop`, changes ship with changesets.
@@ -119,6 +119,7 @@ Reusable discipline the agent reaches for on its own. Full list in [skills/model
 - **[swarm](./skills/model-invoked/swarm/SKILL.md)**: Parallel worker fan-out for coverage, races, and gauntlets with one report.
 - **[tdd](./skills/model-invoked/tdd/SKILL.md)**: Test-driven development with a red-green-refactor loop.
 - **[technical-writing](./skills/model-invoked/technical-writing/SKILL.md)**: Write docs, RFCs, readmes, and commit messages to a layered standard.
+- **[typescript-best-practices](./skills/model-invoked/typescript-best-practices/SKILL.md)**: TypeScript type discipline for agents editing `.ts`/`.tsx`.
 - **[ui-recording-timeline](./skills/model-invoked/ui-recording-timeline/SKILL.md)**: Turn a UI screen recording into an interactive paint timeline page for motion proof.
 - **[unslop](./skills/model-invoked/unslop/SKILL.md)**: Cut AI tells from prose before it ships: replies, PR bodies, commit messages, docs, skills.
 - **[user-manual](./skills/model-invoked/user-manual/SKILL.md)**: Generate a user manual from a running web app: content-cropped screenshots, selector annotations, HTML plus PDF build with QA gates.
