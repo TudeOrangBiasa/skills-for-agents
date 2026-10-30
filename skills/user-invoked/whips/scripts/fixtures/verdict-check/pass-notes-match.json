@@ -1,0 +1,1 @@
+{"comments": [{"author": {"login": "verdict-bot"}, "body": "Verified the endpoint. One nit noted, non-blocking.\n\n<!-- whips-verdict pr=101 sha=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa patch-id=b1b2c3d4e5f60718293a4b5c6d7e8f90123 result=PASS+NOTES -->"}], "head": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "headPatch": "b1b2c3d4e5f60718293a4b5c6d7e8f90123", "me": "verdict-bot"}

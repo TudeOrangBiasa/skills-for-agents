@@ -45,6 +45,8 @@ Everything else. Typical low-risk work: copy and docs, tests only, internal refa
 
 Cases: an isolated 500-line spike of new files with no runtime caller is medium or low, never high on size alone. A workflow change is high, verified against the gate it changes.
 
+The machine-readable form of this verdict is an HTML marker comment checked by `scripts/verdict-check <pr>` for the optional high lane.
+
 ## The reason paragraph
 
 Put it in the PR body under `## Risk`, three sentences at most, in plain words: which verification tier ran and its result (link or SHA).

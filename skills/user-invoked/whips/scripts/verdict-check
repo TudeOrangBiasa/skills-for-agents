@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+# verdict-check: machine-readable check of the optional high-lane verdict (issue #75).
+#
+# A verdict comment on the PR carries a marker:
+#   <!-- whips-verdict pr=<n> sha=<head> patch-id=<id> result=PASS|PASS+NOTES|FAIL|INCONCLUSIVE -->
+# (defined in playbooks/ready-check.md step 2, repeated in opening-a-pr.md).
+#
+# Exit 0 only when the newest trusted marker says PASS or PASS+NOTES and its
+# patch-id equals the patch-id of the current head (the patch-id rule in
+# playbooks/ready-check.md step 3). Trusted means the comment author is the
+# current `gh api user` login or is listed in RUNNER_VERDICT_AUTHORS (comma
+# or space separated). Untrusted markers are skipped, never trusted.
+# Optional lane only, never a merge gate.
+#
+# Usage: verdict-check <pr> [--repo owner/repo]
+# Exit codes: 0 verdict holds, 1 no holding verdict, 2 usage or forge error.
+set -euo pipefail
+
+PR="${1:-}"; shift || true
+REPO=""
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --repo) REPO="$2"; shift 2 ;;
+    -h|--help) sed -n '1,20p' "$0"; exit 0 ;;
+    *) echo "verdict-check: unknown flag $1" >&2; exit 2 ;;
+  esac
+done
+[[ -n "$PR" ]] || { echo "usage: verdict-check <pr> [--repo owner/repo]" >&2; exit 2; }
+
+repo_flag=()
+[[ -z "$REPO" ]] || repo_flag=(--repo "$REPO")
+
+MARKER_RE='<!-- whips-verdict pr=[0-9]+ sha=[0-9a-f]+ patch-id=[0-9a-f]+ result=(PASS[+]NOTES|PASS|FAIL|INCONCLUSIVE) -->'
+
+is_trusted() { # login -> status 0 trusted
+  [[ "${1:-}" == "$me" ]] && return 0
+  local allow="${RUNNER_VERDICT_AUTHORS:-}" name
+  allow="${allow//,/ }"
+  # shellcheck disable=SC2086
+  for name in $allow; do [[ "${1:-}" == "$name" ]] && return 0; done
+  return 1
+}
+
+if [[ -n "${VERDICT_CHECK_FIXTURE:-}" ]]; then
+  me="$(jq -r .me <"$VERDICT_CHECK_FIXTURE")"
+  head_sha="$(jq -r .head <"$VERDICT_CHECK_FIXTURE")"
+  current_patch="$(jq -r .headPatch <"$VERDICT_CHECK_FIXTURE")"
+  comments_json="$(jq -c '{comments: .comments}' <"$VERDICT_CHECK_FIXTURE")"
+else
+  me="$(gh api user --jq .login)" || { echo "verdict-check: cannot read gh api user" >&2; exit 2; }
+  doc="$(gh pr view "$PR" "${repo_flag[@]}" --json comments,headRefOid)" || { echo "verdict-check: cannot read PR $PR" >&2; exit 2; }
+  head_sha="$(jq -r .headRefOid <<<"$doc")"
+  comments_json="$doc"
+  current_patch="$(gh pr diff "$PR" "${repo_flag[@]}" 2>/dev/null | git patch-id --stable 2>/dev/null | awk '{print $1}')"
+fi
+
+count="$(jq '.comments | length' <<<"$comments_json")"
+for ((i = count - 1; i >= 0; i--)); do
+  author="$(jq -r ".comments[$i].author.login // empty" <<<"$comments_json")"
+  body="$(jq -r ".comments[$i].body // empty" <<<"$comments_json")"
+  marker="$(grep -oE "$MARKER_RE" <<<"$body" | tail -n 1 || true)"
+  [[ -n "$marker" ]] || continue
+  m_pr="$(sed -E 's/.* pr=([0-9]+) sha=.*/\1/' <<<"$marker")"
+  [[ "$m_pr" == "$PR" ]] || continue
+  is_trusted "$author" || continue
+  m_sha="$(sed -E 's/.* sha=([0-9a-f]+) patch-id=.*/\1/' <<<"$marker")"
+  m_patch="$(sed -E 's/.* patch-id=([0-9a-f]+) result=.*/\1/' <<<"$marker")"
+  m_result="$(sed -E 's/.* result=(PASS[+]NOTES|PASS|FAIL|INCONCLUSIVE) -->.*/\1/' <<<"$marker")"
+  case "$m_result" in
+    PASS|PASS+NOTES)
+      if [[ -n "${current_patch:-}" && "$m_patch" == "$current_patch" ]]; then
+        if [[ "$m_sha" != "$head_sha" ]]; then
+          echo "verdict-check: $m_result by $author at patch $m_patch (sha moved, patch identical)"
+        else
+          echo "verdict-check: $m_result by $author at head $head_sha"
+        fi
+        exit 0
+      fi
+      echo "verdict-check: stale $m_result by $author: marker patch $m_patch != head patch ${current_patch:-unknown}" >&2
+      exit 1
+      ;;
+    *)
+      echo "verdict-check: verdict by $author is $m_result" >&2
+      exit 1
+      ;;
+  esac
+done
+echo "verdict-check: no trusted verdict marker on PR $PR" >&2
+exit 1
