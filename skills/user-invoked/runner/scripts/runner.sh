@@ -658,31 +658,47 @@ TRIAGE_COUNT_FILE=""
 triage_count() { [[ -n "$TRIAGE_COUNT_FILE" ]] && printf 'x\n' >>"$TRIAGE_COUNT_FILE"; }
 triage_gh_calls() { if [[ -s "$TRIAGE_COUNT_FILE" ]]; then wc -l <"$TRIAGE_COUNT_FILE"; else echo 0; fi; }
 
-f_triage_intake() { # dir -> "createdAt updatedAt number author reporterReply labels" for intake candidates
+f_triage_list() { # dir file ; one list call per repo per tick, raw JSON of open issues
   case "$FORGE" in
     gh)
       triage_count
       (cd "$1" && gh issue list --state open --limit "$RUNNER_TRIAGE_LIST_LIMIT" \
-        --json number,title,createdAt,updatedAt,author,labels,comments) |
-        jq -c --arg ready "$LABEL_READY" --arg human "$LABEL_NEEDS_HUMAN" \
-          --arg info "$LABEL_NEEDS_INFO" --arg triage "$LABEL_NEEDS_TRIAGE" '
-          .[] | .names = [.labels[].name] |
-          select((.names | index($ready) | not) and (.names | index($human) | not)) |
-          select((.names | length) == 0
-            or (.names | index($triage))
-            or (.names | index($info))) |
-          {created: .createdAt, updated: .updatedAt, number: .number, author: (.author.login // ""),
-           labels: (.names | join(","))} |
-          "\(.created) \(.updated) \(.number) \(.author) \(.labels)"' ;;
+        --json number,title,createdAt,updatedAt,author,labels,comments >"$2") ;;
     glab)
       triage_count
-      (cd "$1" && glab issue list --per-page "$RUNNER_TRIAGE_LIST_LIMIT" --output json) |
-        jq -r --arg ready "$LABEL_READY" --arg human "$LABEL_NEEDS_HUMAN" \
-          --arg info "$LABEL_NEEDS_INFO" --arg triage "$LABEL_NEEDS_TRIAGE" '
-          .[] | select((.labels | index($ready) | not) and (.labels | index($human) | not)) |
-          select((.labels | length) == 0 or (.labels | index($triage))
-            or ((.labels | index($info)) and (.user_notes_count // 0) > 0)) |
-          "\(.created_at) \(.updated_at) \(.iid) \(.author.username // "") \(.labels | join(","))"' ;;
+      (cd "$1" && glab issue list --per-page "$RUNNER_TRIAGE_LIST_LIMIT" --output json >"$2") ;;
+  esac
+}
+
+f_triage_intake() { # raw-json-file -> TSV intake candidates (no API calls)
+  # Needs-info enters only on reporter activity: a non-bot comment newer
+  # than the latest AI triage comment (disclaimer marker), else the loop
+  # would re-comment every tick.
+  case "$FORGE" in
+    gh)
+      jq -r --arg ready "$LABEL_READY" --arg human "$LABEL_NEEDS_HUMAN" \
+        --arg info "$LABEL_NEEDS_INFO" --arg triage "$LABEL_NEEDS_TRIAGE" --arg disc "$TRIAGE_DISCLAIMER" '
+        def isbot: (.body // "" | startswith($disc));
+        .[] | .names = [.labels[].name] |
+        select((.names | index($ready) | not) and (.names | index($human) | not)) |
+        select((.names | length) == 0
+          or (.names | index($triage))
+          or ((.names | index($info)) and ([.comments[]? | select(isbot | not)] | length) > 0
+            and (([.comments[]? | select(isbot | not) | .createdAt] | max) > ([.comments[]? | select(isbot) | .createdAt] | max // "0")))) |
+        "\(.createdAt)\t\(.updatedAt)\t\(.number)\t\(.author.login // "")\t\(.title // "" | gsub("\t"; " "))\t\((.names | join(",")))"' "$1" ;;
+    glab)
+      jq -r --arg ready "$LABEL_READY" --arg human "$LABEL_NEEDS_HUMAN" \
+        --arg info "$LABEL_NEEDS_INFO" --arg triage "$LABEL_NEEDS_TRIAGE" '
+        .[] | select((.labels | index($ready) | not) and (.labels | index($human) | not)) |
+        select((.labels | length) == 0 or (.labels | index($triage))) |
+        "\(.created_at)\t\(.updated_at)\t\(.iid)\t\(.author.username // "")\t\(.title // "" | gsub("\t"; " "))\t\((.labels | join(",")))"' "$1" ;;
+  esac
+}
+
+f_triage_titles() { # raw-json-file -> TSV "number<TAB>title" for ALL open issues (no API calls)
+  case "$FORGE" in
+    gh) jq -r '.[] | "\(.number)\t\(.title // "" | gsub("\t"; " "))"' "$1" ;;
+    glab) jq -r '.[] | "\(.iid)\t\(.title // "" | gsub("\t"; " "))"' "$1" ;;
   esac
 }
 
@@ -697,13 +713,19 @@ f_triage_view() { # dir n -> body, comments, labels as TSV sections
   esac
 }
 
-f_triage_label() { # dir n add-label remove-label (each may be empty)
-  local dir="$1" n="$2" add="${3:-}" rm="${4:-}"
+f_triage_label() { # dir n "add labels" "remove labels" (space-separated, each may be empty)
+  local dir="$1" n="$2" add="${3:-}" rm="${4:-}" a args=()
   [[ -n "$add$rm" ]] || return 0
   triage_count
   case "$FORGE" in
-    gh) (cd "$dir" && gh issue edit "$n" ${add:+--add-label "$add"} ${rm:+--remove-label "$rm"} >/dev/null) ;;
-    glab) (cd "$dir" && glab issue update "$n" ${add:+--label "$add"} ${rm:+--unlabel "$rm"} >/dev/null) ;;
+    gh)
+      for a in $add; do args+=(--add-label "$a"); done
+      for a in $rm; do args+=(--remove-label "$a"); done
+      (cd "$dir" && gh issue edit "$n" "${args[@]}" >/dev/null) ;;
+    glab)
+      for a in $add; do args+=(--label "$a"); done
+      for a in $rm; do args+=(--unlabel "$a"); done
+      (cd "$dir" && glab issue update "$n" "${args[@]}" >/dev/null) ;;
   esac
 }
 
@@ -730,9 +752,6 @@ triage_classify_local() { # file-with-body-and-comments -> one decision line
   fi
   if ! grep -qiE 'accept(ance)?( criteria)?|done when|definition of done|verify by|test plan' <<<"$body"; then
     echo "incomplete What testable acceptance proves this is done? Name one command or check."; return
-  fi
-  if ! grep -qiE 'kompleksitas' <<<"$body"; then
-    echo "incomplete What is the ## Kompleksitas line for this ticket?"; return
   fi
   if grep -qiE 'migrat|schema|auth|securit|billing|payment|permission|breaking change|compat' <<<"$body"; then
     echo "complete high"; return
@@ -771,23 +790,33 @@ triage_write_comment() { # dir n kind detail tmpdir -> comment file path
 }
 
 triage_one() { # dir n ; DRY_RUN=1 prints the decision without mutating
-  local dir="$1" n="$2" tmp fetch decision kind detail label rm comment ckind
+  local dir="$1" n="$2" tmp fetch decision kind detail label rm comment ckind title m mt
   tmp="$TRIAGE_TMP/$n"; mkdir -p "$tmp"
   fetch="$tmp/issue-$n.txt"
   f_triage_view "$dir" "$n" >"$fetch"
-  decision="$(triage_classify_local "$fetch")"
-  if [[ "$decision" == "product-call" && "$RUNNER_TRIAGE_AGENT_DECIDE" == "1" ]]; then
-    decision="$(triage_decide_agent "$dir" "$n" "$tmp")"
+  title="$(sed -n 's/^TITLE\t//p' "$fetch" | head -n1)"
+  if [[ -n "$title" && -n "${TRIAGE_TITLES_FILE:-}" ]]; then
+    while IFS=$'\t' read -r m mt; do
+      if [[ -n "${m:-}" && "$m" -lt "$n" && "$mt" == "$title" ]]; then
+        decision="duplicate-of $m"; kind="duplicate-of"; detail="$m"; label="$LABEL_DUPLICATE"; rm="$LABEL_NEEDS_TRIAGE $LABEL_NEEDS_INFO"; ckind=duplicate; break
+      fi
+    done <"$TRIAGE_TITLES_FILE"
   fi
-  kind="${decision%% *}"; detail="${decision#* }"
-  label=""; rm=""; ckind=""
-  case "$kind" in
-    complete) label="$LABEL_READY"; rm="$LABEL_NEEDS_TRIAGE"; ckind=ready ;;
-    incomplete) label="$LABEL_NEEDS_INFO"; rm="$LABEL_NEEDS_TRIAGE"; ckind=info ;;
-    product-call) label="$LABEL_NEEDS_HUMAN"; rm="$LABEL_NEEDS_TRIAGE"; ckind=human; detail="reporter asks for a judgment call; see the issue thread" ;;
-    duplicate-of) label="$LABEL_DUPLICATE"; rm=""; ckind=duplicate ;;
-    *) kind=product-call; label="$LABEL_NEEDS_HUMAN"; rm="$LABEL_NEEDS_TRIAGE"; ckind=human; detail="unrecognized classifier output; needs a human read" ;;
-  esac
+  if [[ -z "${decision:-}" ]]; then
+    decision="$(triage_classify_local "$fetch")"
+    if [[ "$decision" == "product-call" && "$RUNNER_TRIAGE_AGENT_DECIDE" == "1" ]]; then
+      decision="$(triage_decide_agent "$dir" "$n" "$tmp")"
+    fi
+    kind="${decision%% *}"; detail="${decision#* }"
+    label=""; rm=""; ckind=""
+    case "$kind" in
+      complete) label="$LABEL_READY"; rm="$LABEL_NEEDS_TRIAGE $LABEL_NEEDS_INFO"; ckind=ready ;;
+      incomplete) label="$LABEL_NEEDS_INFO"; rm="$LABEL_NEEDS_TRIAGE"; ckind=info ;;
+      product-call) label="$LABEL_NEEDS_HUMAN"; rm="$LABEL_NEEDS_TRIAGE $LABEL_NEEDS_INFO"; ckind=human; detail="reporter asks for a judgment call; see the issue thread" ;;
+      duplicate-of) label="$LABEL_DUPLICATE"; rm="$LABEL_NEEDS_TRIAGE $LABEL_NEEDS_INFO"; ckind=duplicate ;;
+      *) kind=product-call; label="$LABEL_NEEDS_HUMAN"; rm="$LABEL_NEEDS_TRIAGE $LABEL_NEEDS_INFO"; ckind=human; detail="unrecognized classifier output; needs a human read" ;;
+    esac
+  fi
   comment="$(triage_write_comment "$dir" "$n" "$ckind" "$detail" "$tmp")"
   if ((DRY_RUN)); then
     printf 'triage dry-run: %s#%s decision=%s label=%s remove=%s comment=%s\n' \
@@ -813,19 +842,26 @@ cmd_triage() {
   TRIAGE_AGENT_CALLS=0; TRIAGE_SUMMARY=()
   TRIAGE_TMP="$(mktemp -d)"; TRIAGE_COUNT_FILE="$TRIAGE_TMP/gh-calls.count"; : >"$TRIAGE_COUNT_FILE"
   trap 'rm -rf "$TRIAGE_TMP"' RETURN
-  local dir created updated n author labels done=0
+  local dir created updated n author title labels done slug idx=0
   for dir in $RUNNER_REPOS; do
+    done=0
     git -C "$dir" fetch --quiet --prune origin || { record "$dir" - fetch_failed "" "" ""; continue; }
     resolve_repo "$dir"
     [[ -z "$NOTE" ]] || log "$dir: $NOTE"
     [[ "$FORGE" != unsupported ]] || { record "$dir" - unsupported_tracker "" "" "$NOTE"; continue; }
-    while read -r created updated n author labels; do
+    slug="repo-$idx"; idx=$((idx + 1))
+    f_triage_list "$dir" "$TRIAGE_TMP/list-$slug.json"
+    f_triage_intake "$TRIAGE_TMP/list-$slug.json" | sort >"$TRIAGE_TMP/intake-$slug.tsv"
+    f_triage_titles "$TRIAGE_TMP/list-$slug.json" >"$TRIAGE_TMP/titles-$slug.tsv"
+    TRIAGE_TITLES_FILE="$TRIAGE_TMP/titles-$slug.tsv"
+    while IFS=$'\t' read -r created updated n author title labels; do
       [[ -n "${n:-}" ]] || continue
       ((done < RUNNER_TRIAGE_PER_TICK)) || break
       triage_one "$dir" "$n"; done=$((done + 1))
-    done < <(f_triage_intake "$dir" | sort)
-    : "$created $updated $author $labels"
+    done <"$TRIAGE_TMP/intake-$slug.tsv"
+    : "$created $updated $author $title $labels"
   done
+  TRIAGE_TITLES_FILE=""
   log "triage bound: gh_calls=$(triage_gh_calls) agent_calls=$TRIAGE_AGENT_CALLS cap=$RUNNER_TRIAGE_PER_TICK (limit: 1 list + 4 per issue, agents <= cap)"
   if ((${#TRIAGE_SUMMARY[@]})); then printf 'runner: %s\n' "$(IFS=';'; echo "${TRIAGE_SUMMARY[*]}")";
   elif ((DRY_RUN)); then echo 'runner: triage dry-run done, nothing mutated';

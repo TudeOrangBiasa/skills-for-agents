@@ -32,7 +32,7 @@ Review or bot comments on an open agent PR are not intake work. Handle them with
 
 ## Bounds
 
-One list call per repo per tick plus at most four calls per triaged issue (view, label edit, risk label edit, comment). Zero agent spawns unless the repo opts into agent judgment, then at most one spawn per ambiguous issue. Leftover intake waits for the next tick.
+One list call per repo per tick plus at most four calls per triaged issue (view, label edit, risk label edit, comment). Exact-title duplicate matching reuses the same list, so zero extra calls. Zero agent spawns unless the repo opts into agent judgment, then at most one spawn per ambiguous issue. Leftover intake waits for the next tick.
 
 ## Wiring
 
