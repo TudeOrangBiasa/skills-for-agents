@@ -4,7 +4,7 @@ Skills that fire only when the human types their name. They orchestrate; they ne
 
 - **[discuss](./discuss/SKILL.md)**: A relentless interview to sharpen a plan or design.
 - **[discuss-with-docs](./discuss-with-docs/SKILL.md)**: A relentless interview to sharpen a plan or design, which also creates docs (ADR's and glossary) as we go.
-- **[explain-diff-before-merge](./explain-diff-before-merge/SKILL.md)**: Merge gate for learning: explain the diff yourself, survive correction plus three why questions, then merge.
+- **[explain-diff-before-merge](./explain-diff-before-merge/SKILL.md)**: Learning gate (deprecated from the merge path 2026-10-31; execute path is `/whips` only).
 - **[create-verification](./create-verification/SKILL.md)**: Generate a project-local skill that drives the app like a user, with feature map, proven once.
 - **[guide](./guide/SKILL.md)**: Ask which skill or flow fits your situation. A router over the skills in this repo.
 - **[handoff](./handoff/SKILL.md)**: Compact the conversation into a handoff doc for another session to continue.

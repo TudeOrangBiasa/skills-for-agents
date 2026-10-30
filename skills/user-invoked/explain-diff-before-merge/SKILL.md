@@ -5,6 +5,8 @@ name: explain-diff-before-merge
 ---
 # Explain diff before merge
 
+> Deprecated from the merge path (2026-10-31): do not call from merge, ready-check, shipping, or opening-a-pr. Learning value folds into `/teach` or `interview`. Execute path is `/whips` only.
+
 A merge gate for learning: you may merge an agent PR only after proving you understand it. The agent never vouches for your understanding; it checks it.
 
 ## Steps

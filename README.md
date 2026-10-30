@@ -67,7 +67,7 @@ Skills for daily work, fired by hand. Full list in [skills/user-invoked/](skills
 - **[discuss](./skills/user-invoked/discuss/SKILL.md)**: Get relentlessly interviewed about a plan or design until every branch of the design tree is resolved.
 - **[create-verification](./skills/user-invoked/create-verification/SKILL.md)**: Generate a project-local skill that drives the app like a user, with feature map, proven once.
 - **[discuss-with-docs](./skills/user-invoked/discuss-with-docs/SKILL.md)**: Interview session that also builds your project's domain model, sharpening terminology and updating `GLOSSARY.md` and ADRs inline.
-- **[explain-diff-before-merge](./skills/user-invoked/explain-diff-before-merge/SKILL.md)**: Merge gate for learning: explain the diff yourself, survive correction plus three why questions, then merge.
+- **[explain-diff-before-merge](./skills/user-invoked/explain-diff-before-merge/SKILL.md)**: Learning gate (deprecated from the merge path 2026-10-31; execute path is `/whips` only).
 - **[guide](./skills/user-invoked/guide/SKILL.md)**: Ask which skill or flow fits your situation. A router over the skills in this repo. Prefer reading: [COOKBOOK.md](./skills/user-invoked/guide/COOKBOOK.md) shows every common flow as a recipe with diagrams.
 - **[handoff](./skills/user-invoked/handoff/SKILL.md)**: Compact the conversation into a handoff doc for another session to continue.
 - **[judgment-drill](./skills/user-invoked/judgment-drill/SKILL.md)**: Train taste with A/B picks: choose with reasons, rubric grades you.
