@@ -251,12 +251,6 @@ do_check() {
   return 0
 }
 
-protection_body_file() { # required... -> prints tmp file with PUT body
-  local out="$TMP/protection.json"
-  printf '%s\n' "$@" | jq -R . | jq -s '{enforce_admins:true,required_status_checks:{strict:true,checks:map({context:.})},required_pull_request_reviews:null,restrictions:null}' >"$out"
-  printf '%s' "$out"
-}
-
 do_apply() {
   local mode landing
   mode="$(detect_mode)"
