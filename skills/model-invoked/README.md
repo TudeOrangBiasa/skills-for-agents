@@ -25,6 +25,7 @@ Skills the agent can fire on its own when the task fits, or the human can type b
 - **[swarm](./swarm/SKILL.md)**: Parallel worker fan-out for coverage, races, and gauntlets with one report.
 - **[tdd](./tdd/SKILL.md)**: Test-driven development with a red-green-refactor loop.
 - **[technical-writing](./technical-writing/SKILL.md)**: Write docs, RFCs, readmes, and commit messages to a layered standard.
+- **[typescript-best-practices](./typescript-best-practices/SKILL.md)**: TypeScript type discipline for agents editing `.ts`/`.tsx`.
 - **[ui-recording-timeline](./ui-recording-timeline/SKILL.md)**: Turn a UI screen recording into an interactive paint timeline page for motion proof.
 - **[unslop](./unslop/SKILL.md)**: Cut AI tells from prose before it ships.
 - **[user-manual](./user-manual/SKILL.md)**: Generate a user manual from a running web app: content-cropped screenshots, selector annotations, HTML plus PDF build with QA gates.
