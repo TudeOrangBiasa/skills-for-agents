@@ -9,13 +9,13 @@ trap 'rm -rf "$TMP"' EXIT
 pass() { printf 'stub ok: %s\n' "$1"; }
 fail() { printf 'stub FAIL: %s\n' "$1" >&2; exit 1; }
 
-# 1. dry-run prints all four units and writes nothing.
+# 1. dry-run prints all six units and writes nothing.
 out="$("$INSTALL" --dry-run --unit-dir "$TMP/empty" 2>&1)"
-for u in runner-run.service runner-run.timer runner-fix-ci.service runner-fix-ci.timer; do
+for u in runner-run.service runner-run.timer runner-fix-ci.service runner-fix-ci.timer runner-triage.service runner-triage.timer; do
   [[ "$out" == *"$u"* ]] || fail "dry-run missing $u"
 done
 [[ -e "$TMP/empty" ]] && fail "dry-run created the unit dir"
-pass "dry-run prints four units, writes nothing"
+pass "dry-run prints six units, writes nothing"
 
 # 2. bad --only exits 2 before any unit output.
 if "$INSTALL" --dry-run --only bogus >/dev/null 2>&1; then fail "--only bogus accepted"; fi

@@ -20,10 +20,10 @@ ONLY=""
 
 usage() {
   cat >&2 <<'EOF'
-usage: install-timers [--dry-run] [--yes] [--only run|fix-ci] [--unit-dir DIR] [--env-file FILE]
+usage: install-timers [--dry-run] [--yes] [--only run|fix-ci|triage] [--unit-dir DIR] [--env-file FILE]
        install-timers uninstall [--yes] [--unit-dir DIR]
        install-timers pause | resume
-       install-timers cron-line [--only run|fix-ci]
+       install-timers cron-line [--only run|fix-ci|triage]
 EOF
   exit 2
 }
@@ -47,15 +47,16 @@ while (($#)); do
 done
 
 validate_only() {
-  if [[ -n "${ONLY:-}" && "$ONLY" != "run" && "$ONLY" != "fix-ci" ]]; then
-    echo "install-timers: --only must be run or fix-ci" >&2; exit 2
+  if [[ -n "${ONLY:-}" && "$ONLY" != "run" && "$ONLY" != "fix-ci" && "$ONLY" != "triage" ]]; then
+    echo "install-timers: --only must be run, fix-ci, or triage" >&2; exit 2
   fi
 }
 
 units_for() {
   if [[ "$ONLY" == "run" ]]; then echo "runner-run.service runner-run.timer"; fi
   if [[ "$ONLY" == "fix-ci" ]]; then echo "runner-fix-ci.service runner-fix-ci.timer"; fi
-  if [[ -z "${ONLY:-}" ]]; then echo "runner-run.service runner-run.timer runner-fix-ci.service runner-fix-ci.timer"; fi
+  if [[ "$ONLY" == "triage" ]]; then echo "runner-triage.service runner-triage.timer"; fi
+  if [[ -z "${ONLY:-}" ]]; then echo "runner-run.service runner-run.timer runner-fix-ci.service runner-fix-ci.timer runner-triage.service runner-triage.timer"; fi
 }
 
 check_harness() {
@@ -89,6 +90,9 @@ render() { # template outfile
       -e "s|{{FIXCI_BOOT_SEC}}|2min|g" \
       -e "s|{{FIXCI_EVERY}}|10min|g" \
       -e "s|{{FIXCI_JITTER}}|2min|g" \
+      -e "s|{{TRIAGE_BOOT_SEC}}|3min|g" \
+      -e "s|{{TRIAGE_EVERY}}|15min|g" \
+      -e "s|{{TRIAGE_JITTER}}|3min|g" \
       "$TEMPLATE_DIR/$1" >"$2"
 }
 
@@ -115,9 +119,11 @@ if ((DO_RESUME)); then
   exit 0
 fi
 
-if [[ "${CRON_ONLY:-0}" == "1" && ( "${ONLY:-}" == "" || "$ONLY" == "run" || "$ONLY" == "fix-ci" ) ]]; then
+if [[ "${CRON_ONLY:-0}" == "1" && ( "${ONLY:-}" == "" || "$ONLY" == "run" || "$ONLY" == "fix-ci" || "$ONLY" == "triage" ) ]]; then
   if [[ "$ONLY" == "fix-ci" ]]; then
     echo "*/10 * * * * $RUNNER_SH fix-ci >> ~/.local/state/runner/cron.log 2>&1"
+  elif [[ "$ONLY" == "triage" ]]; then
+    echo "*/15 * * * * $RUNNER_SH triage >> ~/.local/state/runner/cron.log 2>&1"
   else
     echo "17 7 * * * $RUNNER_SH run >> ~/.local/state/runner/cron.log 2>&1"
   fi
@@ -182,7 +188,7 @@ for u in $(units_for); do verify_unit "$UNIT_DIR/$u"; echo "verify ok: $u"; done
 if [[ "$UNIT_DIR" == "${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user" ]]; then
   systemctl --user daemon-reload
   manual_probe runner-run.service || true
-  for u in runner-run.timer runner-fix-ci.timer; do
+  for u in runner-run.timer runner-fix-ci.timer runner-triage.timer; do
     if [[ " $(units_for) " == *" $u "* ]]; then
       systemctl --user enable --now "$u"
     fi

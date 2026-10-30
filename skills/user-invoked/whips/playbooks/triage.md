@@ -20,13 +20,9 @@ Every comment posted to the tracker starts with this disclaimer:
 
 ## Review mode
 
-Runs on an open agent PR when the user asks you to address its review or bot comments.
+Runs on an open agent PR when the user asks you to address its review or bot comments. Classify per `../references/bot-triage.md` (fix, dismiss, ask, pass count, learned patterns); that file holds the rubric.
 
 1. Read every unresolved review thread and bot comment on the PR, plus the PR body and diff on the current tip.
-2. Classify each one before acting:
-   - `fix`: a plausible correctness, shipped-behavior, race, or idempotency issue, or a small change that clearly reduces risk. Fix it in the lowest owning PR of the stack, reply with the commit SHA, resolve the thread.
-   - `dismiss`: the current code or context proves no change is needed. Reply with the concrete reason (the invariant, the test, the upstack use), resolve the thread. "Not an issue" is not a reason.
-   - `ask`: security, privacy, auth, data, migration, schema, permission boundaries, high severity, novel, or ambiguous. Label `needs-human` with a `<!-- needs-human reason=ask-thread -->` marker comment, disarm, continue with the next PR, leave the thread open.
-3. When in doubt, ask. Skipping a noisy style comment is cheap; skipping a real data or security bug is not. (Doubt rule is for review threads; risk labels never go high from doubt alone: settle with the `blast-radius` skill per `RISK.md`.)
-4. Verify a claim that one command can settle (rerun the cited test on the tip) before you classify it.
-5. Push the fixes, keep the PR ready (never move it to draft), and report the fix, dismiss, and ask counts with the open asks listed.
+2. Classify each one before acting, then act per the reference: fix in the lowest owning PR, dismiss with a concrete reason, or ask with `needs-human` plus a `<!-- needs-human reason=ask-thread -->` marker, disarm, and continue with the next PR.
+3. Verify a claim that one command can settle (rerun the cited test on the tip) before you classify it.
+4. Push the fixes, keep the PR ready (never move it to draft), and report the fix, dismiss, and ask counts with the open asks listed.

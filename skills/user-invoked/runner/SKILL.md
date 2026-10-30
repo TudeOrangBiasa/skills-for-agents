@@ -44,4 +44,4 @@ Run `scripts/runner.sh check`, then one `scripts/runner.sh run` while the user w
 - Every issue appends one line to `runs.jsonl`; every run prints a one-line summary.
 - The closing summary of a batch follows the ketchup shape ([ketchup](../ketchup/SKILL.md)): how many action items there are, what landed, and each item waiting on the human as a short executive summary.
 
-Never prompt during `run` or `check`; a missing config fails with a pointer to setup. Never enable auto-merge or close an issue.
+`triage` is the intake pass that feeds this queue: it labels unlabeled, needs-triage, and replied needs-info issues up to a per-tick cap, oldest first, using the repo vocab from `docs/agents/triage-labels.md`. See [CONTRACT.md](CONTRACT.md) Triage for flags, bounds, and outcomes, and `whips/playbooks/issue-triage-loop.md` for the on-loop playbook. Never prompt during `run` or `check` or `triage`; a missing config fails with a pointer to setup.
