@@ -9,7 +9,7 @@ Idea path (grill, spec, tickets) comes from [Matt Pocock skills](https://github.
 
 ## TL;DR
 
-- 81 skills (27 user-invoked, 54 model-invoked, including 24 principle leaves) plus 25 `/whips` playbooks: one entry routes any task, the rest fire on triggers.
+- 84 skills (30 user-invoked, 54 model-invoked, including 24 principle leaves) plus 25 `/whips` playbooks: one entry routes any task, the rest fire on triggers.
 - Start with `/guide` (router) or [COOKBOOK.md](./skills/user-invoked/guide/COOKBOOK.md) (recipes with diagrams); build with `/whips`; configure a repo once with `/setup-meta`.
 - Landing is mode-aware: solo repos merge after the local verifier passes, team repos after required checks pass. Risk tiers scale verification (low verifier, medium fresh-context run, high blast-radius plus adversarial review). Humans decide at triage and on irreversible actions outside the repo.
 - Proof is mandatory (screenshots, video, timeline pages), prose passes `unslop`, changes ship with changesets.
@@ -68,6 +68,9 @@ Skills for daily work, fired by hand. Full list in [skills/user-invoked/](skills
 - **[deepen](./skills/user-invoked/deepen/SKILL.md)**: Scan a codebase for deepening opportunities, present them as a visual HTML report, then discuss through whichever one you pick.
 - **[discuss](./skills/user-invoked/discuss/SKILL.md)**: Get relentlessly interviewed about a plan or design until every branch of the design tree is resolved.
 - **[create-verification](./skills/user-invoked/create-verification/SKILL.md)**: Generate a project-local skill that drives the app like a user, with feature map, proven once.
+- **[create-formal-verification](./skills/user-invoked/create-formal-verification/SKILL.md)**: Generate a project-local skill that proves a property where tests rarely reach, with coverage record and sync commit.
+- **[maintain-formal-verification](./skills/user-invoked/maintain-formal-verification/SKILL.md)**: Bring property checks back in line after code changes: drift or bug verdict per check.
+- **[statechart](./skills/user-invoked/statechart/SKILL.md)**: Check a TLA+ model and draw it as a Mermaid statechart with shortest bug paths.
 - **[discuss-with-docs](./skills/user-invoked/discuss-with-docs/SKILL.md)**: Interview session that also builds your project's domain model, sharpening terminology and updating `GLOSSARY.md` and ADRs inline.
 - **[explain-diff-before-merge](./skills/user-invoked/explain-diff-before-merge/SKILL.md)**: Learning gate (deprecated from the merge path 2026-10-31; execute path is `/whips` only).
 - **[guide](./skills/user-invoked/guide/SKILL.md)**: Ask which skill or flow fits your situation. A router over the skills in this repo. Prefer reading: [COOKBOOK.md](./skills/user-invoked/guide/COOKBOOK.md) shows every common flow as a recipe with diagrams.

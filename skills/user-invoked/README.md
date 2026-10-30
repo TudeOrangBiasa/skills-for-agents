@@ -6,6 +6,9 @@ Skills that fire only when the human types their name. They orchestrate; they ne
 - **[discuss-with-docs](./discuss-with-docs/SKILL.md)**: A relentless interview to sharpen a plan or design, which also creates docs (ADR's and glossary) as we go.
 - **[explain-diff-before-merge](./explain-diff-before-merge/SKILL.md)**: Learning gate (deprecated from the merge path 2026-10-31; execute path is `/whips` only).
 - **[create-verification](./create-verification/SKILL.md)**: Generate a project-local skill that drives the app like a user, with feature map, proven once.
+- **[create-formal-verification](./create-formal-verification/SKILL.md)**: Generate a project-local skill that proves a property where tests rarely reach, with coverage record and sync commit.
+- **[maintain-formal-verification](./maintain-formal-verification/SKILL.md)**: Bring property checks back in line after code changes: drift or bug verdict per check.
+- **[statechart](./statechart/SKILL.md)**: Check a TLA+ model and draw it as a Mermaid statechart with shortest bug paths.
 - **[guide](./guide/SKILL.md)**: Ask which skill or flow fits your situation. A router over the skills in this repo.
 - **[handoff](./handoff/SKILL.md)**: Compact the conversation into a handoff doc for another session to continue.
 - **[judgment-drill](./judgment-drill/SKILL.md)**: Train taste with A/B picks: choose with reasons, rubric grades you.

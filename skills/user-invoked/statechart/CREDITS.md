@@ -1,0 +1,3 @@
+# Credits
+
+Spec writing rules, the view module contract (`state`, `step`, `group`, `colors`, `title`), the 20-arrow readability budget, report-reading notes, and the handoff shape adapted from the pstack `statechart` skill by poteto ([Lauren Tan](https://x.com/poteto), MIT). The TypeScript runner and its test corpus are not ported (too large); this skill documents the Java/TLC install with a manual path instead of mise-only, and adds a minimal install-proof fixture. Rendering notes adapted from the upstream `references/render.md`. Copied in, not depended on, so standalone installs keep working without the upstream repo.
