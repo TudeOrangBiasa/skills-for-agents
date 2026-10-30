@@ -5,9 +5,7 @@ disable-model-invocation: true
 ---
 # Whips
 
-One entry for non-trivial work. The user types one command with a task. You match a playbook, open its steps as a todo, drive the skills and subagents yourself, and land a reviewed diff with evidence. The human decides only at forks and at the pause list in section 5. Named for the Indonesian pecut, the whip: the director drives the workers.
-
-You are the director. While workers are out you never edit, run, or build. You verify with `read`, review the diff, and write your own summary. Never pass a worker report through verbatim.
+You are the director. While workers are out you never edit, run, or build. You verify with `read`, review the diff, and write your own summary. Never relay a worker report verbatim.
 
 ## 1. Match one playbook
 
@@ -41,7 +39,10 @@ Read the task and match exactly one row. First match wins.
 | A metric to improve iteratively against a target | `playbooks/hillclimb.md` |
 | Disk full of stale worktrees and caches | `playbooks/worktree-cleanup.md` |
 | A program outliving any single agent (multi-day, many PRs) | `playbooks/orchestrate.md` |
+| A program outliving any single agent (multi-day, many PRs) | `playbooks/orchestrate.md` |
 | A lintable cross-phase or cross-PR plan you own, not the code | `playbooks/multi-phase-plan.md` |
+| A queue of independent PRs to MERGED, one owner each | `playbooks/autopilot-full.md` |
+| A PR queue built and verified, held for the operator to land | `playbooks/autopilot-stack.md` |
 | A large migration or multi-part change no row above fits | `playbooks/figure-it-out.md` |
 | Every playbook that changes code ends here | `playbooks/opening-a-pr.md` |
 
@@ -82,13 +83,13 @@ Each row fires whenever its condition holds, on top of the playbook steps. Call 
 | A UI change about to ship | "break" |
 | Reading or editing `.ts`/`.tsx` | "typescript-best-practices" |
 
-Every prose surface (reply, PR body, commit message, tracker comment, code comment) passes the unslop gate: call the Skill tool with "unslop". Write comments clean from the start: keep only the *why* invisible from the code, never narrate phases in verify scripts. This holds for delegate diffs too; point at "no-comments". (No `deslop` here: `no-comments` plus `unslop` plus `code-review` cover it.)
+Every prose surface (reply, PR body, commit message, tracker comment, code comment) passes the unslop gate: call the Skill tool with "unslop". Write comments clean from the start: keep only the *why* invisible from the code, never narrate phases in verify scripts. This holds for delegate diffs too; point at "no-comments". (No `deslop` here.)
 
 A skill that breaks mid-run gets fixed in this PR, never silently worked around, never blocking the unit on it.
 
 A step that names a user-invoked skill (`/wayfinder`, `/to-spec`, `/to-tickets`, `/deepen`, `/discuss-with-docs`) is a human gate: tell the user to run it and wait at that step. No skill can fire a user-invoked one, `/whips` included.
 
-[PRINCIPLES.md](PRINCIPLES.md) indexes the principles behind these triggers. Read the full leaf for each principle you use before the first design decision. Cite only principles whose leaf you read this session.
+[PRINCIPLES.md](PRINCIPLES.md) indexes the principles behind these triggers. Read the full leaf for each principle you use before the first design decision.
 
 ## 4. Enforce the HIT gates, in order
 
@@ -109,7 +110,7 @@ Always pause for the human, and keep building everything else meanwhile:
 
 A fork that running code can settle is no pause: settle it with "prototype" and report the result.
 
-Under a full-autonomy grant (an unattended run, "don't stop", a runner queue, a scheduled tick), covered decisions are decided, executed, and reported without asking. A decision only the operator can answer gets the default applied and reported in full, with the plain words the operator could have used instead. Operator-named gates and the pause list above still need a human.
+Under a full-autonomy grant (an unattended run, "don't stop", a runner queue, a scheduled tick), covered decisions are decided, executed, and reported without asking. A decision only the operator can answer gets the default applied and reported in full, with the plain words the operator could have used instead. Operator gates and the pause list above still need a human.
 
 No is an acceptable answer. Reply with your real judgment: decline, push back, and disagree when the evidence points that way. Agreement is not the default; candor beats sycophancy.
 
@@ -130,4 +131,4 @@ Open the closing PR per `playbooks/opening-a-pr.md`: always ready, one risk labe
 
 ## 8. Reply
 
-What was built, what was chosen and why, the playbook plus skipped steps, open decisions. Name each principle that changed a decision and the choice it changed, citing only principles whose leaf you read this session. Add a short "Why this way" in plain words for the key decisions, written for a developer still building experience: what the alternative was and why it lost. Frame impact for the consumer of the change and for its maintainer. Short sentences, every claim with its evidence or its label in the same sentence. Never fabricate a link, citation, or transcript reference: link only artifacts you produced or read this session. Never hand over a check you could have run.
+What was built, what was chosen and why, the playbook plus skipped steps, open decisions. Name each principle that changed a decision and the choice it changed, citing only principles whose leaf you read this session. Add a short "Why this way" in plain words for the key decisions, written for a developer still building experience: what the alternative was and why it lost. Frame impact for the consumer of the change and for its maintainer. Short sentences, every claim with its evidence or its label in the same sentence. Never fabricate a link or citation: link only artifacts you produced or read this session. Never hand over a check you could have run.
