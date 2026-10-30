@@ -21,6 +21,7 @@ Read the task and match exactly one row. First match wins.
 | Review or bot comments on an open agent PR | `playbooks/triage.md` review mode |
 | Check on a PR or stack, get it green, anything outstanding | `playbooks/babysit.md` |
 | Is this ready, what do I merge first, give me a merge plan | `playbooks/ready-check.md` |
+| Land a verified PR: merge, read back, retarget the stack | `playbooks/shipping.md` |
 | A reported defect | `playbooks/bug.md` |
 | A fork running code can settle: which layout, flow, query, or approach | `playbooks/prototype.md` |
 | A UI ticket | `playbooks/ui.md`, on top of feature |
@@ -109,7 +110,7 @@ Match effort and speed to the job, never the model family. Start from the role's
 
 ## 7. Verify, gate, open the PR ready
 
-Verify on the matching surface. Verdicts are VERIFIED, NOT VERIFIED, or INCONCLUSIVE, and inconclusive is not a pass. CI green is an input, not a verdict. Evidence-free work returns to a fresh fix agent, never to the same worker by resume chain. Strategic track: nominate at most one environment improvement this task suggested (a repeated manual step, a missing check, a confusing doc) as a `/retro` candidate with its evidence. Never fix it mid-run; the list goes to retro.
+Verify on the matching surface. Verdicts are VERIFIED, NOT VERIFIED, or INCONCLUSIVE, and inconclusive is not a pass. Verifier output is an input, not a verdict: solo repos read the local verifier, team repos read CI. Evidence-free work returns to a fresh fix agent, never to the same worker by resume chain. Strategic track: nominate at most one environment improvement this task suggested (a repeated manual step, a missing check, a confusing doc) as a `/retro` candidate with its evidence. Never fix it mid-run; the list goes to retro.
 
 Open the closing PR per `playbooks/opening-a-pr.md`: always ready, one risk label plus a `## Risk` paragraph per [RISK.md](RISK.md), `Closes #N` when an issue exists, body shaped with the `pr` skill (summary visual, before/after evidence, merge danger). Landing follows the risk tier per [RISK.md](RISK.md): low-risk PRs land immediately in the same run on an independent PASS (no human touch, never self-reported); qualifying medium PRs may be merged by the agent; high-risk PRs wait for an independent verdict plus a human merge. Human review time is for high-risk only. Visible changes add the ATTACHMENTS.md pair: before/after table, native 1x, matched viewport and crop, video when motion matters, never inside `<details>`. On a PR, agents never add themselves as collaborator, assignee, or reviewer. Claiming an issue by assignment, per the Claim step in `docs/agents/issue-tracker.md`, is allowed. Tools are not people, so they only author the body and request review from humans.
 
