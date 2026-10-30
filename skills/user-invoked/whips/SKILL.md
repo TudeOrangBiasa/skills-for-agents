@@ -17,7 +17,6 @@ Read the task and match exactly one row. First match wins.
 | --- | --- |
 | Pause, stop for now, the laptop is closing | `playbooks/pause.md` |
 | Resume or take over a prior run, branch, or open PR | `playbooks/pickup.md` |
-| A goal to pursue until its predicate holds, unattended | `playbooks/goal.md` |
 | Pick up the next agent-ready issue | `playbooks/triage.md` intake |
 | Review or bot comments on an open agent PR | `playbooks/triage.md` review mode |
 | Check on a PR or stack, get it green, anything outstanding | `playbooks/babysit.md` |
@@ -107,8 +106,6 @@ Bulk goes to subagents, summaries stay in this thread. A second opinion is the s
 Pick each subagent's model by role from `docs/agents/models.md` when the repo has it (roles `code`, `hard-code`, `judgment`, `review`). A missing file or a missing role means the subagent runs on your own model. Never name a model or provider yourself.
 
 Match effort and speed to the job, never the model family. Start from the role's model, shift effort one step up for the hardest work and down one or more steps for routine work; verification runs on the `review` role at standard speed, never shifted down. Fast mode is for urgent runs only: a red trunk or CI, or a human blocked waiting on the result. Shift only effort and fast/standard, so a diverse panel stays diverse. When the harness rejects a shifted slug, fall back to the role's plain model and say so; never try another slug.
-
-On OMP, read `VIBE-MAPPING.md` first and follow it on every run: director toolset and vow, the `vibe_send` truth table, advisor severities, drain discipline, and the hooks evidence gate. Never rely on mid-turn steering; steer inline in briefs plus standing orders and at drain points.
 
 ## 7. Verify, gate, open the PR ready
 

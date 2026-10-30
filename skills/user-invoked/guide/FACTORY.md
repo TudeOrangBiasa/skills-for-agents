@@ -50,7 +50,7 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    Grill["Grill: discuss-with-docs, interview"] --> Spec["Spec: to-spec"] --> Tickets["Tickets: to-tickets"] --> AFK["AFK: whips, runner, goal mode"] --> Review["Review: code-review, interrogate, ready-check"] --> Merge["Merge: pr, opening-a-pr, RISK"]
+    Grill["Grill: discuss-with-docs, interview"] --> Spec["Spec: to-spec"] --> Tickets["Tickets: to-tickets"] --> AFK["AFK: whips, runner"] --> Review["Review: code-review, interrogate, ready-check"] --> Merge["Merge: pr, opening-a-pr, RISK"]
     Deep["Deep modules"] --> AFK
     Tests["Tests and types"] --> AFK
     Idx["AGENTS.md pointers"] --> AFK
@@ -59,7 +59,7 @@ flowchart TD
 | Box | In this repo | Skill or playbook | Status |
 | --- | --- | --- | --- |
 | Grill, spec, tickets | Grill with docs, interview primitive, spec, tickets, wayfinder for fog | [discuss-with-docs](../discuss-with-docs/SKILL.md), [interview](../../model-invoked/interview/SKILL.md), [to-spec](../to-spec/SKILL.md), [to-tickets](../to-tickets/SKILL.md), [wayfinder](../wayfinder/SKILL.md) | ada |
-| AFK agents | Whips routes each unit, runner works queues on schedule, goal mode pursues one predicate, swarm fans out parallel work | [whips](../whips/SKILL.md), [goal](../whips/playbooks/goal.md), [orchestrate](../whips/playbooks/orchestrate.md), [pickup](../whips/playbooks/pickup.md), [pause](../whips/playbooks/pause.md), [runner](../runner/SKILL.md), [swarm](../../model-invoked/swarm/SKILL.md) | ada |
+| AFK agents | Whips routes each unit, runner works queues on schedule, swarm fans out parallel work | [whips](../whips/SKILL.md), [orchestrate](../whips/playbooks/orchestrate.md), [pickup](../whips/playbooks/pickup.md), [pause](../whips/playbooks/pause.md), [runner](../runner/SKILL.md), [swarm](../../model-invoked/swarm/SKILL.md) | ada |
 | Review in a fresh context | Two-axis review, adversarial review, independent ready-check verdict, clear context between tickets | [code-review](../../model-invoked/code-review/SKILL.md), [interrogate](../../model-invoked/interrogate/SKILL.md), [ready-check](../whips/playbooks/ready-check.md), [guide](./SKILL.md) | ada |
 | Merge on evidence | PR body with proof, opening checklist, risk tier, explain gate, proof URL check | [pr](../../model-invoked/pr/SKILL.md), [opening-a-pr](../whips/playbooks/opening-a-pr.md), [ready-check](../whips/playbooks/ready-check.md), [RISK](../whips/RISK.md), [explain-diff-before-merge](../explain-diff-before-merge/SKILL.md) | ada |
 | Deep modules | Shared vocabulary, scan for shallow modules, one-time TypeScript wiring, settle shape before code | [codebase-design](../../model-invoked/codebase-design/SKILL.md), [deepen](../deepen/SKILL.md), [setup-ts-deep-modules](../setup-ts-deep-modules/SKILL.md), [architect](../../model-invoked/architect/SKILL.md) | ada |
@@ -88,7 +88,7 @@ flowchart TD
 | Box | In this repo | Skill or playbook | Status |
 | --- | --- | --- | --- |
 | One shared language | Glossary habit plus domain modeling inside doc interviews, re-pitch when a message misses | [domain-modeling](../../model-invoked/domain-modeling/SKILL.md), [discuss-with-docs](../discuss-with-docs/SKILL.md), [wait-what](../wait-what/SKILL.md) | ada |
-| Clear goals | Goal restated before playbook match, sharpened brief, spec, goal mode predicate | [whips](../whips/SKILL.md), [sharpen](../sharpen/SKILL.md), [to-spec](../to-spec/SKILL.md), [goal](../whips/playbooks/goal.md) | ada |
+| Clear goals | Goal restated before playbook match, sharpened brief, spec | [whips](../whips/SKILL.md), [sharpen](../sharpen/SKILL.md), [to-spec](../to-spec/SKILL.md) | ada |
 | Decisions written down | ADRs under .agents/adr, paper trail interviews, decision trail, map decisions, personal loops | [discuss-with-docs](../discuss-with-docs/SKILL.md), [show-me-your-work](../../model-invoked/show-me-your-work/SKILL.md), [wayfinder](../wayfinder/SKILL.md), [worklog](../worklog/SKILL.md) | ada |
 | Planning nerve | One-shot versus grill versus wayfinder rule, recipes 1 and 3, figure-it-out for work with no playbook | [guide](./SKILL.md), [COOKBOOK](./COOKBOOK.md), [figure-it-out](../whips/playbooks/figure-it-out.md) | ada |
 | Sceptical review | Adversarial review, two-axis review, principles, stress page, number check before reporting | [interrogate](../../model-invoked/interrogate/SKILL.md), [code-review](../../model-invoked/code-review/SKILL.md), [PRINCIPLES](../whips/PRINCIPLES.md), [break](../../model-invoked/break/SKILL.md), [benchmark-checklist](../../model-invoked/benchmark-checklist/SKILL.md) | ada |
