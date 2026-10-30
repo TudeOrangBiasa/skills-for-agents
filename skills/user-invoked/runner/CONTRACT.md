@@ -96,6 +96,6 @@ The reaper at the start of `run` releases an orphan claim only when all of these
 
 ## Triage
 
-`triage` walks the same three intake buckets `/triage` shows: unlabeled issues, the needs-triage role, and the needs-info role with reporter activity. Oldest first, capped per repo at `RUNNER_TRIAGE_PER_TICK`. Issues already carrying the ready or human role are never touched, so a re-run is a no-op on them. A `stop` file in the state dir ends the tick with exit 0, the same kill switch pause/resume writes. `--dry-run` prints each decision plus the comment file path and mutates nothing.
+`triage` walks the same three intake buckets `/triage` shows: unlabeled issues, the needs-triage role, and the needs-info role with reporter activity. Oldest first, capped per repo at `RUNNER_TRIAGE_PER_TICK`. The tick never touches issues already carrying the ready or human role, so a re-run is a no-op on them. A `stop` file in the state dir ends the tick with exit 0, the same kill switch pause/resume writes. `--dry-run` prints each decision plus the comment file path and mutates nothing.
 
 One tick costs one list call per repo plus at most four calls per triaged issue (view, label edit, risk label edit, comment) and zero agent spawns unless `RUNNER_TRIAGE_AGENT_DECIDE=1`, in which case at most one spawn per ambiguous issue. Comment bodies travel via `--body-file`, never as argv. The tick never closes an issue, never merges, and never writes code. Outcomes land in `runs.jsonl` as `triaged_complete`, `triaged_incomplete`, `triaged_product-call`, or `triaged_duplicate-of`.

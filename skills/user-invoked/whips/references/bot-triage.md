@@ -1,6 +1,6 @@
 # Bot comment triage
 
-How to triage review and bot comments (Bugbot, automated review, security review) on an open agent PR. Read by `playbooks/triage.md` review mode and `playbooks/babysit.md` step 6; both point here instead of duplicating the rubric. For issue intake, see `playbooks/issue-triage-loop.md`, not this file.
+How to triage review and bot comments (Bugbot, automated review, security review) on an open agent PR. `playbooks/triage.md` review mode and `playbooks/babysit.md` step 6 read this file instead of duplicating the rubric. For issue intake, see `playbooks/issue-triage-loop.md`, not this file.
 
 ## Rubric
 
@@ -10,9 +10,7 @@ Classify each unresolved thread before acting:
 - **Dismiss.** The current code or context proves no change is needed. Reply with the concrete reason (the invariant, the test, the upstack use), resolve the thread. "Not an issue" is not a reason.
 - **Ask.** Security, privacy, auth, data, migration, schema, permission boundaries, high severity, novel, or ambiguous. Label `needs-human` with a `<!-- needs-human reason=ask-thread -->` marker comment, disarm, continue with the next PR, leave the thread open.
 
-When in doubt, ask. Skipping a noisy style comment is cheap; skipping a real data or security bug is not. Noise about style alone may be dismissed with a concrete reason.
-
-## Pass count
+When in doubt, ask. Skipping a noisy style comment is cheap; skipping a real data or security bug is not. Dismiss noise about style alone only with a concrete reason.
 
 Count the bot iteration per PR: first pass, second pass, and so on. From the third pass, lean toward dismissing documented patterns below, but anything touching security, auth, billing, data, or migrations still escalates no matter the pass.
 

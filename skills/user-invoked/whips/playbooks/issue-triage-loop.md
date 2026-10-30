@@ -14,7 +14,7 @@ Every comment posted to the tracker starts with this disclaimer:
 
 1. Check the kill switch: a `stop` file in the runner state dir ends the tick with exit 0, untouched. See `playbooks/pause.md`.
 2. List the intake buckets once, oldest first, capped at the tick cap (default 3): unlabeled issues, the needs-triage role, and the needs-info role with reporter activity. Skip issues already carrying the ready or human role; never re-label them.
-3. Triage each picked issue with `/triage` (state machine, buckets, needs-info template) and write briefs per the `/triage` AGENT-BRIEF shape (summary, current and desired behavior, key interfaces, acceptance criteria, out of scope). The rubric below is only the loop's allowed moves.
+3. Triage each picked issue with `/triage` (state machine, buckets, needs-info template). Write briefs in the `/triage` AGENT-BRIEF shape: summary, current and desired behavior, key interfaces, acceptance criteria, out of scope. The rubric below holds only the loop's allowed moves.
 4. Report per tick: decisions taken, issues left for the next tick, and the call counts that prove the bound.
 
 ## Allowed moves per issue
