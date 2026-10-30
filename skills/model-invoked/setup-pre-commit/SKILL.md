@@ -64,7 +64,22 @@ npm run typecheck
 npm run test
 ```
 
-**Adapt**: Replace `npm` with detected package manager. If repo has no `typecheck` or `test` script in package.json, omit those lines and tell the user.
+
+### 4c. Create `.husky/commit-msg`
+
+Enforce Conventional Commits on the message (`type(scope): subject`, types `feat`, `fix`, `docs`, `refactor`, `test`, `chore`, `perf`, same list as the whips `opening-a-pr` playbook). Use `commitlint` only when the repo already has it; otherwise append this dependency-free shell (under 1 second, git merge/revert messages exempt):
+
+```bash
+# Conventional Commits gate: type(scope): subject, no trailing period; merge/revert exempt
+msg="$(cat "$1")"
+case "$msg" in "Merge "*|"Revert "*) exit 0;; esac
+echo "$msg" | grep -qE '^(feat|fix|docs|refactor|test|chore|perf)(\(.+\))?: .+' || \
+  { echo "commit message must be Conventional Commits: type(scope): subject"; exit 1; }
+echo "$msg" | grep -qE '\.$' && \
+  { echo "commit subject must not end with a period"; exit 1; }
+exit 0
+```
+
 
 ### 5. Create `.lintstagedrc` (Prettier path only; oxlint, oxfmt, and Biome run whole-repo fast enough to skip staged runners)
 
@@ -119,6 +134,10 @@ Lockfiles, minified bundles, build output, and the generated changelog are exemp
 Stage all changed/created files and commit with message: `Add pre-commit hooks (husky + lint-staged + prettier)`
 
 This will run through the new pre-commit hooks: a good smoke test that everything works.
+
+## The four layers
+
+Pre-commit is fast (format, token gate, staged checks, under 3 seconds). Pre-push is slow (typecheck, tests). Commit-msg is format (`type(scope): subject`). The final verifier is the command in `docs/agents/verifier.md` (solo: pre-push; team: CI running the same commands plus a PR-title check): hooks are the first filter, the verifier decides. Hooks can be skipped with `--no-verify`; agents never use that flag to bypass a gate.
 
 ## Notes
 
