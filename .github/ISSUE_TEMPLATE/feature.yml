@@ -1,0 +1,59 @@
+name: "✨ Feature / enhancement"
+description: "Perilaku baru atau peningkatan, dengan acceptance testable."
+title: "[feat]: "
+labels: ["needs-triage", "risk:low"]
+body:
+  - type: dropdown
+    id: tipe
+    attributes:
+      label: "Tipe"
+      description: "Satu tipe per tiket."
+      options:
+        - feature
+        - enhancement
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: "What to build"
+      description: "Perilaku end-to-end dari sudut pengguna, bukan daftar implementasi per lapis."
+    validations:
+      required: true
+  - type: textarea
+    id: kompleksitas
+    attributes:
+      label: "## Kompleksitas"
+      description: "Satu baris: perkiraan langkah verifikasi (file, tes, skrip yang disentuh)."
+      placeholder: "Contoh: O(F) file, F~4; 1 skrip + 1 fixture"
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: "Acceptance criteria"
+      description: "Kriteria testable: apa yang diverifikasi dan bagaimana."
+    validations:
+      required: true
+  - type: textarea
+    id: risiko
+    attributes:
+      label: "Risk"
+      description: "Blast radius diff yang diperkirakan (low/medium/high) plus satu rule RISK yang cocok."
+      placeholder: "Contoh: medium, rule 8 large diff"
+    validations:
+      required: false
+  - type: input
+    id: parent
+    attributes:
+      label: "Parent epic"
+      description: "Nomor issue epic (mis. #62), kosongkan bila tidak ada."
+    validations:
+      required: false
+  - type: input
+    id: blocked
+    attributes:
+      label: "Blocked by"
+      description: "Nomor issue yang menghalangi, kosongkan bila tidak ada."
+    validations:
+      required: false

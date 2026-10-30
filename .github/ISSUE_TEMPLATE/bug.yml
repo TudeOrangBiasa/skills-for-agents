@@ -1,0 +1,57 @@
+name: "🐛 Bug report"
+description: "Laporan defect: sesuatu rusak, sertakan repro."
+title: "[bug]: "
+labels: ["needs-triage", "risk:low"]
+body:
+  - type: dropdown
+    id: tipe
+    attributes:
+      label: "Tipe"
+      description: "Satu tipe per tiket. Lihat tabel Kompleksitas di bawah untuk mengisi effort."
+      options:
+        - bug
+    validations:
+      required: true
+  - type: textarea
+    id: perilaku
+    attributes:
+      label: "Perilaku sekarang vs yang diharapkan"
+      description: "Apa yang terjadi dan apa yang seharusnya terjadi."
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: "Langkah repro"
+      description: "Langkah minimal yang mengulang defect."
+    validations:
+      required: true
+  - type: textarea
+    id: kompleksitas
+    attributes:
+      label: "## Kompleksitas"
+      description: "Satu baris: perkiraan langkah verifikasi (mis. O(1) file, O(F) file, jumlah tes). Lihat panduan di bawah."
+      placeholder: "Contoh: O(1) file, 1 tes repro + 1 tes regresi"
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: "Acceptance criteria"
+      description: "Kriteria testable: apa yang diverifikasi dan bagaimana."
+    validations:
+      required: true
+  - type: input
+    id: parent
+    attributes:
+      label: "Parent epic"
+      description: "Nomor issue epic (mis. #62), kosongkan bila tidak ada."
+    validations:
+      required: false
+  - type: input
+    id: blocked
+    attributes:
+      label: "Blocked by"
+      description: "Nomor issue yang menghalangi (mis. #65), kosongkan bila tidak ada."
+    validations:
+      required: false
