@@ -111,13 +111,34 @@ f_ready_issues() { # dir label -> "createdAt number" for open, unassigned issues
   esac
 }
 
+# Batch PR map: one list call per repo per run (issue #87). Filtering loops
+# call f_linked_pr per candidate; without a cache that is O(n) API calls.
+# preload fills __PR_MAP_JSON once, f_linked_pr filters it locally.
+# After an agent may have opened a PR, call refresh_pr_map so the next
+# lookup sees the new branch. Total cost is 1 + processed issues per repo.
+__PR_MAP_KEY=""
+__PR_MAP_JSON=""
+preload_pr_map() { # dir ; fetch once per repo per FORGE
+  local dir="$1" key="$FORGE:$dir" raw
+  [[ "$__PR_MAP_KEY" == "$key" ]] && return 0
+  case "$FORGE" in
+    gh) raw="$(cd "$dir" && gh pr list --state open --limit 100 --json number,url,isDraft,body 2>/dev/null)" || raw="[]" ;;
+    glab) raw="$(cd "$dir" && glab mr list --per-page 100 --output json 2>/dev/null)" || raw="[]" ;;
+    *) raw="[]" ;;
+  esac
+  __PR_MAP_KEY="$key"
+  __PR_MAP_JSON="$raw"
+}
+refresh_pr_map() { # dir ; force refetch after an agent run
+  __PR_MAP_KEY=""
+  preload_pr_map "$1"
+}
 f_linked_pr() { # dir n -> "number url isDraft" of an open PR/MR whose body closes #n (PRs open ready; isDraft is informational for legacy drafts only)
   local re='(?i)\b(close[sd]?|fix(e[sd])?|resolve[sd]?) #'"$2"'\b'
+  preload_pr_map "$1"
   case "$FORGE" in
-    gh) (cd "$1" && gh pr list --state open --limit 100 --json number,url,isDraft,body) |
-      jq -r --arg re "$re" 'map(select(.body // "" | test($re))) | first // empty | "\(.number) \(.url) \(.isDraft)"' ;;
-    glab) (cd "$1" && glab mr list --per-page 100 --output json) |
-      jq -r --arg re "$re" 'map(select(.description // "" | test($re))) | first // empty | "\(.iid) \(.web_url) \(.draft)"' ;;
+    gh) jq -r --arg re "$re" 'map(select(.body // "" | test($re))) | first // empty | "\(.number) \(.url) \(.isDraft)"' <<<"$__PR_MAP_JSON" ;;
+    glab) jq -r --arg re "$re" 'map(select(.description // "" | test($re))) | first // empty | "\(.iid) \(.web_url) \(.draft)"' <<<"$__PR_MAP_JSON" ;;
   esac
 }
 
@@ -212,7 +233,7 @@ run_one() { # dir n
   ) >"$logf" 2>&1 </dev/null || rc=$?
 
   local pr num url draft outcome detail="agent exit $rc"
-  pr="$(f_linked_pr "$dir" "$n" || true)"; url=""
+  refresh_pr_map "$dir"; pr="$(f_linked_pr "$dir" "$n" || true)"; url=""
   if [[ -n "$pr" ]]; then
     read -r num url draft <<<"$pr"; outcome=pr_opened; set_attempts "$key" clear
   elif f_has_label "$dir" "$n" "$LABEL_NEEDS_INFO"; then
@@ -247,6 +268,7 @@ cmd_run() {
     resolve_repo "$dir"
     [[ -z "$NOTE" ]] || log "$dir: $NOTE"
     [[ "$FORGE" != unsupported ]] || { record "$dir" - unsupported_tracker "" "" "$NOTE"; continue; }
+    preload_pr_map "$dir"
     while read -r created n; do
       [[ -n "${n:-}" ]] || continue
       ((started < RUNNER_MAX_ISSUES)) || break
@@ -266,6 +288,7 @@ cmd_check() { # exit 0 when something is eligible, 1 when not
   for dir in $RUNNER_REPOS; do
     resolve_repo "$dir"
     [[ "$FORGE" != unsupported ]] || continue
+    preload_pr_map "$dir"
     while read -r created n; do
       [[ -n "${n:-}" ]] || continue
       (($(attempts_of "$dir#$n") < RUNNER_MAX_ATTEMPTS)) || continue
