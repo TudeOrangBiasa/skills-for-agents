@@ -27,6 +27,6 @@ Runs on an open agent PR when the user asks you to address its review or bot com
    - `fix`: a plausible correctness, shipped-behavior, race, or idempotency issue, or a small change that clearly reduces risk. Fix it in the lowest owning PR of the stack, reply with the commit SHA, resolve the thread.
    - `dismiss`: the current code or context proves no change is needed. Reply with the concrete reason (the invariant, the test, the upstack use), resolve the thread. "Not an issue" is not a reason.
    - `ask`: security, privacy, auth, data, migration, schema, permission boundaries, high severity, novel, or ambiguous. Ask the human, leave the thread open.
-3. When in doubt, ask. Skipping a noisy style comment is cheap; skipping a real data or security bug is not.
+3. When in doubt, ask. Skipping a noisy style comment is cheap; skipping a real data or security bug is not. (Doubt rule is for review threads; risk labels never go high from doubt alone: settle with the `blast-radius` skill per `RISK.md`.)
 4. Verify a claim that one command can settle (rerun the cited test on the tip) before you classify it.
 5. Push the fixes, keep the PR ready (never move it to draft), and report the fix, dismiss, and ask counts with the open asks listed.
