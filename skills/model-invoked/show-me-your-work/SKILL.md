@@ -20,7 +20,7 @@ Use `scripts/log.sh <logfile> <phase> <decision> <why> <evidence> <result>` (sta
 
 A run is one conversation including later turns. A pickup, replacement agent, or new chat starts a new run: its first row carries phase `start` naming the prior rows' range it did not write, and it first reads the tail to see whether another run wrote since.
 
-Location: `decisions.tsv` in the work dir, or `.audit/<task-slug>.tsv` for parallel efforts, out of git by default. Commit only ambitious trails a reviewer must read to trust.
+Location: `decisions.tsv` in the work dir (`.scratch/whips/<run>/decisions.tsv` for whips runs), or `.audit/<task-slug>.tsv` for parallel efforts, out of git by default. Commit only ambitious trails a reviewer must read to trust. The full create/read map lives in `docs/agents/docs-layout.md` (written by `/setup-meta`).
 
 ## Audit before handing back
 

@@ -39,7 +39,7 @@ Write `skills/verify-<app>/SKILL.md` in the target repo with frontmatter (`name:
 
 ## 3. Seed the feature map
 
-`features/README.md` index plus one file per user-facing feature (top 3-5 from routes, commands, menus, docs). Each file: what it is, how a user reaches it, how the harness drives it, what observable end state proves it, and gotchas. A journey missing a seed precondition reports failure; never weaken the journey to pass. The map is the maintained verification source: proof through one convenient entry stays incomplete while the map lists others.
+`skills/verify-<app>/features/` holds a `README.md` index plus one file per user-facing feature (top 3-5 from routes, commands, menus, docs). Each file: what it is, how a user reaches it, how the harness drives it, what observable end state proves it, and gotchas. A journey missing a seed precondition reports failure; never weaken the journey to pass. The map is the maintained verification source: proof through one convenient entry stays incomplete while the map lists others. (Location per the repo artifact contract in `docs/agents/docs-layout.md`; pstack uses `.cursor/skills/...`, whips keeps `skills/verify-*/` on purpose.)
 
 ## 4. Prove it before handover
 
