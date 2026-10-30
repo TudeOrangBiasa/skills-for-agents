@@ -1,0 +1,5 @@
+interface:
+  display_name: "Maintain Formal Verification"
+  short_description: "Upkeep pass for property checks"
+policy:
+  allow_implicit_invocation: false

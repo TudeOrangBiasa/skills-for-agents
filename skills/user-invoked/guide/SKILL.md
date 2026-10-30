@@ -18,7 +18,7 @@ A **flow** is a path through the skills. Most paths run along one **main flow**,
 - Huge foggy effort: `/wayfinder` (below), then merge onto the main flow at `/to-spec`.
 - Long run mechanics: `## Phase boundaries` below for continue/clear/note/subagent/compact.
 - Whips-driven skills, vocabulary, standalone list: `## Reference` below (one line each, no detail).
-- Setup first: `/setup-meta` (below), plus `/create-verification` for scripted proof.
+- Setup first: `/setup-meta` (below), plus `/create-verification` for scripted proof. After that, offer `/create-formal-verification` only when the repo has race, retry, state machine, parser, or unsafe code that tests rarely reach; never push it.
 
 Read [COOKBOOK.md](COOKBOOK.md) only when a recipe fits; read [FACTORY.md](FACTORY.md) only for the big picture; read [PHASE-BOUNDARIES.md](PHASE-BOUNDARIES.md) only at a phase boundary.
 
@@ -40,4 +40,4 @@ Continue, `/clear`, portable note (`/handoff`), subagent, `/compact` (default). 
 
 ## Precondition
 
-**`/setup-meta`**: run before your first flow (tracker, labels, docs, autonomy, jobs, optional models). Projects needing scripted proof add **`/create-verification`** with **`/maintain-verification`** upkeep.
+**`/setup-meta`**: run before your first flow (tracker, labels, docs, autonomy, jobs, optional models). Projects needing scripted proof add **`/create-verification`** with **`/maintain-verification`** upkeep. Where tests cannot reach (race, retry, state machine, parser, unsafe code), offer **`/create-formal-verification`** with **`/maintain-formal-verification`** upkeep and **`/statechart`** charts; only when it fits, never by default.
