@@ -69,7 +69,7 @@ Offer **multi-context** (a root `GLOSSARY-MAP.md` pointing to per-context `GLOSS
 - **Commit message format**: agree one format (default: conventional commits) and record it in the standards file.
 - **PR body format**: no new file. Confirm the repo uses the `pr` skill shape (Summary visual, before/after Evidence, Merge Danger).
 
-**Section E: Tooling.** Husky hooks with a timing split (checks on every edit flood the agent with known-broken state; batch feedback instead): call the Skill tool with "setup-pre-commit" (fast pre-commit gate under 3 seconds: format, token gate, staged-file checks; typecheck and full tests move to pre-push plus CI). Only when the repo is a JS/TS project; skip otherwise.
+**Section E: Tooling.** Husky hooks with a timing split (checks on every edit flood the agent with known-broken state; batch feedback instead): call the Skill tool with "setup-pre-commit" (fast pre-commit gate under 3 seconds: format, token gate, staged-file checks; typecheck and full tests move to pre-push plus the configured verifier in `docs/agents/verifier.md`). Only when the repo is a JS/TS project; skip otherwise.
 
 **Section F: Models (optional).** Skip unless `whips` is installed. Ask one question:
 

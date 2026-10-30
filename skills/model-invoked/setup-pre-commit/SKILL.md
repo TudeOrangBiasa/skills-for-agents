@@ -10,7 +10,7 @@ description: Set up fast hooks with the repo's own toolchain (oxlint/oxfmt, Biom
 - **Husky** pre-commit hook
 - **Toolchain detection first**: oxlint plus oxfmt when the repo already uses them ( configs `oxlintrc.json`, oxfmt devDependency), else Biome on `biome.json`, else Prettier with lint-staged. Rust toolchains run whole-repo in milliseconds, so they need no staged runner.
 - **typecheck** and **test** scripts in a pre-push hook (never pre-commit: slow gates flood agents with known-broken state)
-- **timing split**: pre-commit stays under 3 seconds (format, token gate, staged-file checks); everything slower goes to pre-push plus CI
+- **timing split**: pre-commit stays under 3 seconds (format, token gate, staged-file checks); everything slower goes to pre-push plus the configured verifier
 - **token-size gate**: staged text files stay under ~5,000 tokens so no file grows past reviewable size
 
 ## Steps
@@ -19,7 +19,7 @@ description: Set up fast hooks with the repo's own toolchain (oxlint/oxfmt, Biom
 
 Check for `package-lock.json` (npm), `pnpm-lock.yaml` (pnpm), `yarn.lock` (yarn), `bun.lockb` (bun). Use whichever is present. Default to npm if unclear.
 
-Then detect the lint/format toolchain in this order: oxlint (`oxlintrc.json` or an `oxlint` devDependency) plus oxfmt (devDependency) wins first; else Biome (`biome.json`); else Prettier (config file or devDependency); else nothing yet, which means proposing oxlint plus oxfmt (official migrate guides from ESLint and Prettier exist, 10-40x faster, our own repos already run them). Record the choice: every step below branches on it.
+Then detect the lint/format toolchain in this order: oxlint (`oxlintrc.json` or an `oxlint` devDependency) plus oxfmt (devDependency) wins first; else Biome (`biome.json`); else Prettier (config file or devDependency); else nothing yet, which means asking the user which toolchain to install (never defaulting to oxlint unasked). Record the choice: every step below branches on it.
 
 ### 2. Install dependencies
 
