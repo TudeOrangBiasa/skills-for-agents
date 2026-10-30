@@ -1,0 +1,3 @@
+interface:
+  display_name: "Exhaust the Design Space"
+  short_description: "Prototype competing designs, compare, commit"

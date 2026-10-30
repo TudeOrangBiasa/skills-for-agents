@@ -1,0 +1,3 @@
+interface:
+  display_name: "Separate Before Serializing"
+  short_description: "Owned targets before locks"

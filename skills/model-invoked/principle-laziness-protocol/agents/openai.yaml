@@ -1,0 +1,3 @@
+interface:
+  display_name: "Laziness Protocol"
+  short_description: "Delete first, smallest diff wins"
