@@ -86,7 +86,7 @@ flowchart TD
     M --> R["/ready-check"] --> G["Land per mode; humans at triage"]
 ```
 
-Alternative for one long unattended run: `/whips` with a checkable predicate plus budget, not a queue.
+Alternative for one long unattended run: `/whips` with a checkable predicate plus budget, not a queue. A queue of independent PRs with one owner each runs through the whips `autopilot-full` playbook (or `autopilot-stack` when the operator holds landing); `/runner` stays the pick for `ready-for-agent` issue intake on a schedule.
 
 Example: 5 `ready-for-agent` issues → `/runner` on schedule → morning `/ketchup` ("2 action items: land solo batch, triage Seeder") → `/ready-check` → land per mode, humans at triage.
 
