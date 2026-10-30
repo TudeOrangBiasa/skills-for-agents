@@ -37,9 +37,9 @@ Run `scripts/runner.sh check`, then one `scripts/runner.sh run` while the user w
 
 ## What a run guarantees
 
-- One run per machine at a time (`flock`). Each issue is claimed with the tracker's own claim, assigning it to the authenticated user, and released when the run ends. Assigned issues are never picked.
-- An issue with an open PR that says `Closes #N` is skipped. Failures count, and an issue stops being picked after the attempt cap until `reset`.
-- A claim left by a run that died is released at the next start, so a missed run is picked up by the next one.
+- One run per machine at a time (`flock`). Each issue is claimed with the tracker's own claim, assigning it to the authenticated user, plus one `runner-claim` marker comment, and released when the run ends. Assigned issues are never picked.
+- An issue with an open PR that says `Closes #N` is skipped. Failures count on GitHub (`runner-attempt` markers), and an issue stops being picked after the attempt cap until `reset`.
+- A claim left by a run that died is released at the next start once its marker passes the TTL with no fresh branch commit, so a missed run is picked up by the next one. Timeout work is pushed to `wip/runner-issue-N` and resumed through `pickup`, never restarted.
 - Landing follows the risk tier: low-risk PASS lands in the run, the rest wait for `ready-check` or the human.
 - Every issue appends one line to `runs.jsonl`; every run prints a one-line summary.
 - The closing summary of a batch follows the ketchup shape ([ketchup](../ketchup/SKILL.md)): how many action items there are, what landed, and each item waiting on the human as a short executive summary.
