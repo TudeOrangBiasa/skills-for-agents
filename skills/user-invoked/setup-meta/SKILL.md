@@ -78,10 +78,19 @@ Offer **multi-context** (a root `GLOSSARY-MAP.md` pointing to per-context `GLOSS
 On **no**, write nothing. On **yes**, read the harness config and environment for the model ids already available (config files, CLI `--help` or model list, provider env var names, never their values), show what you found, and ask which id goes on each role in [models.md](./models.md). Never suggest a model the user did not already have configured. Ask about Effort and Speed columns only when the harness names effort levels; otherwise leave them blank.
 
 **Section G: Unattended runs.** Ask one question:
-
 > How should unattended runs wake up? (recommended: the harness loop or wait command you already use)
 
 Record the mechanism in `docs/agents/unattended.md`: the command or scheduler entry that re-invokes `/whips` (or the `runner` skill for queues), the run log convention (`.scratch/whips/<run>/log.md`, one row per iteration), and the budget habit (predicate first, stated iteration, hour, or PR cap). Point at `/runner` for issue-queue runs; the skill reads this file.
+
+**Section H: Repo mode (solo or team).** Ask one question:
+
+> Is this a solo repo (you plus agents) or a team repo? (no default; skill behavior branches on it)
+
+Write the answer to `docs/agents/repo-mode.md` from [repo-mode.md](./repo-mode.md): `mode: solo|team`. Behavior differs: solo merges after the local verifier passes without waiting on GitHub checks; team waits on CI like pstack. Playbooks read this file; a missing file means stop and tell the user to run `/setup-meta`.
+
+**Section I: Verifier (solo) / CI (team).** First ask once (only when no `skills/verify-*` exists yet): run `/create-verification` now or later; never auto-generate without an answer. Solo: generate or wire the per-project verifier via the Skill tool with "create-verification", write its command to `docs/agents/verifier.md` from [verifier.md](./verifier.md) (PASS = exit 0), install a pre-push hook that runs that command and refuses the push on nonzero exit, and copy the hook into every new worktree at creation time (worktree setup is incomplete without it). Team: skip this section and point at CI running the same command plus a PR-title check. Never force Actions onto this repo. Agents never run `git push --no-verify`.
+
+**Section J: Docs layout.** After Sections A through I, scaffold the canonical docs layout, idempotently. Dirs (create with `.gitkeep` where empty): `docs/adr/`, `docs/research/`, `docs/agents/`, `.scratch/whips/`, `.audit/`. `.gitignore` append (skip lines already present; re-run adds nothing): `.scratch/`, `.audit/`, `decisions.tsv`, `**/decisions.tsv`; never ignore `docs/` or `skills/verify-*/`. Write `docs/agents/docs-layout.md` from [docs-layout.md](./docs-layout.md) and add a `### Docs layout` line to the `## Agent skills` block pointing at it. Content stays lazy: ADR bodies, `GLOSSARY.md`, `skills/verify-*/`, `workflows/*.md` are not scaffolded, only their parent dirs with `.gitkeep`.
 
 Then ask two more, one at a time. Autonomy tier for this repo (the whips mode): strict HIT with every landing human-approved, or tiered auto-land with low-risk PASS PRs merging untouched (recommended: tiered, human time reserved for high-risk). Record it in `docs/agents/unattended.md`; it overrides the default where the repo chooses strictness. Scheduled maintenance: which jobs run on a schedule and how they wake (cron line, systemd timer, or the harness non-interactive/headless mode invoking a skill). Default proposal: `/retro` stale-docs sweep plus `/maintain-verification` upkeep daily via scheduled automation, proposals filed, never auto-applied. Record each job's command, cadence, and output sink in the same file.
 
@@ -90,7 +99,7 @@ Then ask two more, one at a time. Autonomy tier for this repo (the whips mode): 
 Show the user a draft of:
 
 - The `## Agent skills` block to add to the repo's `AGENTS.md`
-- The contents of `docs/agents/issue-tracker.md`, `docs/agents/domain.md`, `docs/agents/triage-labels.md` (the last only when `triage` is installed), and `docs/agents/unattended.md`
+- The contents of `docs/agents/issue-tracker.md`, `docs/agents/domain.md`, `docs/agents/triage-labels.md` (the last only when `triage` is installed), `docs/agents/unattended.md`, `docs/agents/repo-mode.md`, and `docs/agents/verifier.md` (the last only for solo repos)
 - The contents of `docs/agents/models.md`, only when Section F ran with **yes**
 
 Let them edit before writing.
@@ -126,16 +135,30 @@ The block:
 
 [one line: the wake mechanism]. See `docs/agents/unattended.md`.
 
+### Repo mode
+
+[one line: solo or team]. See `docs/agents/repo-mode.md`.
+
+### Verifier
+
+[one line: the verify command]. See `docs/agents/verifier.md` (solo repos).
+
+### Docs layout
+
+One door into where skills write and read. See `docs/agents/docs-layout.md`.
+
 ### Meta docs
 
 [one-line summary of what was scaffolded: DESIGN.md, standards file name, commit format]. PR body needs no line: the `pr` skill is the format.
 ```
 
-Include the `### Triage labels` sub-block, and write `docs/agents/triage-labels.md`, only when `triage` is installed and Section B ran. When it isn't, both are omitted. Include the `### Models` sub-block, and write `docs/agents/models.md`, only when Section F ran with **yes**. Always include the `### Unattended runs` sub-block, and always write `docs/agents/unattended.md`.
+Include the `### Triage labels` sub-block, and write `docs/agents/triage-labels.md`, only when `triage` is installed and Section B ran. When it isn't, both are omitted. Include the `### Models` sub-block, and write `docs/agents/models.md`, only when Section F ran with **yes**. Include the `### Verifier` sub-block, and write `docs/agents/verifier.md`, only for solo repos. Always include the `### Unattended runs`, `### Repo mode`, and `### Docs layout` sub-blocks, and always write `docs/agents/unattended.md`, `docs/agents/repo-mode.md`, and `docs/agents/docs-layout.md`.
 
 Then write the docs files using the seed templates in this skill folder as a starting point:
 
-- [issue-tracker-github.md](./issue-tracker-github.md): GitHub issue tracker
+- [repo-mode.md](./repo-mode.md): solo or team (Section H, always)
+- [verifier.md](./verifier.md): verify command (Section I, solo only)
+- [docs-layout.md](./docs-layout.md): map of where skills write and read (Section J, always)
 - [issue-tracker-gitlab.md](./issue-tracker-gitlab.md): GitLab issue tracker
 - [issue-tracker-local.md](./issue-tracker-local.md): local-markdown issue tracker
 - [triage-labels.md](./triage-labels.md): label mapping (only if `triage` is installed)
@@ -147,6 +170,8 @@ Then write the repo-level meta docs agreed in Section D, at the repo root:
 
 - `DESIGN.md`: tokens frontmatter plus rationale sections in canonical order. Lint it with `npx @google/design.md lint DESIGN.md` and fix errors before finishing.
 - The coding standards file under its agreed name: naming, module shape, test seams, review checks, commit message format.
+
+Then scaffold the Section J docs layout (dirs with `.gitkeep`, `.gitignore` append, `docs-layout.md`, AGENTS pointer) and run Section I (solo verifier + pre-push + worktree hooks) or skip it for team repos.
 
 Then run Section E: call the Skill tool with "setup-pre-commit" when the repo qualifies.
 For "other" issue trackers, write `docs/agents/issue-tracker.md` from scratch using the user's description.
