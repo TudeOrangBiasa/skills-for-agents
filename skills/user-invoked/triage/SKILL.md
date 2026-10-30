@@ -38,6 +38,8 @@ Five **state** roles:
 
 For a PR, the same states read against the attached code: `ready-for-agent` means a brief is attached and an agent should take the next step on the diff; `ready-for-human` means it's ready for a human to merge.
 
+Every triaged issue carries exactly one category role and one state role. If state roles conflict, flag it and ask the maintainer before doing anything else.
+
 A brief without one type plus one `## Kompleksitas` line is not agent-ready: apply `needs-info` with one concrete question pointing at the missing section, never `ready-for-agent`.
 
 These are canonical role names. The actual label strings used in the issue tracker may differ. The mapping should have been provided to you. If not, tell the user to run `/setup-meta`.
