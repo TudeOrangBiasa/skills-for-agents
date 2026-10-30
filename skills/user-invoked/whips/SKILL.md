@@ -41,12 +41,13 @@ Read the task and match exactly one row. First match wins.
 | A metric to improve iteratively against a target | `playbooks/hillclimb.md` |
 | Disk full of stale worktrees and caches | `playbooks/worktree-cleanup.md` |
 | A program outliving any single agent (multi-day, many PRs) | `playbooks/orchestrate.md` |
+| A lintable cross-phase or cross-PR plan you own, not the code | `playbooks/multi-phase-plan.md` |
 | A large migration or multi-part change no row above fits | `playbooks/figure-it-out.md` |
 | Every playbook that changes code ends here | `playbooks/opening-a-pr.md` |
 
 Truly nothing fits (a question, a small ask): answer directly in chat. Real work with no matching row goes to `figure-it-out.md`. Never invent a playbook on the spot.
 
-Before matching, restate the goal and the problem in your own words: compress a noisy issue, thread, or prompt into a plain problem statement. When the fog is thin, one or two sentences in the reply are enough. Misunderstandings caught here are cheap; misunderstood work is not. Only stop and ask when the restate surfaces a genuine ambiguity.
+Before matching, restate the goal and the problem in your own words: compress a noisy issue, thread, or prompt into a plain problem statement. Thin fog needs one or two sentences in the reply. Misunderstandings caught here are cheap; misunderstood work is not. Only stop and ask when the restate surfaces a genuine ambiguity.
 
 ## 2. Open the todo, verbatim
 
@@ -91,7 +92,7 @@ A step that names a user-invoked skill (`/wayfinder`, `/to-spec`, `/to-tickets`,
 
 ## 4. Enforce the HIT gates, in order
 
-Map before Guardrails, Guardrails before Walk. When the map is vague, return to the Map and do not proceed: call the Skill tool with "prototype" when running code can answer the question, else tell the user to run `/discuss-with-docs` or `/wayfinder`. Drive through instead of gating when the fog is thin (one interview round settles it, single-session scope, context still fresh): run the interview, the spec sketch, and the tickets inline, then proceed. Never drive through a human-only step (`wizard`) or above risk authority. When guardrails are missing, call the Skill tool with "tdd" and write behavior plus negative cases first, and do not implement. Never quietly change a guardrail to fit a wrong implementation; that decision belongs to the user.
+Map before Guardrails, Guardrails before Walk. When the map is vague, return to the Map and do not proceed: call the Skill tool with "prototype" when running code can answer the question, else tell the user to run `/discuss-with-docs` or `/wayfinder`. Drive through instead of gating when the fog is thin (one interview round settles it, single-session scope, context still fresh): run the interview, the spec sketch, and the tickets inline, then proceed. Never drive through a human-only step (`wizard`) or above risk authority. When guardrails are missing, call the Skill tool with "tdd" and write behavior plus negative cases first, and do not implement.
 
 ## 5. Autonomy
 
@@ -106,7 +107,7 @@ Always pause for the human, and keep building everything else meanwhile:
 - Closing an issue, messaging anyone outside the repo.
 - A review comment classified `ask`, and a product or preference call no experiment can settle.
 
-A fork that running code can settle is not a pause: settle it with "prototype" and report the result.
+A fork that running code can settle is no pause: settle it with "prototype" and report the result.
 
 Under a full-autonomy grant (an unattended run, "don't stop", a runner queue, a scheduled tick), covered decisions are decided, executed, and reported without asking. A decision only the operator can answer gets the default applied and reported in full, with the plain words the operator could have used instead. Operator-named gates and the pause list above still need a human.
 
@@ -123,7 +124,7 @@ Match effort and speed to the job, never the model family. Start from the role's
 
 ## 7. Verify, gate, open the PR ready
 
-Verify on the matching surface. Verdicts are VERIFIED, NOT VERIFIED, or INCONCLUSIVE, and inconclusive is not a pass. Verifier output is an input, not a verdict: solo repos read the local verifier, team repos read CI. Evidence-free work returns to a fresh fix agent, never to the same worker by resume chain. Strategic track: nominate at most one environment improvement this task suggested (a repeated manual step, a missing check, a confusing doc) as a `/retro` candidate with its evidence. Never fix it mid-run; the list goes to retro.
+Verify on the matching surface. Verdicts are VERIFIED, NOT VERIFIED, or INCONCLUSIVE, and inconclusive is not a pass. Verifier output is an input, not a verdict: solo repos read the local verifier, team repos read CI. Evidence-free work returns to a fresh fix agent, never to the same worker by resume chain. Strategic track: nominate at most one environment improvement this task suggested as a `/retro` candidate with its evidence. Never fix it mid-run; the list goes to retro.
 
 Open the closing PR per `playbooks/opening-a-pr.md`: always ready, one risk label plus a `## Risk` paragraph per [RISK.md](RISK.md), `Closes #N` when an issue exists, body shaped with the `pr` skill (summary visual, before/after evidence, merge danger). Landing follows the risk tier per [RISK.md](RISK.md): low-risk PRs land immediately in the same run on an independent PASS (no human touch, never self-reported); qualifying medium PRs may be merged by the agent; high-risk PRs wait for an independent verdict plus a human merge. Human review time is for high-risk only. Visible changes add the ATTACHMENTS.md pair: before/after table, native 1x, matched viewport and crop, video when motion matters, never inside `<details>`. On a PR, agents never add themselves as collaborator, assignee, or reviewer. Claiming an issue by assignment, per the Claim step in `docs/agents/issue-tracker.md`, is allowed. Tools are not people, so they only author the body and request review from humans.
 
