@@ -1,8 +1,11 @@
 # Skills for Agents
 
 ![Skills for Agents Banner](./assets/banner.jpg)
-
 Agent skills for real engineering: small, composable, human-in-the-loop. Forked from [mattpocock/skills](https://github.com/mattpocock/skills) and reworked around a HIT flow (Have a Map, Install Guardrails, Take a Walk), a UI sub-flow for interface tickets, memorable skill names, and per-skill credits. MIT licensed; every skill carries its own `CREDITS.md`.
+
+## Credits
+
+Idea path (grill, spec, tickets) comes from [Matt Pocock skills](https://github.com/mattpocock/skills): relentless interviews that sharpen foggy ideas, specs synthesized without re-interviewing, tickets split with blocking edges. Execute path (one entry routing each unit through playbooks, principles as reasoning, leaf rigor for fan-out skills like swarm, ketchup, unslop) comes from [pstack](https://github.com/cursor/plugins) (`poteto-mode` and leaf skills) by [Lauren Tan ([@poteto](https://x.com/poteto))](https://github.com/poteto), MIT licensed. Both upstreams are copied in, not depended on; per-skill files stay in each skill's `CREDITS.md`.
 
 ## TL;DR
 
