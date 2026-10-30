@@ -89,7 +89,19 @@ else
   pass "no user-facing changes, changeset not required"
 fi
 
-# 4. No em dashes in added markdown lines (repo rule).
+# 4b. Whips always-on pack budget (issue #120). The whips SKILL.md entry
+#    point loads on every run; cap its size locally (tokens = bytes/4).
+#    Plafond: WHIPS_PACK_BUDGET_TOKENS below. A PR growing the file past
+#    the budget fails here, in pre-commit, with no Actions involved.
+WHIPS_PACK_BUDGET_TOKENS=3000
+whips_bytes="$(wc -c < skills/user-invoked/whips/SKILL.md)"
+whips_tokens="$((whips_bytes / 4))"
+if [[ "$whips_tokens" -gt "$WHIPS_PACK_BUDGET_TOKENS" ]]; then
+  fail "whips pack $whips_tokens tokens exceeds budget $WHIPS_PACK_BUDGET_TOKENS (shrink SKILL.md or raise the plafond in this script with reason)"
+else
+  pass "whips pack $whips_tokens/$WHIPS_PACK_BUDGET_TOKENS tokens"
+fi
+
 if git diff -U0 "$RANGE" -- '*.md' | grep '^+' | grep -v '^+++' | grep -q '—'; then
   fail "em dash found in added markdown lines (rewrite with comma, colon, period, or parens)"
 else
