@@ -265,7 +265,7 @@ record() { # repo n outcome pr log detail
 # commit. An issue assigned to a human is never touched. Runs are
 # serialized by the flock in cmd_run, so the lock is free here.
 reap_one() { # dir n ; releases an orphan claim or leaves it alone
-  local dir="$1" n="$2" me marker run_id ts branch age a mine_only
+  local dir="$1" n="$2" me marker run_id ts branch age a seen_me=0 other=0
   me="$(gh_me_login)"
   [[ -n "$me" ]] || return 0
   marker="$(f_claim_marker "$dir" "$n")"
@@ -273,11 +273,11 @@ reap_one() { # dir n ; releases an orphan claim or leaves it alone
   read -r run_id ts branch <<<"$marker"
   age="$(claim_age_min "$ts" "$(date +%s)")"
   ((age >= RUNNER_CLAIM_TTL_MIN)) || return 0
-  mine_only=1
   while read -r a; do
-    [[ -z "$a" ]] || [[ "$a" == "$me" ]] || mine_only=0
+    [[ -z "$a" ]] && continue
+    if [[ "$a" == "$me" ]]; then seen_me=1; else other=1; fi
   done < <(f_assignees "$dir" "$n")
-  ((mine_only)) || return 0
+  ((seen_me && !other)) || return 0
   [[ -z "$(f_linked_pr "$dir" "$n" || true)" ]] || return 0
   [[ "$(branch_fresh "$dir" "$branch" "$RUNNER_CLAIM_TTL_MIN")" == no ]] || return 0
   log "releasing orphan claim $dir#$n (run $run_id, age ${age}m)"
@@ -367,12 +367,12 @@ push_wip() { # dir wt n ; prints the pushed branch or empty
   fi
   git -C "$wt" rev-list --count HEAD >/dev/null 2>&1 || return 0
   git -C "$wt" branch -f "$branch" HEAD >/dev/null 2>&1
-  git -C "$wt" push --quiet origin "$branch" >/dev/null 2>&1 || return 0
+  git -C "$wt" push --quiet origin "$branch" >/dev/null 2>&1 || return 1
   printf '%s' "$branch"
 }
 
 run_one() { # dir n
-  local dir="$1" n="$2" key="$1#$2" ts wt logf prompt rc=0 resume="" run_id branch=""
+  local dir="$1" n="$2" key="$1#$2" ts wt logf prompt rc=0 resume="" run_id branch="" resume_add_failed=""
   ts="$(date +%Y%m%d-%H%M%S)-$$"
   logf="$(state logs)/$(basename "$dir")-$n-$ts.log"
   prompt="${logf%.log}.prompt.md"
@@ -391,7 +391,7 @@ run_one() { # dir n
   if [[ -n "$resume" ]]; then
     git -C "$dir" worktree add --quiet "$wt" "origin/$resume" >&2 || resume_add_failed=1
   fi
-  if [[ -z "$resume" ]] || [[ -n "${resume_add_failed:-}" ]]; then
+  if [[ -z "$resume" ]] || [[ -n "$resume_add_failed" ]]; then
     [[ -z "$resume" ]] || log "resume branch $resume gone, starting fresh"
     resume=""
     if ! git -C "$dir" worktree add --quiet --detach "$wt" "$(default_ref "$dir")" >&2; then
@@ -425,8 +425,11 @@ run_one() { # dir n
   if [[ "$outcome" == pr_opened || "$outcome" == needs_info ]]; then
     git -C "$dir" worktree remove --force "$wt" >/dev/null 2>&1 || true
   else
-    branch="$(push_wip "$dir" "$wt" "$n")"
-    git -C "$dir" worktree remove --force "$wt" >/dev/null 2>&1 || true
+    branch=""; if branch="$(push_wip "$dir" "$wt" "$n")"; then
+      git -C "$dir" worktree remove --force "$wt" >/dev/null 2>&1 || true
+    else
+      log "wip push failed for $key, worktree kept at $wt"
+    fi
     if [[ -n "$branch" ]]; then
       detail="$detail; wip pushed to $branch"
     else
