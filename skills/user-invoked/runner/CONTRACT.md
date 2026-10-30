@@ -70,4 +70,5 @@ State lives under `RUNNER_STATE_DIR`: `lock`, `active`, `attempts.json`, `runs.j
 
 - The lock is per machine; run the runner from one machine.
 - A PR counts as linked only when its body says `Closes`, `Fixes`, or `Resolves #N`.
+- The open PR list is fetched once per repo per run and filtered locally, so filtering N candidates costs one API call. One refresh follows each processed issue to see its new PR.
 - Needs `bash`, `git`, `jq`, `flock`, `timeout`, and the tracker CLI, authenticated.
