@@ -14,6 +14,7 @@ What `scripts/runner.sh` reads, does, and writes. A scheduler needs only this fi
 | `resume` | no | Removes the stop file | 0 |
 | `status [N]` | no | Config, last start and finish, last N outcomes | 0 |
 | `reset <repo-dir>#<n>` | no | Writes a reset marker on GitHub, clears the cached attempts | 0 |
+| `triage [--dry-run]` | no | Labels up to the triage cap of intake issues per repo, prints a summary | 0 done or lock busy, 2 config error |
 
 Setup flags: `--agent-cmd`, `--model`, `--repos`, `--allowlist`, `--max-issues`. Without a terminal, setup refuses unless `--agent-cmd` and `--model` are given.
 
@@ -33,6 +34,9 @@ Setup flags: `--agent-cmd`, `--model`, `--repos`, `--allowlist`, `--max-issues`.
 | `RUNNER_CLAIM_TTL_MIN` | timeout + 30 | A claim older than this with no fresh branch commit is an orphan |
 | `RUNNER_STATE_DIR` | `~/.local/state/runner` | Lock, logs, history |
 | `RUNNER_WORK_DIR` | `~/.cache/runner` | Worktrees |
+| `RUNNER_TRIAGE_PER_TICK` | `3` | Intake issues labeled per repo per `triage` tick |
+| `RUNNER_TRIAGE_AGENT_DECIDE` | `0` | `1` lets an ambiguous case use one agent call, else it goes to the human label |
+| `RUNNER_TRIAGE_LIST_LIMIT` | `60` | Open issues fetched in the single intake list call |
 
 Label strings and tracker commands are not config. They come from each repo's `docs/agents/`.
 
@@ -89,3 +93,9 @@ The reaper at the start of `run` releases an orphan claim only when all of these
 - A PR counts as linked only when its body says `Closes`, `Fixes`, or `Resolves #N`.
 - The open PR list is fetched once per repo per run and filtered locally, so filtering N candidates costs one API call. One refresh follows each processed issue to see its new PR.
 - Needs `bash`, `git`, `jq`, `flock`, `timeout`, and the tracker CLI, authenticated.
+
+## Triage
+
+`triage` walks the same three intake buckets `/triage` shows: unlabeled issues, the needs-triage role, and the needs-info role with reporter activity. Oldest first, capped per repo at `RUNNER_TRIAGE_PER_TICK`. Issues already carrying the ready or human role are never touched, so a re-run is a no-op on them. A `stop` file in the state dir ends the tick with exit 0, the same kill switch pause/resume writes. `--dry-run` prints each decision plus the comment file path and mutates nothing.
+
+One tick costs one list call per repo plus at most four calls per triaged issue (view, label edit, risk label edit, comment) and zero agent spawns unless `RUNNER_TRIAGE_AGENT_DECIDE=1`, in which case at most one spawn per ambiguous issue. Comment bodies travel via `--body-file`, never as argv. The tick never closes an issue, never merges, and never writes code. Outcomes land in `runs.jsonl` as `triaged_complete`, `triaged_incomplete`, `triaged_product-call`, or `triaged_duplicate-of`.
