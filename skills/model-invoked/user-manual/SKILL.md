@@ -61,4 +61,6 @@ The manifest records the app commit SHA and the UI source paths at capture. `man
 
 After the build, open `review.html`: every final shot with its blank ratio and print page, sorted worst first, plus the must-watch list (top blank ratios, most annotations, shots changed since the last build). The agent views the must-watch shots before calling the manual done. Gate numbers alone are never enough.
 
-**Reply:** what was built (page count, shot count, locales), the QA numbers that passed, the must-watch pages reviewed, and anything waiting on the human (stale shots, overridden blanks with reasons).
+## Acceptance (fixture-local)
+
+Verify with the shipped fixture only, never a live consumer repo: run `node scripts/manual selftest` (no browser needed; trim, measure, and QA gates) and build the preview from `fixture/demo-page.html` with `fixture/manual.json` in this skill dir. `review.html` and all proof generate locally from that fixture. Origin story stays in `CREDITS.md`; it is not a test target.
