@@ -13,7 +13,7 @@ The agent command and the model are the user's choice, made once at setup and sa
 
 Each target repo needs the `/setup-meta` output: `docs/agents/issue-tracker.md` for the tracker and its commands, `docs/agents/triage-labels.md` for the label strings. The script reads both from the default branch on every run, so a rename in those docs takes effect without re-running setup.
 
-A missing file falls back the way `/whips` `playbooks/opening-a-pr.md` does: `gh` and the canonical role names. Tell the user to run `/setup-meta` in that repo. A tracker with no CLI mapping (local markdown, or a freeform "other") is skipped and reported.
+A missing file means stop for that repo and tell the user to run `/setup-meta` in it, like `/whips` `playbooks/triage.md` does. A tracker with no CLI mapping (local markdown, or a freeform "other") is skipped and reported.
 
 `/whips` must be reachable by the agent in each repo, installed per repo or globally.
 

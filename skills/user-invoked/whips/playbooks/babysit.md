@@ -2,7 +2,7 @@
 
 Drive an open agent PR or stack to merge-ready: conflicts, review threads, verifier. Merge-ready is the finish line. Marking ready and merging stay with the human. Starts when the user asks ("check on PR X", "get it green", "anything outstanding"), never just because a PR opened.
 
-1. Declare the mode before the first poll. `drive` runs the loop until merge-ready, the default. `check` is one status pass and a report; docs-only or tiny PRs get `check`. `threads-only` answers review and bot comments and touches nothing else. Resolve the forge commands from `docs/agents/issue-tracker.md`, default `gh`.
+1. Declare the mode before the first poll. `drive` runs the loop until merge-ready, the default. `check` is one status pass and a report; docs-only or tiny PRs get `check`. `threads-only` answers review and bot comments and touches nothing else. Resolve the forge commands from `docs/agents/issue-tracker.md`. A missing file means stop and tell the user to run `/setup-meta`.
 2. One babysitter per PR or stack. Check that no other run already owns it.
 3. Work the frontier: the lowest unmerged PR in the stack. Read upstack PRs and batch their fixes, but never restart the frontier's checks to fix something above it.
 4. Order is conflicts, then review threads, then verifier (solo: the local verifier; team: CI). Batch every known fix into one push.

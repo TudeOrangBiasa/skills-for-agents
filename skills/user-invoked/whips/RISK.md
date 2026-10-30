@@ -2,7 +2,7 @@
 
 Every agent PR carries exactly one risk label and one paragraph saying why. The label tells the human where to spend review time: high-risk PRs get a real review first, low-risk PRs merge as a quick batch. Every PR opens ready, never as a draft; what holds a merge back is the verdict, not draft status. Who may land: low, the agent immediately on an independent PASS verdict (a fresh agent that did not write the code, via `playbooks/ready-check.md` or a second agent; never the worker's own claim), merging in the same run; medium, the agent only when every landing condition in `playbooks/ready-check.md` holds; high, the human always, and only after a PASS or PASS+NOTES verdict comment from a verifier that did not write the code (an independent agent or a human reviewer) on the current head SHA. Only high-risk PRs spend human review time. Verifier output and bot approvals are inputs, never verdicts: solo repos read the local verifier, team repos read CI. Neither runs the change as a user would.
 
-Label strings come from `docs/agents/triage-labels.md` when it has `risk-low`, `risk-medium`, and `risk-high` rows; otherwise use `risk:low`, `risk:medium`, and `risk:high`. Create a missing label once with the tracker CLI (`gh label create risk:high --color B60205`, `gh label create risk:medium --color FBCA04`, `gh label create risk:low --color 0E8A16`).
+Label strings come from `docs/agents/triage-labels.md` when it has `risk-low`, `risk-medium`, and `risk-high` rows; otherwise use `risk:low`, `risk:medium`, and `risk:high`. Create a missing label once with the tracker CLI command from `docs/agents/issue-tracker.md`.
 
 ## High
 
@@ -18,7 +18,7 @@ A PR is `risk:high` when any rule below matches. Check each against the diff, no
 8. **Large diff.** More than 400 changed lines or 15 files, not counting lockfiles, generated files, snapshots, and fixtures.
 9. **Unproven.** The verify verdict is not VERIFIED.
 
-In a Laravel app these usually show up as `database/migrations/`, `config/`, `routes/api.php`, `app/Http/Middleware/`, `app/Policies/`, `composer.json`, and `.github/workflows/`. Path is a hint, the diff decides: a comment-only edit to a migration file is not a schema change.
+Stack examples live in `docs/agents/domain.md` (written by `/setup-meta` per repo). Path is a hint, the diff decides: a comment-only edit to a migration file is not a schema change.
 
 ## Medium
 
