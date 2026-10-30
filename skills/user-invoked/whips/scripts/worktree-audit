@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# worktree-audit: read-only worktree classification (issue #73, folded into #83).
+#
+# Prints a TSV table: path<TAB>branch<TAB>size_kb<TAB>dirty_files<TAB>pr_state<TAB>bucket
+# Buckets: safe-to-prune (merged/closed + clean), keep (open PR or no PR), needs-look (dirty).
+# Read-only: never deletes, never writes labels, never merges. One gh call max
+# (gh pr list batched per repo), zero per-worktree API calls.
+#
+# Usage: worktree-audit [--base <ref>] [repo-path]
+# Exit 0 always on success (report, even when everything is keep).
+set -euo pipefail
+
+BASE="" REPO="."
+while (($#)); do case "$1" in
+  -b|--base) BASE="$2"; shift 2 ;;
+  -h|--help) sed -n '1,16p' "$0"; exit 0 ;;
+  *) REPO="$1"; shift ;;
+esac; done
+
+cd "$REPO"
+[[ -z "$BASE" ]] && BASE="$(git symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null || echo origin/main)"
+command -v jq >/dev/null || { echo "worktree-audit: missing dependency: jq" >&2; exit 2; }
+
+# One batched PR lookup: headRefName -> state. Zero calls when gh is absent.
+PRMAP="$(mktemp)"; trap 'rm -f "$PRMAP"' RETURN
+echo '{}' >"$PRMAP"
+if command -v gh >/dev/null 2>&1; then
+  gh pr list --state all --limit 200 --json number,state,headRefName 2>/dev/null \
+    | jq 'map({(.headRefName): .state}) | add // {}' >"$PRMAP" 2>/dev/null || echo '{}' >"$PRMAP"
+fi
+
+printf 'path\tbranch\tsize_kb\tdirty_files\tpr_state\tbucket\n'
+git worktree list --porcelain | awk '/^worktree /{print substr($0, 10)}' | while IFS= read -r wt; do
+  branch="$(git -C "$wt" rev-parse --abbrev-ref HEAD 2>/dev/null || echo detached)"
+  if [[ "$wt" == "$(git rev-parse --show-toplevel)" ]]; then
+    printf '%s\t%s\t0\t0\tmain\tkeep\n' "$wt" "$branch"; continue
+  fi
+  size="$(du -sk "$wt" 2>/dev/null | cut -f1)"
+  dirty="$(git -C "$wt" status --porcelain 2>/dev/null | wc -l)"
+  pr_state="$(jq -r --arg b "$branch" '.[$b] // "none"' "$PRMAP")"
+  bucket=keep
+  if ((dirty > 0)); then bucket=needs-look
+  elif [[ "$pr_state" == "MERGED" || "$pr_state" == "CLOSED" ]]; then bucket=safe-to-prune
+  fi
+  printf '%s\t%s\t%s\t%s\t%s\t%s\n' "$wt" "$branch" "${size:-0}" "$dirty" "$pr_state" "$bucket"
+done

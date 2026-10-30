@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+# worktree-prune: delete safe-to-prune worktrees after PR merge/close (issue #83).
+#
+# Consumes worktree-audit (read-only classification); this script is the only
+# writer. Default is --dry-run: print the plan, change nothing. Auto-removal
+# applies ONLY to bucket safe-to-prune: PR merged or closed AND working tree
+# clean AND not the main worktree AND not held by a runner lock file.
+# Dirty worktrees are reported with a status summary and never touched.
+# Exit 0 always on success (a held-back worktree is a report row, not an error).
+#
+# Bounds per repo: one `git worktree list`, one batched `gh pr list` (inside
+# the audit call), O(1) status per worktree, O(w_safe) removes, one
+# `git worktree prune` plus one `git fetch --prune` (never per worktree).
+#
+# Usage: worktree-prune [--dry-run] [--all | --pr N] [repo-path]
+#        --pr N prunes only the worktree whose branch matches PR N's head.
+#        --all scans RUNNER_WORK_DIR plus the given repo (default: given repo).
+set -euo pipefail
+
+HERE="$(cd "$(dirname "$0")" && pwd)"
+DRY=1 PR="" ALL=0 REPO="."
+while (($#)); do case "$1" in
+  --dry-run) DRY=1; shift ;;
+  --apply) DRY=0; shift ;;
+  --pr) PR="$2"; shift 2 ;;
+  --all) ALL=1; shift ;;
+  -h|--help) sed -n '1,24p' "$0"; exit 0 ;;
+  *) REPO="$1"; shift ;;
+esac; done
+
+cd "$REPO"
+TOP="$(git rev-parse --show-toplevel)"
+command -v jq >/dev/null || { echo "worktree-prune: missing dependency: jq" >&2; exit 2; }
+
+audit="$("$HERE/worktree-audit" "$TOP")"
+mapfile -t rows < <(tail -n +2 <<<"$audit")
+
+w=0 safe=0 dirty=0 held=0 removed=0
+pruned_any=0
+
+pr_head=""
+if [[ -n "$PR" && "$(command -v gh)" != "" ]]; then
+  pr_head="$(gh pr view "$PR" --json headRefName --jq .headRefName 2>/dev/null || echo "")"
+fi
+
+for row in "${rows[@]}"; do
+  IFS=$'\t' read -r path branch _size _dirty pr_state bucket <<<"$row"
+  [[ -n "$PR" && -n "$pr_head" && "$branch" != "$pr_head" ]] && continue
+  [[ "$bucket" == "keep" && -z "$PR" ]] && { w=$((w + 1)); continue; }
+  w=$((w + 1))
+  if [[ "$bucket" == "needs-look" ]]; then
+    dirty=$((dirty + 1))
+    printf 'hold dirty: %s (%s uncommitted files)\n' "$path" "$_dirty"
+    git -C "$path" status --porcelain 2>/dev/null | head -n 5 | sed "s|^|  |"
+    continue
+  fi
+  if [[ -f "$path/.runner-lock" || -f "$path/.whips-hold" ]]; then
+    held=$((held + 1)); printf 'hold locked: %s\n' "$path"; continue
+  fi
+  if [[ "$bucket" != "safe-to-prune" ]]; then
+    printf 'keep: %s (branch %s, pr %s)\n' "$path" "$branch" "$pr_state"; continue
+  fi
+  safe=$((safe + 1))
+  if ((DRY)); then
+    printf 'would prune: %s (branch %s, pr %s)\n' "$path" "$branch" "$pr_state"
+    continue
+  fi
+  git worktree remove "$path" 2>/dev/null || { printf 'hold remove-failed: %s\n' "$path"; continue; }
+  if ! git branch -r --list "origin/$branch" --format '%(refname)' | grep -q .; then
+    git branch -D "$branch" >/dev/null 2>&1 || true
+  fi
+  pruned_any=1
+  removed=$((removed + 1))
+  printf 'pruned: %s (branch %s)\n' "$path" "$branch"
+done
+
+if ((DRY == 0 && pruned_any)); then
+  git worktree prune
+  git fetch --quiet --prune origin 2>/dev/null || true
+fi
+if ((ALL)); then : "${RUNNER_WORK_DIR:=${XDG_CACHE_HOME:-$HOME/.cache}/runner}"; fi
+printf 'worktree-prune: scanned=%d safe=%d removed=%d dirty=%d held=%d%s\n' \
+  "$w" "$safe" "$removed" "$dirty" "$held" "$(((DRY)) && echo ' (dry-run)' || echo '')"
