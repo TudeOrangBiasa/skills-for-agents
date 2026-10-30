@@ -20,6 +20,8 @@ Budget labels stay the same on every harness: `unlimited` (max), `large` (xhigh)
 | `arena-runner` | `<model id>` | standard | standard | One candidate in an `arena` bakeoff |
 | `architect-runner` | `<model id>` | standard | standard | One design sketch in `architect` phase B |
 | `interrogate-reviewer` | `<model id>` | standard, never below `code` | standard | One adversarial reviewer in an `interrogate` panel |
+| `reflect-reviewer` | `<model id>` | standard | standard | One lens reviewer in a `reflect` fan-out |
+| `reflect-synthesizer` | `<model id>` | standard | standard | Merges `reflect` findings into Accepted, Rejected, Backlog |
 
 Write `inherit` in the Model column to run that role on the parent model. `inherit` is always valid. Delete a row to get the same result.
 
@@ -44,3 +46,4 @@ Every role on the single confirmed id; effort carries the difference. `review` s
 | `swarm-worker` | `inherit` | medium, follows `review` | standard |
 | `arena-runner`, `architect-runner` | `inherit` | medium | standard |
 | `interrogate-reviewer` | `inherit` | medium, never below `code` | standard |
+| `reflect-reviewer`, `reflect-synthesizer` | `inherit` | medium | standard |
