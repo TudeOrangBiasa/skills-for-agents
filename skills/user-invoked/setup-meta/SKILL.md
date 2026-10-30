@@ -84,11 +84,15 @@ Offer **multi-context** (a root `GLOSSARY-MAP.md` pointing to per-context `GLOSS
 5. **Write.** Rewrite `docs/agents/models.md` from [models.md](./models.md) in full on every run: no duplicated rows, retired roles deleted. Location is per repo (`docs/agents/models.md`); use the personal fallback only when the user explicitly asks for one config across repos, and record why.
 6. **Confirm.** Show the written file and ask for corrections before moving on. Do not raise `/create-verification` here; the scaffold layout step owns that offer.
 
-**Section G: Unattended runs.** Ask one question:
-> How should unattended runs wake up? (recommended: the harness loop or wait command you already use)
+**Section G: Unattended runs (opt-in).** The skill never installs a harness by default; this section runs only when the user asks for unattended wake; otherwise write `Wake: none` in `docs/agents/unattended.md` and move on.
 
-Record the mechanism in `docs/agents/unattended.md`: the command or scheduler entry that re-invokes `/whips` (or the `runner` skill for queues), the run log convention (`.scratch/whips/<run>/log.md`, one row per iteration), and the budget habit (predicate first, stated iteration, hour, or PR cap). Point at `/runner` for issue-queue runs; the skill reads this file.
+When asked, work in this order. Detect first: `command -v omp`, then read `omp --help` for the non-interactive flag, the session timeout, the structured output mode, and the approval flags. Copy only flags the help text documents; never guess them. Orca may be recorded as present, but it stays an optional note: never a requirement and never installed by this skill.
 
+Configure the runner with `runner.sh setup --agent-cmd ... --model ... --repos ...` (model choice comes from Section F). Preview timers with `install-timers --dry-run`: it prints the four units rendered from the `systemd/` templates plus every command, and writes nothing. The templates use `Type=oneshot`, `EnvironmentFile`, an explicit `Environment=PATH=`, `TimeoutStartSec` from `RUNNER_TIMEOUT_MIN`, and timers use `Persistent=true`, `OnBootSec`, `OnUnitActiveSec`, `RandomizedDelaySec`.
+
+Verify before enabling: `systemd-analyze --user verify` on each unit, one manual `systemctl --user start` probe, then read `journalctl --user -u ...`. Enable only after the user says yes (`--yes`); print `loginctl enable-linger $USER` as a step the user runs themselves when timers must survive logout. Re-runs are idempotent: an installed unit is a no-op. The kill switch is `runner.sh pause` (until `runner.sh resume`) plus `install-timers uninstall`, which removes only units carrying its managed marker. Without systemd, print the one-line `cron-line` fallback instead.
+
+Record the wake choice, run log convention (`.scratch/whips/<run>/log.md`, one row per iteration), and budget habit (predicate first, stated iteration, hour, or PR cap) in `docs/agents/unattended.md`. Point at `/runner` for issue-queue runs; the skill reads this file.
 
 **Section H: Repo mode (solo or team).** Ask one question:
 

@@ -10,6 +10,8 @@ What `scripts/runner.sh` reads, does, and writes. A scheduler needs only this fi
 | `detect` | no | Agents on PATH, models in harness configs, provider env var names, per-repo tracker and labels | 0 |
 | `check` | no | Is any issue eligible? | 0 yes, 1 no, 2 config error |
 | `run` | no | Releases stale claims, works up to the per-run cap, prints a summary | 0 done or lock busy, 2 config error |
+| `pause` | no | Writes the stop file; `run` and `check` exit quietly until `resume` | 0 |
+| `resume` | no | Removes the stop file | 0 |
 | `status [N]` | no | Config, last start and finish, last N outcomes | 0 |
 | `reset <repo-dir>#<n>` | no | Clears an issue's failed attempts | 0 |
 
@@ -49,6 +51,8 @@ RUNNER_MODEL='opencode-go/muse-spark-1.3'
 ```
 
 The allowlist only governs what the runner launches. Pin the agent's own subagent or fallback models in the agent's config.
+
+Documented `omp` preset (flags read from `omp --help`, not guessed): `omp -p --max-time "$RUNNER_TIMEOUT_MIN"m --mode text --auto-approve -m "$RUNNER_MODEL" "$RUNNER_PROMPT"`. Orca is never a dependency: setup-meta may note its presence, but nothing requires or installs it.
 
 The prompt opens with `/whips` and asks for triage intake on exactly that issue, `opening-a-pr` to finish with tiered landing, and no waiting for answers. It is saved beside the log.
 

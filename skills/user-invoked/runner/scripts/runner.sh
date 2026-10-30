@@ -256,6 +256,7 @@ run_one() { # dir n
 
 cmd_run() {
   load_config; require_config
+  if [[ -f "$(state stop)" ]]; then log stopped; exit 0; fi
   exec 9>"$(state lock)"
   flock -n 9 || { log "another run holds the lock"; exit 0; }
   date -Is >"$(state last-start)"
@@ -284,6 +285,7 @@ cmd_run() {
 
 cmd_check() { # exit 0 when something is eligible, 1 when not
   load_config; require_config
+  if [[ -f "$(state stop)" ]]; then echo stopped; exit 1; fi
   local dir created n
   for dir in $RUNNER_REPOS; do
     resolve_repo "$dir"
@@ -316,8 +318,12 @@ cmd_reset() { load_config; require_config; set_attempts "${1:?usage: reset <repo
 AGENTS="opencode pi omp codex claude grok gemini cursor-agent aider goose amp droid kimi qwen crush"
 
 # Offered only where the CLI documents a non-interactive mode; verify with '<agent> --help'.
+# omp preset, flags read from `omp --help` on the host (issue #78): -p/--print
+# for non-interactive runs, --max-time for the session timeout, --mode for
+# structured output, --auto-approve / --approval-mode to skip TUI approval.
 preset_cmd() {
   case "$1" in
+    omp) printf '%s' 'omp -p --max-time "$RUNNER_TIMEOUT_MIN"m --mode text --auto-approve -m "$RUNNER_MODEL" "$RUNNER_PROMPT"' ;;
     opencode) printf '%s' 'opencode run --auto -m "$RUNNER_MODEL" "$RUNNER_PROMPT"' ;;
     codex) printf '%s' 'codex exec --full-auto -m "$RUNNER_MODEL" "$RUNNER_PROMPT"' ;;
     claude) printf '%s' 'claude -p --model "$RUNNER_MODEL" "$RUNNER_PROMPT"' ;;
@@ -344,6 +350,10 @@ detect_models() {
 }
 
 detect_env_keys() { compgen -e | grep -E '(_API_KEY|_TOKEN)$' | grep -vxE 'GH_TOKEN|GITHUB_TOKEN|GITLAB_TOKEN' | sort || true; }
+
+cmd_pause() { mkdir -p "$RUNNER_STATE_DIR"; : >"$(state stop)"; log "paused: runs exit 0 as stopped until resume"; }
+
+cmd_resume() { rm -f "$(state stop)"; log resumed; }
 
 cmd_detect() {
   load_config
@@ -426,7 +436,9 @@ case "${1:-}" in
   detect) cmd_detect ;;
   check) cmd_check ;;
   run) cmd_run ;;
+  pause) load_config; cmd_pause ;;
+  resume) load_config; cmd_resume ;;
   status) shift; cmd_status "${1:-10}" ;;
   reset) shift; cmd_reset "${1:-}" ;;
-  *) echo 'usage: runner.sh setup [flags] | detect | check | run | status [N] | reset <repo-dir>#<n>' >&2; exit 2 ;;
+  *) echo 'usage: runner.sh setup [flags] | detect | check | run | pause | resume | status [N] | reset <repo-dir>#<n>' >&2; exit 2 ;;
 esac
