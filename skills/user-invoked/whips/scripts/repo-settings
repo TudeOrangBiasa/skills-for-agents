@@ -1,0 +1,340 @@
+#!/usr/bin/env bash
+# repo-settings: check and apply team repo settings for landing (issue #76).
+#
+# Team mode only. In solo mode the local verifier decides landing, so repo
+# settings are N/A and both commands below exit 0 saying so.
+#
+#   repo-settings check [--repo owner/name] [--mode solo|team]
+#                       [--landing auto-merge|direct]
+#   repo-settings apply [--repo owner/name] [--mode solo|team]
+#                       [--landing auto-merge|direct] [--dry-run] --yes
+#
+# check is read-only: only GET style calls (gh api GET, gh label list,
+# gh repo view). apply is idempotent: a second run after a green check
+# changes nothing. apply needs --yes (the skill asks the user first);
+# --dry-run prints every mutating call without running it.
+#
+# Exit codes: 0 ok, no-op, or solo N/A. 1 gaps found (check) or changes
+# would run (apply --dry-run). 2 usage error or refused (auto-merge
+# landing with empty required checks). 3 no admin: UI steps printed,
+# nothing changed.
+#
+# Deps: bash, gh, jq. No new dependency.
+set -euo pipefail
+
+CMD="" REPO="" MODE="" LANDING="" DRY=0 YES=0
+TMP="$(mktemp -d)"
+trap 'rm -rf "$TMP"' EXIT
+
+die() { printf 'repo-settings: %s\n' "$*" >&2; exit 2; }
+usage() { sed -n '1,20p' "$0"; exit 2; }
+
+# ---------- args ----------
+
+parse_args() {
+  [[ $# -ge 1 ]] || usage
+  CMD="$1"; shift
+  [[ "$CMD" == check || "$CMD" == apply ]] || usage
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --repo) REPO="$2"; shift 2 ;;
+      --mode) MODE="$2"; shift 2 ;;
+      --landing) LANDING="$2"; shift 2 ;;
+      --dry-run) DRY=1; shift ;;
+      --yes|-y) YES=1; shift ;;
+      -h|--help) usage ;;
+      *) die "unknown flag $1" ;;
+    esac
+  done
+  [[ -z "$MODE" || "$MODE" == solo || "$MODE" == team ]] || die "--mode wants solo|team"
+  [[ -z "$LANDING" || "$LANDING" == auto-merge || "$LANDING" == direct ]] || die "--landing wants auto-merge|direct"
+}
+
+# ---------- mode and landing ----------
+
+detect_mode() { # flag wins, else docs/agents/repo-mode.md, else team
+  if [[ -n "$MODE" ]]; then printf '%s' "$MODE"; return; fi
+  if [[ -f docs/agents/repo-mode.md ]]; then
+    local hit
+    hit="$(grep -i 'mode' docs/agents/repo-mode.md | sed -n 's/.*\(solo\|team\).*/\1/p' | head -1 || true)"
+    if [[ -n "$hit" ]]; then printf '%s' "$hit"; return; fi
+  fi
+  printf 'team'
+}
+
+detect_landing() { # flag wins, else a Landing: line in unattended.md, else direct
+  if [[ -n "$LANDING" ]]; then printf '%s' "$LANDING"; return; fi
+  if [[ -f docs/agents/unattended.md ]] && grep -qi 'landing:.*auto-merge' docs/agents/unattended.md; then
+    printf 'auto-merge'; return
+  fi
+  printf 'direct'
+}
+
+# ---------- forge reads (no writes here) ----------
+
+resolve_repo() {
+  if [[ -z "$REPO" ]]; then
+    REPO="$(gh repo view --json nameWithOwner --jq .nameWithOwner)"
+  fi
+  [[ "$REPO" == */* ]] || die "cannot parse repo '$REPO', want owner/name"
+}
+
+repo_json="" protection_json="" protected=0
+actual_names=() have_labels=() required=()
+allow_merge="" delete_branch="" allow_squash="" branch="" is_admin=""
+
+load_state() {
+  local owner="${REPO%/*}" name="${REPO#*/}"
+  repo_json="$(gh api "repos/$owner/$name" \
+    --jq '{allow_auto_merge,delete_branch_on_merge,allow_squash_merge,default_branch,admin:(.permissions.admin // false)}')"
+  allow_merge="$(jq -r .allow_auto_merge <<<"$repo_json")"
+  delete_branch="$(jq -r .delete_branch_on_merge <<<"$repo_json")"
+  allow_squash="$(jq -r .allow_squash_merge <<<"$repo_json")"
+  branch="$(jq -r .default_branch <<<"$repo_json")"
+  is_admin="$(jq -r .admin <<<"$repo_json")"
+  if protection_json="$(gh api "repos/$owner/$name/branches/$branch/protection" 2>/dev/null)"; then
+    protected=1
+  else
+    protected=0; protection_json="{}"
+  fi
+  mapfile -t required < <(jq -r '[(.required_status_checks.checks[]?.context // empty), (.required_status_checks.contexts[]? // empty)] | unique | .[]' <<<"$protection_json" || true)
+  mapfile -t actual_names < <(gh api "repos/$owner/$name/commits/$branch/check-runs?per_page=100" \
+    --jq '[.check_runs[]?.name] | unique | .[]' 2>/dev/null || true)
+  while IFS= read -r job; do actual_names+=("$job"); done < <(workflow_jobs || true)
+  mapfile -t have_labels < <(gh label list --repo "$REPO" --limit 200 --json name --jq '.[].name' 2>/dev/null || true)
+}
+
+workflow_jobs() { # job ids from local .github/workflows (2-space indent heuristic)
+  local f in_scope=0 line
+  for f in .github/workflows/*.yml .github/workflows/*.yaml; do
+    [[ -f "$f" ]] || continue
+    in_scope=0
+    while IFS= read -r line || [[ -n "$line" ]]; do
+      if [[ "$line" =~ ^jobs:[[:space:]]*$ ]]; then in_scope=1; continue; fi
+      if [[ "$line" =~ ^[^[:space:]#] ]]; then in_scope=0; continue; fi
+      if (( in_scope )) && [[ "$line" =~ ^[[:space:]][[:space:]]([A-Za-z0-9_.-]+):[[:space:]]*$ ]]; then
+        printf '%s\n' "${BASH_REMATCH[1]}"
+      fi
+    done < "$f"
+  done
+}
+
+has_exact() { # needle, haystack...; 0 when an element equals needle
+  local needle="$1"; shift
+  local e
+  for e in "$@"; do [[ "$e" == "$needle" ]] && return 0; done
+  return 1
+}
+
+matches_actual() { # required context; 0 when some actual name equals it or ends with /it
+  local ctx="$1" a
+  for a in "${actual_names[@]}"; do
+    [[ "$a" == "$ctx" || "$a" == */"$ctx" ]] && return 0
+  done
+  return 1
+}
+
+# ---------- label vocabulary (#65) ----------
+
+expected_labels() {
+  printf '%s\n' needs-triage needs-info ready-for-agent ready-for-human wontfix \
+    risk:low risk:medium risk:high ci-failed agent:fixing \
+    fix-attempt-1 fix-attempt-2 fix-attempt-3 needs-human
+}
+
+label_meta() { # name -> "color|description"
+  case "$1" in
+    needs-triage) printf 'd4c5f9|Maintainer needs to evaluate this issue' ;;
+    needs-info) printf 'fbca04|Waiting on reporter for more information' ;;
+    ready-for-agent) printf '0e8a16|Fully specified, ready for an agent' ;;
+    ready-for-human) printf '0052cc|Issue needs human implementation, never on PRs' ;;
+    wontfix) printf 'ffffff|Will not be actioned' ;;
+    risk:low) printf '0e8a16|Agent PR low verification lane' ;;
+    risk:medium) printf 'fbca04|Agent PR medium verification lane' ;;
+    risk:high) printf 'b60205|Agent PR high verification lane' ;;
+    ci-failed) printf 'b60205|CI reported failure, poller state' ;;
+    agent:fixing) printf '0052cc|Agent is fixing a CI failure' ;;
+    fix-attempt-*) printf 'cccccc|Poller fix attempt marker' ;;
+    needs-human) printf 'b60205|Agent stopped, a human must decide, see marker comment' ;;
+  esac
+}
+
+protection_body_file() { # required contexts in $@ -> prints tmp file with PUT body
+  local out="$TMP/protection.json"
+  if (( $# == 0 )); then
+    printf '{"enforce_admins":true,"required_status_checks":{"strict":true,"checks":[]},"required_pull_request_reviews":null,"restrictions":null}\n' >"$out"
+  else
+    printf '%s\n' "$@" | jq -R . | jq -s '{enforce_admins:true,required_status_checks:{strict:true,checks:map({context:.})},required_pull_request_reviews:null,restrictions:null}' >"$out"
+  fi
+  printf '%s' "$out"
+}
+
+label_create_cmd() { # name -> exact command
+  local meta color desc
+  meta="$(label_meta "$1")"; color="${meta%%|*}"; desc="${meta#*|}"
+  printf 'gh label create --repo %s %s --force --color %s --description "%s"' "$REPO" "$1" "$color" "$desc"
+}
+
+# ---------- report ----------
+
+rows=() fixes=() warns=()
+row() { rows+=("$1|$2"); }          # status|text
+fix() { fixes+=("$1"); }
+warn() { warns+=("warn|$1"); }
+
+print_report() { # title
+  printf '%s\n' "$1"
+  local r s t
+  for r in "${rows[@]}" "${warns[@]}"; do s="${r%%|*}"; t="${r#*|}"; printf '%-7s %s\n' "$s" "$t"; done
+  if (( ${#fixes[@]} )); then printf 'Fix commands:\n'; printf '%s\n' "${fixes[@]}"; fi
+}
+
+# ---------- gap computation shared by check and apply ----------
+
+gaps=0
+compute() { # fills rows/fixes; sets gaps
+  local owner="${REPO%/*}" name="${REPO#*/}" lbl ctx
+  rows=(); fixes=(); warns=(); gaps=0
+  if [[ "$allow_merge" == true ]]; then row ok "allow_auto_merge = true"
+  else row kurang "allow_auto_merge = $allow_merge"; fix "gh api repos/$owner/$name -X PATCH -f allow_auto_merge=true"; gaps=$((gaps+1)); fi
+  if [[ "$delete_branch" == true ]]; then row ok "delete_branch_on_merge = true"
+  else row kurang "delete_branch_on_merge = $delete_branch"; fix "gh api repos/$owner/$name -X PATCH -f delete_branch_on_merge=true"; gaps=$((gaps+1)); fi
+  if [[ "$allow_squash" == true ]]; then row ok "allow_squash_merge = true"
+  else warns+=("warn|squash merge off (info only, apply leaves it)") ; fi
+  if [[ "$protected" == 1 ]]; then row ok "branch protection on $branch"
+  else row kurang "no branch protection on $branch"; fix "apply writes it (see apply --dry-run)"; gaps=$((gaps+1)); fi
+  if (( ${#required[@]} )); then
+    row ok "required checks: ${required[*]}"
+    for ctx in "${required[@]}"; do
+      if matches_actual "$ctx"; then row ok "required check seen in repo: $ctx"
+      else row kurang "stale required check, no run or job named: $ctx"; fix "# rename or drop '$ctx' in protection, then re-run check"; gaps=$((gaps+1)); fi
+    done
+  else
+    row kurang "no required checks on $branch"
+    fix "# add status checks to protection, then re-run check"
+    gaps=$((gaps+1))
+  fi
+  if [[ "$protected" == 1 ]] && jq -e '.required_pull_request_reviews != null' <<<"$protection_json" >/dev/null; then
+    row kurang "required pull request review is on (team landing uses checks, not human review)"
+    fix "apply writes protection without the review block (see apply --dry-run)"
+    gaps=$((gaps+1))
+  else
+    row ok "no required human review"
+  fi
+  for lbl in $(expected_labels); do
+    if has_exact "$lbl" "${have_labels[@]}"; then row ok "label present: $lbl"
+    else row kurang "label missing: $lbl"; fix "$(label_create_cmd "$lbl")"; gaps=$((gaps+1)); fi
+  done
+}
+
+# ---------- commands ----------
+
+do_check() {
+  local mode landing
+  mode="$(detect_mode)"
+  if [[ "$mode" == solo ]]; then
+    printf 'repo-settings: N/A in solo mode (local verifier decides landing, no forge settings needed).\n'
+    return 0
+  fi
+  landing="$(detect_landing)"
+  resolve_repo
+  load_state
+  compute
+  print_report "repo-settings check $REPO (mode team, landing $landing)"
+  if [[ "$landing" == auto-merge && ${#required[@]} == 0 ]]; then
+    printf 'repo-settings: refused: Landing auto-merge needs required checks. Add checks first, or use --landing direct.\n'
+    printf 'Mark: <!-- needs-human reason=no-required-checks -->\n'
+    return 1
+  fi
+  if (( gaps )); then printf 'repo-settings: %s gaps, see fix commands above.\n' "$gaps"; return 1; fi
+  printf 'repo-settings: all ok.\n'
+  return 0
+}
+
+do_apply() {
+  local mode landing
+  mode="$(detect_mode)"
+  if [[ "$mode" == solo ]]; then
+    printf 'repo-settings: N/A in solo mode (local verifier decides landing, no forge settings needed).\n'
+    return 0
+  fi
+  if [[ "$DRY" == 0 && "$YES" == 0 ]]; then
+    die "apply needs --yes (the user said yes in setup) or use --dry-run"
+  fi
+  landing="$(detect_landing)"
+  resolve_repo
+  load_state
+  compute >/dev/null
+  local owner="${REPO%/*}" name="${REPO#*/}" lbl
+  if [[ "$landing" == auto-merge && ${#required[@]} == 0 ]]; then
+    printf 'repo-settings: refused: Landing auto-merge needs required checks. Add checks to protection first, then re-run apply.\n'
+    printf 'Mark: <!-- needs-human reason=no-required-checks -->\n'
+    return 2
+  fi
+  local calls=()
+  for lbl in $(expected_labels); do
+    has_exact "$lbl" "${have_labels[@]}" || calls+=("$(label_create_cmd "$lbl")")
+  done
+  local need_settings=0 need_protection=0
+  [[ "$allow_merge" == true && "$delete_branch" == true ]] || need_settings=1
+  if [[ "$protected" == 0 || ${#required[@]} == 0 ]]; then need_protection=1
+  elif jq -e '.required_pull_request_reviews != null' <<<"$protection_json" >/dev/null; then need_protection=1
+  else
+    local ctx
+    for ctx in "${required[@]}"; do matches_actual "$ctx" || { need_protection=1; break; }; done
+  fi
+  local patch_cmd="gh api repos/$owner/$name -X PATCH -f allow_auto_merge=true -f delete_branch_on_merge=true"
+  local body_file="" put_cmd=""
+  if (( need_protection )); then
+    if (( ${#actual_names[@]} )); then body_file="$(protection_body_file "${actual_names[@]}")"
+    else body_file="$(protection_body_file)"; fi
+    put_cmd="gh api repos/$owner/$name/branches/$branch/protection -X PUT --input $body_file"
+  fi
+  (( need_settings )) && calls+=("$patch_cmd")
+  [[ -n "$put_cmd" ]] && calls+=("$put_cmd")
+  if (( DRY )); then
+    if (( ${#calls[@]} == 0 )); then printf 'repo-settings apply --dry-run %s: no-op, settings already match.\n' "$REPO"; return 0; fi
+    printf 'repo-settings apply --dry-run %s: would run %s calls, changing nothing:\n' "$REPO" "${#calls[@]}"
+    printf 'would run: %s\n' "${calls[@]}"
+    if [[ -n "$body_file" ]]; then printf 'protection body:\n'; jq . "$body_file"; fi
+    return 1
+  fi
+  if (( need_settings || need_protection )) && [[ "$is_admin" != true ]]; then
+    ui_steps "$landing"
+    return 3
+  fi
+  if (( ${#calls[@]} == 0 )); then printf 'repo-settings: no-op, settings already match.\n'; return 0; fi
+  local c
+  for c in "${calls[@]}"; do
+    if [[ "$c" == gh\ label\ create* ]]; then eval "$c" >/dev/null
+    elif [[ "$c" == *"-X PATCH"* ]]; then
+      gh api "repos/$owner/$name" -X PATCH -f allow_auto_merge=true -f delete_branch_on_merge=true >/dev/null
+    else
+      gh api "repos/$owner/$name/branches/$branch/protection" -X PUT --input "$body_file" >/dev/null
+    fi
+    printf 'ran: %s\n' "$c"
+  done
+  printf 'repo-settings: applied %s changes; re-run check to confirm.\n' "${#calls[@]}"
+}
+
+ui_steps() { # landing;338
+  local landing="$1" checks_line="${actual_names[*]:-CHECK-NAME}"
+  cat <<EOF
+repo-settings: no admin rights on $REPO, nothing changed.
+Do this once in the forge UI, then re-run check:
+1. Settings > General > Pull Requests: check Allow auto-merge, check Automatically delete head branches, Save.
+2. Settings > Branches > Add classic branch protection rule: Branch name pattern = $branch; check Require status checks to pass, check Require branches to be up to date, pick: $checks_line; leave Require a pull request before merging unchecked; Save.
+3. Labels need no admin: re-run apply after access, or ask an admin to run the label commands from check.
+Re-run: repo-settings check --repo $REPO --landing $landing
+EOF
+}
+
+main() {
+  parse_args "$@"
+  case "$CMD" in
+    check) do_check ;;
+    apply) do_apply ;;
+  esac
+}
+
+main "$@"

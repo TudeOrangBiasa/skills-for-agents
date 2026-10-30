@@ -1,0 +1,12 @@
+# Managed by setup-meta install-timers (issue #78). Remove with: install-timers uninstall.
+[Unit]
+Description=Runner issue queue, one pass (opt-in unattended harness)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart={{RUNNER_SH_ABS}} run
+Environment=PATH={{PATH_VALUE}}
+EnvironmentFile=-{{ENV_FILE}}
+TimeoutStartSec={{TIMEOUT_MIN}}min
