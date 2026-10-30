@@ -5,7 +5,7 @@ name: runner
 ---
 # Runner
 
-Loop runner for the agent-ready queue, on any schedule (cron, an interval loop, or one manual run; renamed from nightshift, which sounded nights-only). Hand the queue to an agent while nobody is watching. Distinct from `/worklog`, which designs personal workflows and never runs them, and from goal mode (`goal.md` playbook), which pursues one long goal: runner runs repo issue queues, nothing else. One script, [scripts/runner.sh](scripts/runner.sh), claims each `ready-for-agent` issue, runs `/whips` triage intake on it in a fresh worktree, and lands per the risk tier. The human reviews high-risk in the morning; low-risk already landed.
+Loop runner for the agent-ready queue, on any schedule (cron, an interval loop, or one manual run; renamed from nightshift, which sounded nights-only). Hand the queue to an agent while nobody is watching. Distinct from `/worklog`, which designs personal workflows and never runs them: runner runs repo issue queues, nothing else. One script, [scripts/runner.sh](scripts/runner.sh), claims each `ready-for-agent` issue, runs `/whips` triage intake on it in a fresh worktree, and lands per the risk tier. The human reviews high-risk in the morning; low-risk already landed.
 
 The agent command and the model are the user's choice, made once at setup and saved to a config file. Nothing is defaulted. [CONTRACT.md](CONTRACT.md) holds the config keys, commands, exit codes, and outcomes. Any scheduler can call `runner.sh run`; wiring one is out of scope here.
 

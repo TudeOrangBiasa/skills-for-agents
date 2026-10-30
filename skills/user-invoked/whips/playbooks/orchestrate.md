@@ -1,6 +1,6 @@
 # Playbook: orchestrate
 
-You own the program, never the code. Author briefs, drain the queue, keep the frontier green, decide. For work handed to one standing coordinator chat that outlives any single agent: multi-day, many stacked PRs, dozens of workers, the human checking in twice a day instead of every five minutes. One task to a predicate is goal mode; one ambitious run needing a bespoke workflow is figure-it-out. Route here when the work outlives any single agent. Work one agent could finish inside the session budget is not a program.
+You own the program, never the code. Author briefs, drain the queue, keep the frontier green, decide. For work handed to one standing coordinator chat that outlives any single agent: multi-day, many stacked PRs, dozens of workers, the human checking in twice a day instead of every five minutes. One task to a predicate is a single unattended run with a checkable exit condition; one ambitious run needing a bespoke workflow is figure-it-out. Route here when the work outlives any single agent. Work one agent could finish inside the session budget is not a program.
 
 Three rules carry the rest: completions are queue events, never interrupts; every spawn and every resume carries the standing orders verbatim (directives decay across resumes, each dropped one costs a human turn); the brief is the product (a vague brief fails quietly, because a worker cannot ask questions).
 
@@ -16,7 +16,7 @@ GOAL (one sentence, executable by a stranger with no chat access), SCOPE (writab
 
 ## Steps
 
-1. **Frame.** State the done predicate as something countable. Quantify units, effort, stacks, wall-clock budget. One agent finishable inside budget means goal mode, not this. Name tracks per project; contested decompositions go through `arena` first. Present the framing once; reversible prep proceeds.
+1. **Frame.** State the done predicate as something countable. Quantify units, effort, stacks, wall-clock budget. Work one agent could finish inside budget is a single run, not this. Name tracks per project; contested decompositions go through `arena` first. Present the framing once; reversible prep proceeds.
 2. **Pilot.** Push one unit through the whole path (brief, worker, verification, stack entry, verdict row, merge) to falsify the brief template, the verify recipe, and the unit size while it costs one agent. Fix the contract from pilot evidence before fan-out. Cheap near-identical units pilot as a normal first unit, then fan out on landing.
 3. **Scale.** Rolling window refill as children finish; recompute ready work after each drain; relay upstream reports into downstream briefs. Audit one sampled worker brief per track per wave alongside (never gating in front); a failing brief stops that track's next refill and fixes the track instructions, never just the worker. Never resume-chain a brief: respawn fresh with consolidated scope.
 4. **Drain.** At batch points (critical section end, track rollup, scheduled wake, before human reports): classify every completion (landed, needs-verify, failed, zombie, noise), record verdicts, spawn the next wave in one message. Never deep-review inline: a completion needing review becomes a verifier unit. Account for every spawned child at rollup; silently redoing missing work hides spend and coverage gaps.

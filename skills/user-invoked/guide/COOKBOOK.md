@@ -86,7 +86,7 @@ flowchart TD
     M --> R["/ready-check"] --> G["You merge the low batch, review high"]
 ```
 
-Alternative for one long goal: `/whips` goal mode with predicate + budget, not a queue.
+Alternative for one long unattended run: `/whips` with a checkable predicate plus budget, not a queue.
 
 Example: 5 `ready-for-agent` issues → `/runner` on schedule → morning `/ketchup` ("2 action items: merge low batch, review Seeder high") → `/ready-check` → merge the low batch, review high.
 
@@ -215,7 +215,7 @@ Example: navbar variants scattered across 4 files, same assumption repeated. `/d
 
 **Starting fresh but recent work spans several chats?** → `/recall`: scope the window, mine repo history plus session traces, verify live, capsule brief with tagged threads. One specific run or branch is whips pickup; this chat alone is `/ketchup`. Going forward, keep decisions in ADRs and tickets so memory lives in the repo, not in sessions. No skill recovers what was never written down.
 
-**Multi-day program with one approval up front?** → `figure-it-out` for the designed phase list (approve once), `runner` or goal mode to execute, scheduled `ready-check` to land qualifying batches. Review high-risk only; the design approval plus tiered landing carry the rest.
+**Multi-day program with one approval up front?** → `figure-it-out` for the designed phase list (approve once), `runner` or a single unattended run to execute, scheduled `ready-check` to land qualifying batches. Review high-risk only; the design approval plus tiered landing carry the rest.
 
 **Must AFK with a deadline near, parallel tickets, no QA time?** → split first: frontier tickets (behavior already answers every open question) run now; tickets genuinely needing you wait with an explicit "needs decision X" note. Frontier goes to `/runner` before you leave (fresh worktree each, ready PRs only, set max-issues). QA does not vanish, it compacts: per-slice tests plus verification evidence ride in each PR, and your morning is `/ketchup` plus `/ready-check` (independent verdicts, merge the low batch, review high). Decisions the requested behavior already answers are not decisions: say so in the ticket and let them run.
 
