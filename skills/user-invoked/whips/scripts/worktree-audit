@@ -22,7 +22,7 @@ cd "$REPO"
 command -v jq >/dev/null || { echo "worktree-audit: missing dependency: jq" >&2; exit 2; }
 
 # One batched PR lookup: headRefName -> state. Zero calls when gh is absent.
-PRMAP="$(mktemp)"; trap 'rm -f "$PRMAP"' RETURN
+PRMAP="$(mktemp)"; trap 'rm -f "$PRMAP"' EXIT
 echo '{}' >"$PRMAP"
 if command -v gh >/dev/null 2>&1; then
   gh pr list --state all --limit 200 --json number,state,headRefName 2>/dev/null \
@@ -38,6 +38,9 @@ git worktree list --porcelain | awk '/^worktree /{print substr($0, 10)}' | while
   size="$(du -sk "$wt" 2>/dev/null | cut -f1)"
   dirty="$(git -C "$wt" status --porcelain 2>/dev/null | wc -l)"
   pr_state="$(jq -r --arg b "$branch" '.[$b] // "none"' "$PRMAP")"
+  if [[ "$pr_state" == "none" && "$branch" != "detached" ]] && git -C "$wt" merge-base --is-ancestor HEAD "$BASE" 2>/dev/null; then
+    pr_state="merged-local"
+  fi
   bucket=keep
   if ((dirty > 0)); then bucket=needs-look
   elif [[ "$pr_state" == "MERGED" || "$pr_state" == "CLOSED" ]]; then bucket=safe-to-prune

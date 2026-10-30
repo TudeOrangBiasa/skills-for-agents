@@ -394,7 +394,7 @@ run_one() { # dir n
   f_claim "$dir" "$n" || { log "could not claim $key"; return; }
   [[ "$FORGE" == gh ]] && f_claim_write "$dir" "$n" "$run_id" "${resume:-wip/runner-issue-$n}"
   printf '%s %s\n' "$dir" "$n" >>"$(state active)"
-  wt="$RUNNER_WORK_DIR/worktrees/$(basename "$dir")-$n-$ts"
+  wt="$RUNNER_WORK_DIR/worktrees/$(basename "$dir")-issue-$n-$ts"
   mkdir -p "$(dirname "$wt")"
   if [[ -n "$resume" ]]; then
     git -C "$dir" worktree add --quiet "$wt" "origin/$resume" >&2 || resume_add_failed=1

@@ -2,7 +2,7 @@
 
 Disk full of stale worktrees and caches. This is the one playbook that deletes user state with no code review to catch a slip, so the gates below are the review.
 
-Naming convention (so the scripts can match a worktree to its PR): runner issue N lives at `$RUNNER_WORK_DIR/worktrees/<repo>-issue-<N>-<ts>` on branch `wip/issue-<N>` (or the PR head branch); whips unit or PR work lives at `<repo>-worktrees/pr-<N>` (or `.whips/worktrees/<repo>/pr-<N>`). Legacy runner paths `<repo>-<n>-<ts>` (no `issue-`) still parse for one release, then deprecate per the changelog.
+Naming convention (so the scripts can match a worktree to its PR): runner issue N lives at `$RUNNER_WORK_DIR/worktrees/<repo>-issue-<N>-<ts>` on branch `wip/issue-<N>` (or the PR head branch); whips unit or PR work lives at `<repo>-worktrees/pr-<N>` (or `.whips/worktrees/<repo>/pr-<N>`). Legacy runner paths `<repo>-<n>-<ts>` (no `issue-`) still parse for the active-claim guard (regex `-<digits>-<digits>` on the basename) for one release, then deprecate per the changelog. `worktree-prune` drops the local branch ref only for MERGED PRs with no remote ref left; CLOSED-unmerged PRs keep their branch ref (commits survive there).
 
 ## Auto mode (on-loop, no human confirm)
 
