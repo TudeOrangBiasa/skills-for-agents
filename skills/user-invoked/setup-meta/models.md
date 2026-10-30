@@ -7,7 +7,7 @@ Optional. Skills that spawn subagents (`/whips` today) read this file to pick a 
 | `code` | `<model id as your harness names it>` |  |  | Routine implementation and mechanical edits |
 | `hard-code` | `<model id>` |  |  | Cross-cutting design, concurrency, subtle algorithms |
 | `judgment` | `<model id>` |  |  | Planning, prose, PR bodies, risk calls |
-| `review` | `<model id>` |  |  | Second-opinion review; pick a different model from `code` so agreement means something |
+| `review` | `<model id>` |  |  | Second-opinion review; a different model when you have one, otherwise a fresh context with an adversarial brief. With a single model, set every role to that id (or `inherit`) and differ reviewers by lens, never by model |
 
 Write `inherit` in the Model column to run that role on the parent model. Delete a row to get the same result.
 

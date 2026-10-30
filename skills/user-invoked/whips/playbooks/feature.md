@@ -9,5 +9,5 @@ New or changed behavior, built from a named data shape. The director owns design
 5. Delegate implementation to a fresh subagent with the section 4 brief (file paths, named data shape, success criteria). Review separation is mandatory: no standing by on a nested agent. A subagent forbidden to spawn satisfies this by owning the diff directly with the same separation.
 6. Verify on the matching surface. Inconclusive or wrong-surface is not a pass. Flag it.
 7. Rebase into small ordered commits, one verifiable unit per commit. Verify each before the next.
-8. Contested design means a second opinion before shipping: call the Skill tool with "code-review" (Standards plus Spec), and send the same review prompt to a second model when the harness offers one. Agreement is the signal.
+8. Contested design means a second opinion before shipping: call the Skill tool with "code-review" (Standards plus Spec), and send the same review prompt to a second model when the harness offers one, else the same prompt in a fresh context with the adversarial brief. Agreement is the signal.
 9. Unslop gate, then PR body with before/after evidence, then `playbooks/opening-a-pr.md`.

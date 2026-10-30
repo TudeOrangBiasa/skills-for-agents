@@ -8,7 +8,7 @@ Three rules carry the rest: completions are queue events, never interrupts; ever
 
 - **Coordinator (this chat).** Frames, authors briefs, drains completions, owns the human report, makes judgment calls. Never authors or edits code; conflicted merges and code changes are always tasked units. Models per role from the repo model map. It may land verified units itself where local git is cheap; queueing finished work behind an idle stacker harvests nothing at deadline.
 - **Track leads.** Only past what one coordinator drains alone: one per track (build, landing, verification are common cuts), each owning its units, authoring worker briefs, rolling up aggregates at wave boundaries, never forwarding raw reports. Cap in-flight children near ten as a rolling window, never blocking batches (which pay the slowest child every round).
-- **Workers and verifiers.** One writer per worktree or branch (rule 15). Verification scales to the unit: cheap single-command checks run inline with spot-checked receipts; expensive, judgment-laden, or high-blast-radius units get a dedicated verifier on a different model family. Prefer fewer, broader workers.
+- **Workers and verifiers.** One writer per worktree or branch (rule 15). Verification scales to the unit: cheap single-command checks run inline with spot-checked receipts; expensive, judgment-laden, or high-blast-radius units get a dedicated verifier in a fresh context with the adversarial brief (a different model family when the harness offers one). Prefer fewer, broader workers.
 
 ## The brief
 
