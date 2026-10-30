@@ -12,7 +12,7 @@ The caller's files or diff; otherwise the current diff against the base branch, 
 
 ## Steps
 
-1. Spawn one reviewer per available model with the same brief (scope plus this rubric), all in one round; single-model harnesses run two passes (find, then challenge). Models follow the repo model map. Never restate the rubric inside the brief; point at it.
+1. Spawn one reviewer per available model with the same brief (scope plus `agents/comment-sicko.md`), all in one round; single-model harnesses run two passes (find, then challenge). Models follow the repo model map. Never restate the rubric inside the brief; point at it.
 2. Judge every finding skeptically before touching code. Reject application-code edits, scope escapes, exception-protected deletions, misstated kill reasons, and flags treating kept intentional code as guilty. A keep survives only with proof it is about something unchangeable (generated code, external contract, hardware limit); run `how` or `why` on thin keeps before believing them. Ambiguous kill means do not restore; refuted or still-ambiguous keep means delete. A rejected report gets one rerun with the failure named; reject twice and the skill fails open with the report.
 3. Fix trivial accepted flags directly: delete the dead path, drop the parameter, use the real API. Fixes needing shape get one `codebase-design` sketch first; the sketch shapes, implementation follows.
 4. Implement the smallest root-cause fix in scope (rule 2) and remove every named workaround. Root cause out of scope means landing the smallest in-scope fix and reporting the rest open. Never bolt on symptom guards, never widen the fence.
