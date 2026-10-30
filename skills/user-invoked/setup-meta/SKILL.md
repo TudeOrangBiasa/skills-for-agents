@@ -69,13 +69,19 @@ Offer **multi-context** (a root `GLOSSARY-MAP.md` pointing to per-context `GLOSS
 - **Commit message format**: agree one format (default: conventional commits) and record it in the standards file.
 - **PR body format**: no new file. Confirm the repo uses the `pr` skill shape (Summary visual, before/after Evidence, Merge Danger).
 
-**Section E: Tooling.** Husky hooks with a timing split (checks on every edit flood the agent with known-broken state; batch feedback instead): call the Skill tool with "setup-pre-commit" (fast pre-commit gate under 3 seconds: format, token gate, staged-file checks; typecheck and full tests move to pre-push plus the configured verifier in `docs/agents/verifier.md`). Only when the repo is a JS/TS project; skip otherwise.
+**Section E: Tooling.** Local gates in four layers, no mandatory CI template (the verifier in `docs/agents/verifier.md` decides; Section I wires it): call the Skill tool with "setup-pre-commit" for JS/TS repos (fast pre-commit gate under 3 seconds: format, token gate, staged-file checks; commit-msg enforces Conventional Commits; typecheck and full tests move to pre-push plus the configured verifier). For non-JS repos, install shell hooks under `.githooks/` and point git at them with `git config core.hooksPath .githooks` (no new runtime, no new dependencies without confirmation): use only preset commands whose tools already exist in the repo. Dart: `dart format --set-exit-if-changed .` in pre-commit, `dart analyze` and `dart test` in pre-push. PHP/Laravel: `./vendor/bin/pint --test` (or `pint --test` when on PATH) in pre-commit, `phpstan` only when configured, `php artisan test` in pre-push. Python: project tools only when `pyproject.toml` declares them (format check in pre-commit, test command in pre-push). The `commit-msg` hook reuses the Conventional Commits shell from `setup-pre-commit` (merge and revert messages exempt). Record one line in `docs/agents/` naming the four layers and banning `--no-verify` for bypassing gates.
 
-**Section F: Models (optional).** Skip unless `whips` is installed. Ask one question:
+**Section F: Models (optional).** Skip unless `whips` is installed. Run six steps, one question per step, and never name a model id the user has not confirmed. Never hardcode a harness or model id into the skill; copy only what detection found. Answering inherit-everywhere at step 1 ends the section with nothing written.
 
-> Do you want to pin a model per subagent role? (recommended: **no**, every subagent runs on whatever model you run the parent on)
-
-On **no**, write nothing. On **yes**, read the harness config and environment for the model ids already available (config files, CLI `--help` or model list, provider env var names, never their values), show what you found, and ask which id goes on each role in [models.md](./models.md). Never suggest a model the user did not already have configured. Ask about Effort and Speed columns only when the harness names effort levels; otherwise leave them blank.
+1. **Detect.** Read the harness config and environment for model ids already available: config files, CLI `--help` or model list output, provider env var names without their values. `inherit` is always valid. Show what you found, nothing more.
+> Which of these detected ids should roles use, or should every role inherit?
+2. **Budget.** Offer four familiar levels plus `n/a`: `unlimited` (max), `large` (xhigh), `medium` (high), `small` (medium). Write the pick as a `# budget:` line in `docs/agents/models.md`. A harness that names no effort levels gets `n/a`, and every role runs at its plain model.
+> Which budget fits the hardest work in this repo: unlimited, large, medium, small, or n/a?
+3. **Map.** One model for every role is fine; effort carries the difference. Put the confirmed id (or `inherit`) on each row in [models.md](./models.md): `code`, `hard-code`, `judgment`, `review`, `how-explorer`, `how-explainer`, `why-investigator`, `why-synthesizer`, `swarm-worker`, `arena-runner`, `architect-runner`, `interrogate-reviewer`. `hard-code` sits one step above `code`; `swarm-worker` follows `review`.
+> Same model everywhere, or a different id for any role?
+4. **Validate.** Check every id against what detection found (`inherit` always passes), and check `review` is never effort-shifted below `code` per whips SKILL.md section 6 (shift effort one step up for the hardest work, never down for review). Fix mismatches with the user before writing.
+5. **Write.** Rewrite `docs/agents/models.md` from [models.md](./models.md) in full on every run: no duplicated rows, retired roles deleted. Location is per repo (`docs/agents/models.md`); use the personal fallback only when the user explicitly asks for one config across repos, and record why.
+6. **Confirm.** Show the written file and ask for corrections before moving on. Do not raise `/create-verification` here; the scaffold layout step owns that offer.
 
 **Section G: Unattended runs.** Ask one question:
 > How should unattended runs wake up? (recommended: the harness loop or wait command you already use)
@@ -178,7 +184,7 @@ Then write the repo-level meta docs agreed in Section D, at the repo root:
 
 Then scaffold the Section J docs layout (dirs with `.gitkeep`, `.gitignore` append, `docs-layout.md`, AGENTS pointer) and run Section I (solo verifier + pre-push + worktree hooks) or skip it for team repos.
 
-Then run Section E: call the Skill tool with "setup-pre-commit" when the repo qualifies.
+Then run Section E: call the Skill tool with "setup-pre-commit" for JS/TS repos, or install the `.githooks/` shell presets for non-JS repos.
 For "other" issue trackers, write `docs/agents/issue-tracker.md` from scratch using the user's description.
 
 ### 5. Done
