@@ -30,6 +30,7 @@ Look at the current repo to understand its starting state. Read whatever exists;
 - Is the `triage` skill installed? (a `triage` skill folder alongside this one, or `triage` in your available skills.) This decides whether Section B runs at all.
 - Monorepo signals: a `pnpm-workspace.yaml`, a `workspaces` field in `package.json`, or a populated `packages/*` with its own `src/`. These are present only in a genuinely large multi-package repo; their absence means single-context, which is almost every repo.
 - Unattended wake options: what this harness offers for runs without the user watching (a loop or wait command, a watch on CI or refs, an outside scheduler). This decides Section G.
+- Repo settings for team landing: `allow_auto_merge`, `delete_branch_on_merge`, branch protection, required checks (Section K; team only, solo skips as N/A).
 
 ### 2. Present findings and ask
 
@@ -88,6 +89,7 @@ Offer **multi-context** (a root `GLOSSARY-MAP.md` pointing to per-context `GLOSS
 
 Record the mechanism in `docs/agents/unattended.md`: the command or scheduler entry that re-invokes `/whips` (or the `runner` skill for queues), the run log convention (`.scratch/whips/<run>/log.md`, one row per iteration), and the budget habit (predicate first, stated iteration, hour, or PR cap). Point at `/runner` for issue-queue runs; the skill reads this file.
 
+
 **Section H: Repo mode (solo or team).** Ask one question:
 
 > Is this a solo repo (you plus agents) or a team repo? (no default; skill behavior branches on it)
@@ -100,6 +102,12 @@ Write the answer to `docs/agents/repo-mode.md` from [repo-mode.md](./repo-mode.m
 
 Then ask two more, one at a time. Autonomy tier for this repo (the whips mode): strict HIT with every landing human-approved, or tiered auto-land with low-risk PASS PRs merging untouched (recommended: tiered, human time reserved for high-risk). Record it in `docs/agents/unattended.md`; it overrides the default where the repo chooses strictness. Scheduled maintenance: which jobs run on a schedule and how they wake (cron line, systemd timer, or the harness non-interactive/headless mode invoking a skill). Default proposal: `/retro` stale-docs sweep plus `/maintain-verification` upkeep daily via scheduled automation, proposals filed, never auto-applied. Record each job's command, cadence, and output sink in the same file.
 
+**Section K: Repo settings (team only, solo skips).** Skip entirely when Section H answered **solo**: say "Repo settings are N/A in solo mode, the local verifier decides landing" and move on. For **team** repos, ask one question:
+
+> May I check the forge settings this repo needs for landing, and apply what is missing? (recommended: **yes to check**, apply only after you confirm each change)
+
+Run `whips/scripts/repo-settings check --landing <auto-merge|direct>` (read-only). The Landing value comes from `docs/agents/unattended.md`: `auto-merge` arms `gh pr merge --auto --squash` on open and lands when required checks pass; `direct` merges with `gh pr merge --squash` after CI is green and a read-back shows `state: MERGED`. Refuse `auto-merge` when required checks are empty: write the `needs-human` marker `<!-- needs-human reason=no-required-checks -->` and tell the user to enable branch protection first. On user yes, run `repo-settings apply --dry-run` first, show the exact calls, then `apply --yes` only after the user confirms. Without admin rights the script prints UI steps instead of changing anything; never work around that. Record the outcome in `docs/agents/unattended.md` (`Landing:` line) and in the `### Landing` sub-block of the `## Agent skills` block. Re-run is a no-op when settings already match.
+
 ### 3. Confirm and edit
 
 Show the user a draft of:
@@ -107,6 +115,7 @@ Show the user a draft of:
 - The `## Agent skills` block to add to the repo's `AGENTS.md`
 - The contents of `docs/agents/issue-tracker.md`, `docs/agents/domain.md`, `docs/agents/triage-labels.md` (the last only when `triage` is installed), `docs/agents/unattended.md`, `docs/agents/repo-mode.md`, and `docs/agents/verifier.md` (the last only for solo repos)
 - The contents of `docs/agents/models.md`, only when Section F ran with **yes**
+- The `repo-settings check` output, only for team repos (Section K)
 
 Let them edit before writing.
 
@@ -155,7 +164,7 @@ One door into where skills write and read. See `docs/agents/docs-layout.md`.
 
 ### Landing
 
-[one line: solo verifier or team checks]. See `docs/agents/landing-policy.md`.
+[one line: solo verifier or team checks plus the repo-settings outcome (Section K)]. See `docs/agents/landing-policy.md`.
 
 ### Meta docs
 
