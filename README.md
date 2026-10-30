@@ -55,6 +55,8 @@ Three phases, one rule per phase: Map before Guardrails, Guardrails before Walk.
 
 UI tickets run a sub-flow inside Walk: diverge (`/prototype` variants), guard (a11y plus content floors), stress (`/break` page), review with evidence, promote one and delete the rest. Start with `/whips` and it drives this flow for you; use `/guide` when you want to pick the skill by hand.
 
+Full grill-to-execute order with the handoff contract: [stage-pipeline playbook](./skills/user-invoked/whips/playbooks/stage-pipeline.md).
+
 ## Reference
 
 These split on one axis: who can invoke them. **User-invoked** skills are reachable only when you type them; their job is to orchestrate. **Model-invoked** skills can be invoked by you _or_ reached for automatically by the agent when the task fits; they hold the reusable discipline. A user-invoked skill may invoke model-invoked skills, but never another user-invoked one.

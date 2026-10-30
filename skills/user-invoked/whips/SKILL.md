@@ -30,6 +30,7 @@ Read the task and match exactly one row. First match wins.
 | New or changed behavior, a migration | `playbooks/feature.md` |
 | A read-only question | `playbooks/investigation.md` |
 | A huge, foggy effort | `playbooks/wayfinder-handoff.md` |
+| A foggy idea through the full grill-to-execute pipeline | `playbooks/stage-pipeline.md` |
 | Codebase health on a spare moment | `playbooks/upkeep.md` |
 | A live process to instrument: spin, leak, or glitch with no diagnosis | `playbooks/runtime-forensics.md` |
 | A captured trace or dump to diagnose: cpuprofile, heapsnapshot, spindump | `playbooks/trace-forensics.md` |
