@@ -91,9 +91,11 @@ fi
 
 # 4b. Whips always-on pack budget (issue #120). The whips SKILL.md entry
 #    point loads on every run; cap its size locally (tokens = bytes/4).
-#    Plafond: WHIPS_PACK_BUDGET_TOKENS below. A PR growing the file past
-#    the budget fails here, in pre-commit, with no Actions involved.
-WHIPS_PACK_BUDGET_TOKENS=3000
+#    Plafond: WHIPS_PACK_BUDGET_TOKENS below (raised 3000 -> 3200 for the
+#    pstack trigger parity in #68: seven trigger rows plus grant clause).
+#    A PR growing the file past the budget fails here, in pre-commit,
+#    with no Actions involved.
+WHIPS_PACK_BUDGET_TOKENS=3200
 whips_bytes="$(wc -c < skills/user-invoked/whips/SKILL.md)"
 whips_tokens="$((whips_bytes / 4))"
 if [[ "$whips_tokens" -gt "$WHIPS_PACK_BUDGET_TOKENS" ]]; then
