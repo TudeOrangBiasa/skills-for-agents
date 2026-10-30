@@ -52,7 +52,7 @@ RUNNER_MODEL='opencode-go/muse-spark-1.3'
 
 The allowlist only governs what the runner launches. Pin the agent's own subagent or fallback models in the agent's config.
 
-Documented `omp` preset (flags read from `omp --help`, not guessed): `omp -p --max-time "$RUNNER_TIMEOUT_MIN"m --mode text --auto-approve -m "$RUNNER_MODEL" "$RUNNER_PROMPT"`. Orca is never a dependency: setup-meta may note its presence, but nothing requires or installs it.
+Documented `omp` preset (flags read from `omp --help`, not guessed): `omp -p --max-time "$RUNNER_TIMEOUT_MIN"m --mode text --auto-approve --model "$RUNNER_MODEL" "$RUNNER_PROMPT"`. Orca is never a dependency: setup-meta may note its presence, but nothing requires or installs it.
 
 The prompt opens with `/whips` and asks for triage intake on exactly that issue, `opening-a-pr` to finish with tiered landing, and no waiting for answers. It is saved beside the log.
 

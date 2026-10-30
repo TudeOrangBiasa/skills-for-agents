@@ -323,7 +323,7 @@ AGENTS="opencode pi omp codex claude grok gemini cursor-agent aider goose amp dr
 # structured output, --auto-approve / --approval-mode to skip TUI approval.
 preset_cmd() {
   case "$1" in
-    omp) printf '%s' 'omp -p --max-time "$RUNNER_TIMEOUT_MIN"m --mode text --auto-approve -m "$RUNNER_MODEL" "$RUNNER_PROMPT"' ;;
+    omp) printf '%s' 'omp -p --max-time "$RUNNER_TIMEOUT_MIN"m --mode text --auto-approve --model "$RUNNER_MODEL" "$RUNNER_PROMPT"' ;;
     opencode) printf '%s' 'opencode run --auto -m "$RUNNER_MODEL" "$RUNNER_PROMPT"' ;;
     codex) printf '%s' 'codex exec --full-auto -m "$RUNNER_MODEL" "$RUNNER_PROMPT"' ;;
     claude) printf '%s' 'claude -p --model "$RUNNER_MODEL" "$RUNNER_PROMPT"' ;;
