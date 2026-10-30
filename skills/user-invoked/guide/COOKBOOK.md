@@ -146,7 +146,7 @@ Example: morning after a 5-issue runner queue, `/ketchup` answers "2 action item
 
 ## 9. Close the loop
 
-When: session over, the environment must be better than before it started. Run it after successes too: a smooth session still hides inefficiencies and workarounds the agent battled silently.
+When: session over, the environment must be better than before it started. Run it after successes too: a smooth session still hides inefficiencies and workarounds the agent battled silently. Pick the loop by what should change: `/reflect` writes learnings back into skills, `/retro` fixes the repo environment (checks, docs, pointers), `/ketchup` changes nothing and just catches you up.
 
 ```mermaid
 flowchart TD
@@ -157,7 +157,7 @@ flowchart TD
     S --> M
 ```
 
-A repeated manual task becomes a CLI + skill candidate (fewer tokens, fewer hallucinations). Whips runs feed this loop with one strategic-track nomination each. Every few sessions, point retro at the last 10 for navigability: slow finds and trusted-but-stale docs are the cheapest tokens you will ever save.
+A repeated manual task becomes a CLI + skill candidate (fewer tokens, fewer hallucinations). Whips runs feed this loop with one strategic-track nomination each. Every few sessions, point retro at the last 10 for navigability: slow finds and trusted-but-stale docs are the cheapest tokens you will ever save. When the finding belongs in a skill instead (a gap in a skill you used, or one that should have fired but did not), say `/reflect`: three reviewers mine this session and each accepted learning becomes a small skill PR. `/ketchup` is the odd one out: same-session catch-up with action items, no writes at all.
 
 Example: the image-rescue PR was born because proof URLs died with branch deletion. The recurring "rotten proof link" objection became the canonical-main-URL rule + `check-proof-urls.sh` (deterministic check, not prose). PR comments inform the code going forward.
 

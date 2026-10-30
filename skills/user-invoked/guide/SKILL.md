@@ -36,7 +36,7 @@ Continue, `/clear`, portable note (`/handoff`), subagent, `/compact` (default). 
 
 - Whips-driven (fired by `/whips`, never typed): `/how`, `/why`, `/architect`, `/arena`, `/interrogate`, `/no-comments`, `/blast-radius`, `/benchmark-checklist`, `/show-me-your-work`, `/correct`, `/technical-writing`, `/ui-recording-timeline`, `/user-manual`.
 - Vocabulary: `/domain-modeling`, `/codebase-design`.
-- Standalone: `/discuss`, `/interview`, `/merge-fix`, `/break`, `/sharpen`, `/prototype`, `/research`, `/wizard`, `/showcase`, `/wait-what`, `/ketchup`, `/recall`, `/teach`, `/handoff`, `/retro`, `/worklog`, `/writing-for-agents`, `/setup-ts-deep-modules`, `/learn-while-delegating`. Deprecated from merge path: `/explain-diff-before-merge` (learning value in `/teach`/`interview`; execute is `/whips` only). On hold: `/judgment-drill` (needs-info #93).
+- Standalone: `/discuss`, `/interview`, `/merge-fix`, `/break`, `/sharpen`, `/prototype`, `/research`, `/wizard`, `/showcase`, `/wait-what`, `/ketchup`, `/recall`, `/teach`, `/handoff`, `/retro`, `/reflect`, `/worklog`, `/writing-for-agents`, `/setup-ts-deep-modules`, `/learn-while-delegating`. Deprecated from merge path: `/explain-diff-before-merge` (learning value in `/teach`/`interview`; execute is `/whips` only). On hold: `/judgment-drill` (needs-info #93).
 
 ## Precondition
 

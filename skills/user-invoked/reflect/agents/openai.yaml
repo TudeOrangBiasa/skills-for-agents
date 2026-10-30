@@ -1,0 +1,5 @@
+interface:
+  display_name: "Reflect"
+  short_description: "Mine this session for learnings, route each to a skill edit."
+policy:
+  allow_implicit_invocation: false
