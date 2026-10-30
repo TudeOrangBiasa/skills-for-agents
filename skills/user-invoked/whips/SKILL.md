@@ -18,6 +18,7 @@ Read the task and match exactly one row. First match wins.
 | Pause, stop for now, the laptop is closing | `playbooks/pause.md` |
 | Resume or take over a prior run, branch, or open PR | `playbooks/pickup.md` |
 | Pick up the next agent-ready issue | `playbooks/triage.md` intake |
+| Review or bot comments on an open agent PR | `playbooks/triage.md` review mode |
 | Label the waiting issue queue on a loop | `playbooks/issue-triage-loop.md` |
 | Check on a PR or stack, get it green, anything outstanding | `playbooks/babysit.md` |
 | Is this ready, what do I merge first, give me a merge plan | `playbooks/ready-check.md` |
