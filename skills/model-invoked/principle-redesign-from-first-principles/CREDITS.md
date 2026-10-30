@@ -1,0 +1,3 @@
+# Credits
+
+The do-not-bolt-on rule, the read-everything-first discipline, the from-scratch question, full propagation through types docs and examples, and the whole-redesign-then-incremental-delivery method with its option-value rationale adapted from the pstack `principle-redesign-from-first-principles` skill set by poteto ([Lauren Tan](https://x.com/poteto), MIT). Rewritten to this repo conventions: fixed leaf sections (rule, Why, scope, steps, repo example, reply contract), cross-references point at our skills. Copied in, not depended on, so standalone installs keep working without the upstream repo.

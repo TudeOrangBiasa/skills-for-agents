@@ -1,0 +1,3 @@
+# Credits
+
+First-unit-by-hand recipe learning, rerun-and-diff proof, deterministic lever over fan-out, the delegate brief as a shared artifact outside delegate write scope, and the cited-it-means-a-file-is-in-the-diff bar adapted from the pstack skill set by poteto ([Lauren Tan](https://x.com/poteto), MIT). Rewritten to this repo voice: minimal-script bar absorbed inline, cross-link to the encode-lessons leaf instead of upstream relative links, repo example grounded in `scripts/check-docs.sh` as the rerunnable lever reviewers run. Copied in, not depended on, so standalone installs keep working without the upstream repo.

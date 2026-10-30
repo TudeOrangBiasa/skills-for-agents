@@ -1,0 +1,3 @@
+# Credits
+
+The write-the-decision-before-you-run discipline, the why-not-double limiter question with its profile-or-counters bar, the rule-out-what-else roster (errors, skipped or cached work, code that never ran, untuned sides, noise, too-small-to-matter), the run-count-spread-limiter evidence bundle, the skip signals, and the Prove It Works distinction adapted from the pstack `principle-explain-the-number` skill set by poteto ([Lauren Tan](https://x.com/poteto), MIT). Rewritten to this repo conventions: fixed leaf sections (rule, Why, scope, steps, repo example, reply contract), benchmark-checklist pointer aimed at our skill. Copied in, not depended on, so standalone installs keep working without the upstream repo.

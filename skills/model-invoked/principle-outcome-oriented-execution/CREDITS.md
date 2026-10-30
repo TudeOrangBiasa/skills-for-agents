@@ -1,0 +1,3 @@
+# Credits
+
+End-state integrity over transitional stability, planned scoped reversible breakage, declared breakage zones, high-signal checks on touched areas, and full verification at plan completion adapted from the pstack `principle-outcome-oriented-execution` skill set by poteto ([Lauren Tan](https://x.com/poteto), MIT). Rewritten to this repo conventions: the no-throwaway-compat rule from PRINCIPLES.md rule 16 folded in, fixed leaf sections (rule, Why, scope, steps, repo example, reply contract), cross-references point at our skills. Copied in, not depended on, so standalone installs keep working without the upstream repo.

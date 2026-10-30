@@ -1,0 +1,3 @@
+# Credits
+
+Domain-as-data-structure framing (state machines, typed models, registries, reducer/event models, knowledge-owned modules, access-pattern collections), the do-not-force-an-abstraction caution, and the skipped-it signs (growing if/else chains, synced booleans, temporal decomposition) adapted from the pstack skill set by poteto ([Lauren Tan](https://x.com/poteto), MIT). Rewritten to this repo voice: rule-first shape with Why and a repo-local example (skill metadata as one typed shape), no harness-specific wording. Copied in, not depended on, so standalone installs keep working without the upstream repo.

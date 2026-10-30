@@ -1,0 +1,3 @@
+interface:
+  display_name: "Migrate Callers Then Delete"
+  short_description: "Same-wave migration, no shims"
