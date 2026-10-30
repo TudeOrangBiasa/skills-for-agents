@@ -11,6 +11,7 @@ No narrower playbook fits, but the task is real work: a large migration, an ambi
 5. Fan out only across seams (rule 15): one worktree and branch per worker, effort and speed per worker per `SKILL.md` section 6. Over-fanning is banned.
 6. Small fog (two or three units, clear predicates): light design, skip to B. Large fog: the full list above.
 7. Write the phase list down and stop for human review. Present the predicate, the rigor level, the units, the order, and what each proves. Nothing executes before approval; design changes after approval come back here.
+Cross-phase or cross-PR design that must lint as a plan goes to `playbooks/multi-phase-plan.md` instead.
 
 ## B. Run the loop
 
