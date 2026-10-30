@@ -63,20 +63,29 @@ Each row fires whenever its condition holds, on top of the playbook steps. Call 
 | Domain terms change or a hard-to-reverse decision lands | "domain-modeling" |
 | A question running code can answer | "prototype", instead of asking the user |
 | Outside docs or API facts | "research" |
-| Contested design, or before any PR | "code-review", plus the same prompt to a second model when the harness offers one |
+| Contested design, or before any PR | "interrogate", "code-review" |
 | A merge or rebase conflict | "merge-fix" |
 | Before review, comments and the code they protect | "no-comments" |
 | A perf number you measured | "benchmark-checklist" before reporting or acting on it |
 | A small diff you don't trust | "blast-radius" for what breaks outside it |
 | A step only a human can do (secrets, dashboards) | "wizard" |
+| A nontrivial change, or "are we sure?" | "how" |
+| A rationale or regression question | "why" |
+| Parallel fan-out | "swarm" |
+| A design or code bakeoff | "arena" |
+| A long or unattended run | "show-me-your-work" |
+| Docs, RFC, README, PR body, commit message | "technical-writing" |
+| A UI, IDE, or CLI about to ship | verify on its surface (`create-verification` output) |
 | A PR body | "pr" |
 | A UI change about to ship | "break" |
 
-Every prose surface (reply, PR body, commit message, tracker comment, code comment) passes the unslop gate: call the Skill tool with "unslop".
+Every prose surface (reply, PR body, commit message, tracker comment, code comment) passes the unslop gate: call the Skill tool with "unslop". Write comments clean from the start: keep only the *why* invisible from the code, never narrate phases in verify scripts. This holds for delegate diffs too; point at "no-comments". (No `deslop` here: `no-comments` plus `unslop` plus `code-review` cover it.)
+
+A skill that breaks mid-run gets fixed in this PR, never silently worked around, never blocking the unit on it.
 
 A step that names a user-invoked skill (`/wayfinder`, `/to-spec`, `/to-tickets`, `/deepen`, `/discuss-with-docs`) is a human gate: tell the user to run it and wait at that step. No skill can fire a user-invoked one, `/whips` included.
 
-[PRINCIPLES.md](PRINCIPLES.md) holds the principles behind these triggers. Read it once per run before the first design decision.
+[PRINCIPLES.md](PRINCIPLES.md) holds the principles behind these triggers. Read it once per run before the first design decision. Cite only principles whose leaf you read this session.
 
 ## 4. Enforce the HIT gates, in order
 
@@ -96,6 +105,8 @@ Always pause for the human, and keep building everything else meanwhile:
 - A review comment classified `ask`, and a product or preference call no experiment can settle.
 
 A fork that running code can settle is not a pause: settle it with "prototype" and report the result.
+
+Under a full-autonomy grant (an unattended run, "don't stop", a runner queue, a scheduled tick), covered decisions are decided, executed, and reported without asking. A decision only the operator can answer gets the default applied and reported in full, with the plain words the operator could have used instead. Operator-named gates and the pause list above still need a human.
 
 No is an acceptable answer. Reply with your real judgment: decline, push back, and disagree when the evidence points that way. Agreement is not the default; candor beats sycophancy.
 
