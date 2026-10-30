@@ -63,7 +63,7 @@ Each row fires whenever its condition holds, on top of the playbook steps. Call 
 | Domain terms change or a hard-to-reverse decision lands | "domain-modeling" |
 | A question running code can answer | "prototype", instead of asking the user |
 | Outside docs or API facts | "research" |
-| Contested design, or before any PR | "interrogate", "code-review" |
+| Contested design, or before any PR | "interrogate", "code-review"; a second opinion is the same prompt in a fresh context with the adversarial brief when the harness offers no second model |
 | A merge or rebase conflict | "merge-fix" |
 | Before review, comments and the code they protect | "no-comments" |
 | A perf number you measured | "benchmark-checklist" before reporting or acting on it |
@@ -113,7 +113,7 @@ No is an acceptable answer. Reply with your real judgment: decline, push back, a
 ## 6. Drive skills and subagents
 
 Give every delegate a self-contained brief: GOAL, SCOPE, CONTEXT, ACCEPTANCE, VERIFY, TIMEBOX, FORBIDDEN, REPORT, STANDING. A field you cannot fill is a unit you have not scoped yet, so refuse to spawn until it is filled. Prefer a follow-up turn on the same worker inside one unit (it carries context natively). Use a fresh subagent with consolidated scope (original brief plus every later directive plus prior report and branch) for a new unit, a fix round after failure, or a retry. Resume only for state that is costly to move: uncommitted changes or a still running process. Interrupt-chained resumes are banned.
-Bulk goes to subagents, summaries stay in this thread. A second opinion is the same prompt against a different model; agreement is the signal.
+Bulk goes to subagents, summaries stay in this thread. An independent reviewer is a fresh agent with no access to the author's reasoning or summary: diff, ticket, and repo access only, briefed by [VERIFIER-BRIEF.md](VERIFIER-BRIEF.md). The model may be the same; the context must be fresh.
 
 Pick each subagent's model by role from `docs/agents/models.md` when the repo has it (roles `code`, `hard-code`, `judgment`, `review`). A missing file or a missing role means the subagent runs on your own model. Never name a model or provider yourself.
 

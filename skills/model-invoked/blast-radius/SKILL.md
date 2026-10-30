@@ -17,7 +17,7 @@ A blast-radius writeup that sounds right is worthless: it reads convincing wheth
 3. Look where grep stops: read the called library's source, check its pinned version and local patches; work out timing (queues, teardown, framework differences); follow what symbol search misses (API payload shapes, DB columns, wire formats, another language reading the same bytes, feature flags, code three hops downstream).
 4. Be honest per risk: a real chance and a real cost. Keep confirmed risks; list checked-and-cleared separately. Cite a real file:line, an empty search is still an answer, never invent a caller or API.
 5. Prove the one fact: a script or test running the real code, run it, paste what happened. Mark unproven what you could not prove.
-6. Big or wide changes go through `arena`: different models catch different real bugs.
+6. Big or wide changes go through `arena`: model diversity catches different real bugs when the harness offers it, else lens diversity in fresh contexts.
 
 ## Handoff
 
