@@ -2,6 +2,8 @@
 
 A huge, foggy effort that no single session can hold. The map and its collapse are human gates: `/wayfinder`, `/to-spec`, and `/to-tickets` are user-invoked, so you tell the user to run each one and wait. This playbook keeps the order straight and builds the tickets once they exist.
 
+This playbook covers the foggy-effort branch of the full pipeline. Full stage order plus handoff contract: `playbooks/stage-pipeline.md`.
+
 1. Confirm the fog: the way from here to the destination is not visible in one session. A well-scoped feature that fits one session is not this playbook; route it to feature.
 2. Tell the user to run `/wayfinder`. It builds the shared map of decision tickets on the tracker and resolves them one at a time. Each ticket produces decisions, not deliverables. Stop here until the map clears.
 3. At the handoff, tell the user to run `/to-spec`: it collapses the linked decisions into one buildable plan. Never jump from the map straight to code; that skips the collapse and throws the linked detail away. Genuinely small outcomes may go straight to feature, nothing else.
