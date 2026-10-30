@@ -42,6 +42,7 @@ load_config() {
   : "${RUNNER_MAX_ISSUES:=1}"
   : "${RUNNER_MAX_ATTEMPTS:=2}"
   : "${RUNNER_TIMEOUT_MIN:=120}"
+  : "${RUNNER_CLAIM_TTL_MIN:=$((RUNNER_TIMEOUT_MIN + 30))}"
   : "${RUNNER_STATE_DIR:=${XDG_STATE_HOME:-$HOME/.local/state}/runner}"
   : "${RUNNER_WORK_DIR:=${XDG_CACHE_HOME:-$HOME/.cache}/runner}"
 }
@@ -119,7 +120,7 @@ f_ready_issues() { # dir label -> "createdAt number" for open, unassigned issues
 __PR_MAP_KEY=""
 __PR_MAP_JSON=""
 preload_pr_map() { # dir ; fetch once per repo per FORGE
-  local dir="$1" key="$FORGE:$dir" raw
+  local dir="$1" raw; local key="$FORGE:$dir"
   [[ "$__PR_MAP_KEY" == "$key" ]] && return 0
   case "$FORGE" in
     gh) raw="$(cd "$dir" && gh pr list --state open --limit 100 --json number,url,isDraft,body 2>/dev/null)" || raw="[]" ;;
@@ -163,13 +164,92 @@ f_unclaim() {
   esac
 }
 
+
+# Markers live in issue comments on GitHub, so a wiped state dir or a reboot
+# keeps the same count. Comments by other logins never count.
+me_login() { gh_me_login; }
+gh_me_login() {
+  if [[ -z "${__ME_LOGIN:-}" ]]; then
+    __ME_LOGIN="$(gh api user -q .login 2>/dev/null)" || __ME_LOGIN=""
+  fi
+  printf '%s' "$__ME_LOGIN"
+}
+f_comments() { # dir n -> JSON array of {id,author,body}
+  case "$FORGE" in
+    gh) (cd "$1" && gh issue view "$2" --comments --json comments -q '.comments // [] | map({id, author: .author.login, body})' 2>/dev/null) || echo '[]' ;;
+    *) echo '[]' ;;
+  esac
+}
+# Highest n= among my <!-- runner-attempt n=<k> outcome=<...> --> markers, counting only markers after the last reset.
+f_attempt_count() { # dir n -> number from GitHub
+  local me; me="$(gh_me_login)"
+  f_comments "$1" "$2" | jq -r --arg me "$me" '
+    [.[] | select(.author == $me) | .body // ""]
+    | (map(. | contains("<!-- runner-attempt reset -->")) | to_entries | map(select(.value) | .key) | last) as $r
+    | (if $r == null then . else .[$r + 1:] end)
+    | ([.[] | capture("<!-- runner-attempt n=(?<k>[0-9]+)")? | select(.) | .k | tonumber] | max // 0)'
+}
+f_attempt_write() { # dir n k outcome ; append one marker comment
+  case "$FORGE" in
+    gh) (cd "$1" && gh issue comment "$2" --body "<!-- runner-attempt n=$3 outcome=$4 -->
+runner: attempt $3 ended $4" >/dev/null) ;;
+  esac
+}
+f_attempt_reset() { # dir n ; one reset marker comment
+  case "$FORGE" in
+    gh) (cd "$1" && gh issue comment "$2" --body '<!-- runner-attempt reset -->
+runner: attempts reset' >/dev/null) ;;
+  esac
+}
+# My latest <!-- runner-claim run=<id> ts=<epoch> branch=<name> --> comment, "id ts branch" or empty.
+f_claim_marker() { # dir n
+  local me; me="$(gh_me_login)"
+  f_comments "$1" "$2" | jq -r --arg me "$me" '
+    [.[] | select(.author == $me) | .body // "" | capture("<!-- runner-claim run=(?<r>[^ >]+) ts=(?<t>[0-9]+) branch=(?<b>[^ >]+) -->")? | select(.) | "\(.r) \(.t) \(.b)"]
+    | last // empty'
+}
+f_claim_write() { # dir n run_id branch ; one comment per claim, edited is folded into the reaper
+  case "$FORGE" in
+    gh) (cd "$1" && gh issue comment "$2" --body "<!-- runner-claim run=$3 ts=$(date +%s) branch=$4 -->
+runner: claimed for run $3" >/dev/null) ;;
+  esac
+}
+f_assignees() { # dir n -> login per line
+  case "$FORGE" in
+    gh) (cd "$1" && gh issue view "$2" --json assignees -q '.assignees[].login' 2>/dev/null) || true ;;
+    glab) (cd "$1" && glab issue view "$2" --output json 2>/dev/null) | jq -r '.assignees[]?' || true ;;
+  esac
+}
+claim_age_min() { # ts_epoch now_epoch -> minutes; one helper for every TTL check
+  printf '%s' "$((($2 - $1) / 60))"
+}
+# Newest commit on origin/<branch> within TTL minutes? Prints yes/no.
+branch_fresh() { # dir branch ttl_min
+  local ts now
+  ts="$(git -C "$1" log -1 --format=%ct "origin/$2" 2>/dev/null)" || { printf 'no'; return; }
+  now="$(date +%s)"
+  (( (now - ts) / 60 < $3 )) && printf 'yes' || printf 'no'
+}
 # ---------- attempts and history ----------
 
+# attempts.json is a cache; the count of record comes from GitHub markers.
 attempts_of() { jq -r --arg k "$1" '.[$k] // 0' "$(state attempts.json)"; }
-set_attempts() { # key delta|clear
+set_attempts() { # key n|delta|clear ; syncs the local cache only
   local f; f="$(state attempts.json)"
-  if [[ "$2" == clear ]]; then jq --arg k "$1" 'del(.[$k])' "$f"; else jq --arg k "$1" '.[$k] = ((.[$k] // 0) + 1)' "$f"; fi >"$f.tmp"
+  if [[ "$2" == clear ]]; then jq --arg k "$1" 'del(.[$k])' "$f";
+  elif [[ "$2" =~ ^[0-9]+$ ]]; then jq --arg k "$1" --argjson n "$2" '.[$k] = $n' "$f";
+  else jq --arg k "$1" '.[$k] = ((.[$k] // 0) + 1)' "$f"; fi >"$f.tmp"
   mv "$f.tmp" "$f"
+}
+attempts_live() { # dir n -> count from GitHub, cache synced (GitLab: local cache only)
+  local key="$1#$2" live=0
+  if [[ "$FORGE" == gh ]]; then
+    live="$(f_attempt_count "$1" "$2")"
+    set_attempts "$key" "$live"
+  else
+    live="$(attempts_of "$key")"
+  fi
+  printf '%s' "$live"
 }
 record() { # repo n outcome pr log detail
   jq -cn --arg ts "$(date -Is)" --arg repo "$1" --arg n "$2" --arg outcome "$3" --arg pr "$4" \
@@ -179,25 +259,74 @@ record() { # repo n outcome pr log detail
 
 # ---------- run ----------
 
+# The reaper releases an orphan claim only when every guard holds:
+# the marker is past RUNNER_CLAIM_TTL_MIN, I am the sole assignee,
+# no open PR closes the issue, and the recorded branch has no fresh
+# commit. An issue assigned to a human is never touched. Runs are
+# serialized by the flock in cmd_run, so the lock is free here.
+reap_one() { # dir n ; releases an orphan claim or leaves it alone
+  local dir="$1" n="$2" me marker run_id ts branch age a seen_me=0 other=0
+  me="$(gh_me_login)"
+  [[ -n "$me" ]] || return 0
+  marker="$(f_claim_marker "$dir" "$n")"
+  [[ -n "$marker" ]] || return 0
+  read -r run_id ts branch <<<"$marker"
+  age="$(claim_age_min "$ts" "$(date +%s)")"
+  ((age >= RUNNER_CLAIM_TTL_MIN)) || return 0
+  while read -r a; do
+    [[ -z "$a" ]] && continue
+    if [[ "$a" == "$me" ]]; then seen_me=1; else other=1; fi
+  done < <(f_assignees "$dir" "$n")
+  ((seen_me && !other)) || return 0
+  [[ -z "$(f_linked_pr "$dir" "$n" || true)" ]] || return 0
+  [[ "$(branch_fresh "$dir" "$branch" "$RUNNER_CLAIM_TTL_MIN")" == no ]] || return 0
+  log "releasing orphan claim $dir#$n (run $run_id, age ${age}m)"
+  f_unclaim "$dir" "$n"
+  if [[ "$FORGE" == gh ]]; then
+    local k; k=$(( $(f_attempt_count "$dir" "$n") + 1 ))
+    f_attempt_write "$dir" "$n" "$k" interrupted
+    set_attempts "$dir#$n" "$k"
+  else
+    set_attempts "$dir#$n" +1
+  fi
+  record "$dir" "$n" interrupted "" "" "orphan claim released at next start"
+}
 recover_stale() { # claims a dead run left behind; safe because we hold the lock
   local f dir n; f="$(state active)"
-  [[ -s "$f" ]] || return 0
-  while read -r dir n; do
-    [[ -n "$n" ]] || continue
-    resolve_repo "$dir"
-    log "releasing stale claim $dir#$n"
-    f_unclaim "$dir" "$n"
-    if [[ -n "$(f_linked_pr "$dir" "$n" || true)" ]]; then
-      record "$dir" "$n" recovered_pr "" "" "previous run ended without reporting"
-    else
-      set_attempts "$dir#$n" +1; record "$dir" "$n" interrupted "" "" "previous run ended without reporting"
-    fi
-  done <"$f"
-  : >"$f"
+  if [[ -s "$f" ]]; then
+    while read -r dir n; do
+      [[ -n "$n" ]] || continue
+      resolve_repo "$dir"
+      [[ "$FORGE" == unsupported ]] && continue
+      reap_one "$dir" "$n"
+    done <"$f"
+    : >"$f"
+  fi
+  local repo
+  for repo in $RUNNER_REPOS; do
+    resolve_repo "$repo"
+    [[ "$FORGE" == gh ]] || continue
+    git -C "$repo" fetch --quiet --prune origin || continue
+    preload_pr_map "$repo"
+    while read -r n; do
+      [[ -n "$n" ]] || continue
+      reap_one "$repo" "$n"
+    done < <((cd "$repo" && gh issue list --state open --assignee @me --limit 100 --json number -q '.[].number' 2>/dev/null) || true)
+  done
 }
 
-write_prompt() { # dir n file
-  cat >"$3" <<PROMPT
+write_prompt() { # dir n file [resume_branch]
+  if [[ -n "${4:-}" ]]; then
+    cat >"$3" <<PROMPT
+/whips Pick up issue #$2 with playbooks/pickup.md. This is an unattended runner run, so no human is watching.
+
+- Continue from branch $4, checked out in the current directory. Do not create a new branch.
+- The prior run timed out or ended without a PR; its trail is in the issue comments and this branch.
+- Otherwise finish with playbooks/opening-a-pr.md, landing per the risk tier (low-risk PASS lands, high waits for the human). Never enable auto-merge.
+- Never wait for an answer. A decision you cannot make goes into the PR body or an issue comment.
+PROMPT
+  else
+    cat >"$3" <<PROMPT
 /whips Pick up issue #$2 with playbooks/triage.md intake. This is an unattended runner run, so no human is watching.
 
 - Work only on #$2, in the current directory: a fresh worktree detached at the default branch. Create your own branch per playbooks/opening-a-pr.md.
@@ -206,28 +335,76 @@ write_prompt() { # dir n file
 - Otherwise finish with playbooks/opening-a-pr.md, landing per the risk tier (low-risk PASS lands, high waits for the human). Never enable auto-merge.
 - Never wait for an answer. A decision you cannot make goes into the PR body or an issue comment.
 PROMPT
+  fi
+}
+
+# Remote branch that holds prior work for issue n, or empty. The claim
+# marker names the branch; the WIP branch is the timeout fallback.
+resume_branch() { # dir n -> branch name or empty
+  local marker branch
+  marker="$(f_claim_marker "$1" "$2")"
+  if [[ -n "$marker" ]]; then
+    branch="${marker##* }"
+    git -C "$1" show-ref --verify --quiet "refs/remotes/origin/$branch" && { printf '%s' "$branch"; return; }
+  fi
+  if git -C "$1" show-ref --verify --quiet "refs/remotes/origin/wip/runner-issue-$2"; then
+    printf 'wip/runner-issue-%s' "$2"
+  fi
+}
+# Push timeout/no_pr work so a later run resumes it. Follows the pause
+# rule: one wip: commit for a dirty tree, then push to wip/runner-issue-N.
+push_wip() { # dir wt n ; prints the pushed branch or empty
+  local dir="$1" wt="$2" n="$3"; local branch="wip/runner-issue-$n"
+  git -C "$wt" rev-parse --git-dir >/dev/null 2>&1 || return 0
+  if ! git -C "$wt" log --oneline -1 >/dev/null 2>&1; then
+    [[ -z "$(git -C "$wt" status --porcelain)" ]] && return 0
+  fi
+  if [[ -n "$(git -C "$wt" status --porcelain)" ]]; then
+    git -C "$wt" add -A 2>/dev/null
+    git -C "$wt" -c user.name=runner -c user.email=runner@local \
+      commit --quiet -m "wip: unattended run interrupted on issue #$n" \
+      -m "Resumable via playbooks/pickup.md." || return 0
+  fi
+  git -C "$wt" rev-list --count HEAD >/dev/null 2>&1 || return 0
+  git -C "$wt" branch -f "$branch" HEAD >/dev/null 2>&1
+  git -C "$wt" push --quiet origin "$branch" >/dev/null 2>&1 || return 1
+  printf '%s' "$branch"
 }
 
 run_one() { # dir n
-  local dir="$1" n="$2" key="$1#$2" ts wt logf prompt rc=0
+  local dir="$1" n="$2" key="$1#$2" ts wt logf prompt rc=0 resume="" run_id branch="" resume_add_failed=""
   ts="$(date +%Y%m%d-%H%M%S)-$$"
   logf="$(state logs)/$(basename "$dir")-$n-$ts.log"
   prompt="${logf%.log}.prompt.md"
+  run_id="$(basename "$dir")-$n-$ts"
+
+  refresh_pr_map "$dir"
+  [[ -z "$(f_linked_pr "$dir" "$n" || true)" ]] || { log "skip $key: PR opened since listing"; return; }
+  resume="$(resume_branch "$dir" "$n")"
+  [[ -z "$resume" ]] || log "resuming $key from $resume"
 
   f_claim "$dir" "$n" || { log "could not claim $key"; return; }
+  [[ "$FORGE" == gh ]] && f_claim_write "$dir" "$n" "$run_id" "${resume:-wip/runner-issue-$n}"
   printf '%s %s\n' "$dir" "$n" >>"$(state active)"
   wt="$RUNNER_WORK_DIR/worktrees/$(basename "$dir")-$n-$ts"
   mkdir -p "$(dirname "$wt")"
-  if ! git -C "$dir" worktree add --quiet --detach "$wt" "$(default_ref "$dir")" >&2; then
-    f_unclaim "$dir" "$n"; sed -i "\|^$dir $n\$|d" "$(state active)"
-    set_attempts "$key" +1; record "$dir" "$n" setup_failed "" "" "git worktree add failed"; return
+  if [[ -n "$resume" ]]; then
+    git -C "$dir" worktree add --quiet "$wt" "origin/$resume" >&2 || resume_add_failed=1
   fi
-  write_prompt "$dir" "$n" "$prompt"
+  if [[ -z "$resume" ]] || [[ -n "$resume_add_failed" ]]; then
+    [[ -z "$resume" ]] || log "resume branch $resume gone, starting fresh"
+    resume=""
+    if ! git -C "$dir" worktree add --quiet --detach "$wt" "$(default_ref "$dir")" >&2; then
+      f_unclaim "$dir" "$n"; sed -i "\|^$dir $n\$|d" "$(state active)"
+      fail_attempt "$dir" "$n" setup_failed; record "$dir" "$n" setup_failed "" "" "git worktree add failed"; return
+    fi
+  fi
+  write_prompt "$dir" "$n" "$prompt" "$resume"
 
   log "running agent on $key (log: $logf)"
   (
     cd "$wt"
-    export RUNNER_MODEL RUNNER_ISSUE="$n" RUNNER_WORKTREE="$wt" RUNNER_PROMPT_FILE="$prompt"
+    export RUNNER_MODEL RUNNER_ISSUE="$n" RUNNER_WORKTREE="$wt" RUNNER_PROMPT_FILE="$prompt" RUNNER_RESUME_BRANCH="$resume"
     RUNNER_PROMPT="$(cat "$prompt")"; export RUNNER_PROMPT
     timeout --kill-after=60 "$((RUNNER_TIMEOUT_MIN * 60))" bash -c "$RUNNER_AGENT_CMD"
   ) >"$logf" 2>&1 </dev/null || rc=$?
@@ -235,24 +412,44 @@ run_one() { # dir n
   local pr num url draft outcome detail="agent exit $rc"
   refresh_pr_map "$dir"; pr="$(f_linked_pr "$dir" "$n" || true)"; url=""
   if [[ -n "$pr" ]]; then
-    read -r num url draft <<<"$pr"; outcome=pr_opened; set_attempts "$key" clear
+    read -r num url draft <<<"$pr"; outcome=pr_opened; clear_attempts "$dir" "$n"
   elif f_has_label "$dir" "$n" "$LABEL_NEEDS_INFO"; then
-    outcome=needs_info; set_attempts "$key" clear
+    outcome=needs_info; clear_attempts "$dir" "$n"
   elif ((rc == 124 || rc == 137)); then
-    outcome=timeout; set_attempts "$key" +1
+    outcome=timeout; fail_attempt "$dir" "$n" timeout
   else
-    outcome=no_pr; set_attempts "$key" +1
+    outcome=no_pr; fail_attempt "$dir" "$n" no_pr
   fi
   f_unclaim "$dir" "$n"
   sed -i "\|^$dir $n\$|d" "$(state active)"
   if [[ "$outcome" == pr_opened || "$outcome" == needs_info ]]; then
     git -C "$dir" worktree remove --force "$wt" >/dev/null 2>&1 || true
   else
-    detail="$detail; worktree kept at $wt"
+    branch=""; if branch="$(push_wip "$dir" "$wt" "$n")"; then
+      git -C "$dir" worktree remove --force "$wt" >/dev/null 2>&1 || true
+    else
+      log "wip push failed for $key, worktree kept at $wt"
+    fi
+    if [[ -n "$branch" ]]; then
+      detail="$detail; wip pushed to $branch"
+    else
+      detail="$detail; no commits to push"
+    fi
   fi
   record "$dir" "$n" "$outcome" "$url" "$logf" "$detail"
   SUMMARY+=("$(basename "$dir")#$n $outcome${url:+ $url}")
 }
+# One failed attempt: append the GitHub marker and sync the cache.
+fail_attempt() { # dir n outcome
+  if [[ "$FORGE" == gh ]]; then
+    local k; k=$(( $(f_attempt_count "$1" "$2") + 1 ))
+    f_attempt_write "$1" "$2" "$k" "$3"
+    set_attempts "$1#$2" "$k"
+  else
+    set_attempts "$1#$2" +1
+  fi
+}
+clear_attempts() { set_attempts "$1#$2" clear; }
 
 cmd_run() {
   load_config; require_config
@@ -273,7 +470,7 @@ cmd_run() {
     while read -r created n; do
       [[ -n "${n:-}" ]] || continue
       ((started < RUNNER_MAX_ISSUES)) || break
-      (($(attempts_of "$dir#$n") < RUNNER_MAX_ATTEMPTS)) || continue
+      (($(attempts_live "$dir" "$n") < RUNNER_MAX_ATTEMPTS)) || continue
       [[ -z "$(f_linked_pr "$dir" "$n" || true)" ]] || continue
       run_one "$dir" "$n"; started=$((started + 1))
     done < <(f_ready_issues "$dir" "$LABEL_READY" | sort)
@@ -293,7 +490,7 @@ cmd_check() { # exit 0 when something is eligible, 1 when not
     preload_pr_map "$dir"
     while read -r created n; do
       [[ -n "${n:-}" ]] || continue
-      (($(attempts_of "$dir#$n") < RUNNER_MAX_ATTEMPTS)) || continue
+      (($(attempts_live "$dir" "$n") < RUNNER_MAX_ATTEMPTS)) || continue
       [[ -z "$(f_linked_pr "$dir" "$n" || true)" ]] || continue
       printf 'eligible: %s#%s (since %s)\n' "$dir" "$n" "$created"; exit 0
     done < <(f_ready_issues "$dir" "$LABEL_READY" | sort)
@@ -311,7 +508,13 @@ cmd_status() {
   return 0
 }
 
-cmd_reset() { load_config; require_config; set_attempts "${1:?usage: reset <repo-dir>#<n>}" clear; }
+cmd_reset() {
+  load_config; require_config
+  local key="${1:?usage: reset <repo-dir>#<n>}"; local dir="${key%%#*}" n="${key##*#}"
+  resolve_repo "$dir"
+  [[ "$FORGE" == gh ]] && f_attempt_reset "$dir" "$n"
+  set_attempts "$key" clear
+}
 
 # ---------- setup: detect, ask, persist ----------
 
