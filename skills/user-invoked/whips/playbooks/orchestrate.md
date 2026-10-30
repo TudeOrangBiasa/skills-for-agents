@@ -24,4 +24,20 @@ GOAL (one sentence, executable by a stranger with no chat access), SCOPE (writab
 6. **Verify to the ledger.** Ready-check verdicts keyed by PR plus head SHA are the ledger (a new SHA re-verifies). Verifier output is an input, not a verdict. Behavioral work needs better than type-check-only. Failed verification gets a fix unit, never a bare re-verify. Externalize on landing (pushed branch, recorded verdict, receipts in the trail): work existing only on one dead machine was never done.
 7. **Close.** Drain the final inbox, reconcile every spawned agent to a terminal row, confirm the predicate on the real artifact, confirm every landed PR holds a verdict for its current head, audit the trail per show-me-your-work with its cross-model review, encode recurring corrections into standing orders. Escalation reaches the human batched (irreversible actions, genuine product calls, contradicted standing orders, dead ends surviving replans); everything else acts and logs. Mid-run discoveries fix only frontier-blockers; the rest parks in follow-ups.
 
+## Store layout and ledger
+
+No new CLI. State is two TSV files plus the tracker mirror. Units live in `.scratch/whips/<run>/units.tsv` (one row per unit: id, track, goal, branch, owner, state). Verdicts live in `.scratch/whips/<run>/ledger.tsv`, one row per PR plus head SHA appended via `show-me-your-work/scripts/log.sh <run>/ledger.tsv <phase> <decision> <why> <evidence> <result>`; a new head SHA re-verifies, never inherits. Example row: `2026-10-31T00:00:00Z	verify	repo#12@abc1234	ready	ready-check PASS at abc1234	VERIFIED`. Mirror both to the tracker on landing: unit rows as `whips-run-log` marker comments, verdict rows as PR comments, so a dead laptop loses nothing. No `ledger-check` script yet; `pr-status` answers live state, the ledger answers verdict history.
+
+## Stack safety
+
+Exactly one stacker per stack mutates topology; workers never rebase, merge, or retarget (step 5, FORBIDDEN in every brief). Advance only on merge or reported head SHAs. A base close or retarget orphans the chain above it, so both go through the stacker. A new head SHA voids prior verdicts for that PR; restack children before re-verifying.
+
+## Liveness and failure
+
+Stuck means no push and no trail row past the unit TIMEBOX, or an error loop with identical failures twice. Zombie means a worker that returned late after replacement: check its findings against current PR state, hand anything unique to a fresh worker, never resume it. Replace (never resume-chain) on stuck; replan the unit smaller after two replacements. Dead ends surviving a replan escalate.
+
+## Escalation
+
+Batch to the human only: irreversible actions, genuine product calls no experiment settles, contradicted standing orders, dead ends surviving replans. Everything else (rebase mechanics, retries, flakes, review triage, keep-going) acts and logs under the full-autonomy grant. Deviations from pstack, all deliberate: no `orch` CLI (log.sh plus tracker mirror instead), verification is the mode verifier plus self-proof (not CI-only plus independent swarm), landing follows the risk tier (not operator-only shipping).
+
 **Reply:** at checkpoints and close: predicate plus count, tracks and landings, frontier (PR list plus SHAs), verdict summary, abandons with reasons, gates awaiting the human (the only asks), trail path. Numbers from the records, not narrative, with PR links.
