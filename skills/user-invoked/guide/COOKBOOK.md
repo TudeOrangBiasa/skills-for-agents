@@ -50,7 +50,7 @@ flowchart TD
     Q -->|no| S["/to-spec"]
     P --> S
     S --> T["/to-tickets"] --> W["/whips per ticket, fresh context between"]
-    W --> B["/babysit to green"] --> R["/ready-check: verdict + risk label"] --> M["You merge per plan"]
+    W --> B["/babysit to green"] --> R["/ready-check: verdict + risk label"] --> M["Land per mode: solo verifier, team checks"]
 ```
 
 One unbroken window for discuss through tickets; each whips run starts fresh. Thin fog skips the hops via drive-through (recipe 0). Gate to a dedicated session only when the fog needs its own window.
@@ -83,12 +83,12 @@ When: sleep while the queue resolves itself.
 flowchart TD
     T["/triage: ripen issues"] --> N["/runner: queue runs itself"]
     N --> M["Morning: /ketchup"]
-    M --> R["/ready-check"] --> G["You merge the low batch, review high"]
+    M --> R["/ready-check"] --> G["Land per mode; humans at triage"]
 ```
 
 Alternative for one long unattended run: `/whips` with a checkable predicate plus budget, not a queue.
 
-Example: 5 `ready-for-agent` issues → `/runner` on schedule → morning `/ketchup` ("2 action items: merge low batch, review Seeder high") → `/ready-check` → merge the low batch, review high.
+Example: 5 `ready-for-agent` issues → `/runner` on schedule → morning `/ketchup` ("2 action items: land solo batch, triage Seeder") → `/ready-check` → land per mode, humans at triage.
 
 ## 5. UI change with proof
 
@@ -142,7 +142,7 @@ When: the chat outran you, or one agent message does not land.
 - Confused by one message: `/wait-what` (visual re-pitch + plain sentences).
 - Both run mid-conversation inside other skills.
 
-Example: morning after a 5-issue runner queue, `/ketchup` answers "2 action items: merge low batch (link), review Seeder high (summary + recommendation)". One confusing message mid-flow, `/wait-what` re-pitches it visually.
+Example: morning after a 5-issue runner queue, `/ketchup` answers "2 action items: land solo batch (link), triage Seeder (summary + recommendation)". One confusing message mid-flow, `/wait-what` re-pitches it visually.
 
 ## 9. Close the loop
 
@@ -185,7 +185,7 @@ Example: navbar variants scattered across 4 files, same assumption repeated. `/d
 
 **Spec and tickets already exist?** → `/whips` per ticket, blockers-first (recipe 2).
 
-**PRs green, which merges first?** → `/whips` with "check on PR X" or "merge plan": the ready-check playbook verifies each independently and orders high-risk review first, low-risk quick batch second.
+**PRs green, which merges first?** → `/whips` with "check on PR X" or "merge plan": the ready-check playbook verifies each independently and orders the plan by risk and mode (solo verifier, team checks).
 
 **Empty repo with PRD.md but confused about the stack?** → `/discuss-with-docs` first: settle backend/frontend (spike with `/prototype` when running code can answer the fork), record the stack as an ADR (hard-to-reverse by definition), seed `GLOSSARY.md`. Then `/setup-meta` (tracker, docs, standards), `/to-spec` built from the PRD, `/to-tickets`, `/whips` per ticket.
 
@@ -215,9 +215,9 @@ Example: navbar variants scattered across 4 files, same assumption repeated. `/d
 
 **Starting fresh but recent work spans several chats?** → `/recall`: scope the window, mine repo history plus session traces, verify live, capsule brief with tagged threads. One specific run or branch is whips pickup; this chat alone is `/ketchup`. Going forward, keep decisions in ADRs and tickets so memory lives in the repo, not in sessions. No skill recovers what was never written down.
 
-**Multi-day program with one approval up front?** → `figure-it-out` for the designed phase list (approve once), `runner` or a single unattended run to execute, scheduled `ready-check` to land qualifying batches. Review high-risk only; the design approval plus tiered landing carry the rest.
+**Multi-day program with one approval up front?** → `figure-it-out` for the designed phase list (approve once), `runner` or a single unattended run to execute, scheduled `ready-check` to land qualifying batches. Humans decide at triage; the design approval plus tiered verification carry the rest.
 
-**Must AFK with a deadline near, parallel tickets, no QA time?** → split first: frontier tickets (behavior already answers every open question) run now; tickets genuinely needing you wait with an explicit "needs decision X" note. Frontier goes to `/runner` before you leave (fresh worktree each, ready PRs only, set max-issues). QA does not vanish, it compacts: per-slice tests plus verification evidence ride in each PR, and your morning is `/ketchup` plus `/ready-check` (independent verdicts, merge the low batch, review high). Decisions the requested behavior already answers are not decisions: say so in the ticket and let them run.
+**Must AFK with a deadline near, parallel tickets, no QA time?** → split first: frontier tickets (behavior already answers every open question) run now; tickets genuinely needing you wait with an explicit "needs decision X" note. Frontier goes to `/runner` before you leave (fresh worktree each, ready PRs only, set max-issues). QA does not vanish, it compacts: per-slice tests plus verification evidence ride in each PR, and your morning is `/ketchup` plus `/ready-check` (independent verdicts, land per mode, humans at triage). Decisions the requested behavior already answers are not decisions: say so in the ticket and let them run.
 
 **Overnight run missed the spec, start over in a new session?** → no. Morning `/ketchup`, then check the Spec axis (`/code-review` Standards + Spec, or the ready-check verdict). Then `/whips` pickup on the open PR with the spec plus the missed point: small miss means a fix round on the same PR, big miss means a fresh ticket. Either way it runs fresh by design, never as a resume-chain of the night session.
 

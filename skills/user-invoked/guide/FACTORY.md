@@ -9,7 +9,7 @@ Credit: map after Matt Pocock, see [CREDITS.md](./CREDITS.md).
 
 ## TL;DR
 
-This repo turns a vague idea into a reviewed ready PR through one fixed factory: map first, guardrails second, then small walked tickets. Agents run AFK inside that loop with fresh context per ticket, and every claim leaves proof in the PR. Strategy and team layers keep the loop honest: shared language, written decisions, sceptical review, and ownership of each diff. You spend review time only on high-risk merges, and low-risk PASS batches land on their own.
+This repo turns a vague idea into a reviewed ready PR through one fixed factory: map first, guardrails second, then small walked tickets. Agents run AFK inside that loop with fresh context per ticket, and every claim leaves proof in the PR. Strategy and team layers keep the loop honest: shared language, written decisions, sceptical review, and ownership of each diff. Solo repos land on the local verifier, team repos on required checks; risk tiers add verification (fresh-context run, blast-radius, adversarial review) where the blast radius earns it.
 
 ## Overview
 
