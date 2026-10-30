@@ -108,7 +108,7 @@ Let them edit before writing.
 
 Edit the repo's `AGENTS.md`, creating it if it does not exist.
 
-If an `## Agent skills` block already exists in the chosen file, update its contents in-place rather than appending a duplicate. Don't overwrite user edits to the surrounding sections.
+If an `## Agent skills` block already exists in the chosen file, update its contents in-place rather than appending a duplicate. Don't overwrite user edits to the surrounding sections. On re-run, detect legacy landing text ("Open PRs as drafts", "never merge a `risk:high`", "agents must never merge"): show it to the user and offer the replacement; never silently overwrite.
 
 The block:
 
@@ -147,18 +147,23 @@ The block:
 
 One door into where skills write and read. See `docs/agents/docs-layout.md`.
 
+### Landing
+
+[one line: solo verifier or team checks]. See `docs/agents/landing-policy.md`.
+
 ### Meta docs
 
 [one-line summary of what was scaffolded: DESIGN.md, standards file name, commit format]. PR body needs no line: the `pr` skill is the format.
 ```
 
-Include the `### Triage labels` sub-block, and write `docs/agents/triage-labels.md`, only when `triage` is installed and Section B ran. When it isn't, both are omitted. Include the `### Models` sub-block, and write `docs/agents/models.md`, only when Section F ran with **yes**. Include the `### Verifier` sub-block, and write `docs/agents/verifier.md`, only for solo repos. Always include the `### Unattended runs`, `### Repo mode`, and `### Docs layout` sub-blocks, and always write `docs/agents/unattended.md`, `docs/agents/repo-mode.md`, and `docs/agents/docs-layout.md`.
+Include the `### Triage labels` sub-block, and write `docs/agents/triage-labels.md`, only when `triage` is installed and Section B ran. When it isn't, both are omitted. Include the `### Models` sub-block, and write `docs/agents/models.md`, only when Section F ran with **yes**. Include the `### Verifier` sub-block, and write `docs/agents/verifier.md`, only for solo repos. Always include the `### Unattended runs`, `### Repo mode`, `### Docs layout`, and `### Landing` sub-blocks, and always write `docs/agents/unattended.md`, `docs/agents/repo-mode.md`, `docs/agents/docs-layout.md`, and `docs/agents/landing-policy.md`.
 
 Then write the docs files using the seed templates in this skill folder as a starting point:
 
 - [repo-mode.md](./repo-mode.md): solo or team (Section H, always)
 - [verifier.md](./verifier.md): verify command (Section I, solo only)
 - [docs-layout.md](./docs-layout.md): map of where skills write and read (Section J, always)
+- [landing-policy.md](./landing-policy.md): landing rules reading repo-mode plus verifier (always)
 - [issue-tracker-gitlab.md](./issue-tracker-gitlab.md): GitLab issue tracker
 - [issue-tracker-local.md](./issue-tracker-local.md): local-markdown issue tracker
 - [triage-labels.md](./triage-labels.md): label mapping (only if `triage` is installed)
