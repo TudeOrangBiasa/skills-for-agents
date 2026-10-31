@@ -9,6 +9,7 @@ One door into where skills write and read. Scaffolded by `/setup-repo` Section J
 | Triage labels | `/setup-repo` Section B | `ship-triage`, whips playbooks | `docs/agents/triage-labels.md` | scaffolded when `ship-triage` installed |
 | Model map | `/setup-repo` Section F | whips subagent roles | `docs/agents/models.md` | scaffolded on yes |
 | Unattended config | `/setup-repo` Section G | `ship-runner`, unattended runs | `docs/agents/unattended.md` | scaffolded |
+| Harness config | `runner.sh setup` | `ship-runner` every run | `docs/agents/harness.md` | lazy (first setup writes it) |
 | Repo mode | `/setup-repo` Section H | playbooks needing solo vs team | `docs/agents/repo-mode.md` | scaffolded |
 | Verifier | `/setup-repo` Section I | pre-push hook, agent before PR | `docs/agents/verifier.md` | scaffolded for solo repos |
 | This map | `/setup-repo` Section J | humans and agents | `docs/agents/docs-layout.md` | scaffolded |
