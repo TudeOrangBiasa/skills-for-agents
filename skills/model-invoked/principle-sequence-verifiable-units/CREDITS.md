@@ -1,3 +1,0 @@
-# Credits
-
-Before/after bracket execution, clean-trunk baselining, story-ordered delivery (failing test first, subtraction before reshape, baseline before treatment, scaffold before feature), and the prove-it-works plus build-the-lever complement adapted from the pstack skill set by poteto ([Lauren Tan](https://x.com/poteto), MIT). Rewritten to this repo voice: rule-first shape with Why and a repo-local example (stacking a skill split as leaves, then index, then monolith trim), no harness-specific wording. Copied in, not depended on, so standalone installs keep working without the upstream repo.

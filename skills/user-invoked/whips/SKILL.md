@@ -88,7 +88,7 @@ A skill that breaks mid-run gets fixed in this PR, never silently worked around,
 
 A step that names a user-invoked skill (`/wayfinder`, `/to-spec`, `/to-tickets`, `/deepen`, `/discuss-with-docs`) is a human gate: tell the user to run it and wait at that step. No skill can fire a user-invoked one, `/whips` included.
 
-[PRINCIPLES.md](PRINCIPLES.md) indexes the principles behind these triggers. Read the full leaf for each principle you use before the first design decision.
+[PRINCIPLES.md](PRINCIPLES.md) indexes the principles behind these triggers. Read the full file for each principle you use before the first design decision.
 
 ## 4. Enforce the HIT gates, in order
 
@@ -130,4 +130,4 @@ Open the closing PR per `playbooks/opening-a-pr.md`: always ready, one risk labe
 
 ## 8. Reply
 
-What was built, what was chosen and why, the playbook plus skipped steps, open decisions. Name each principle that changed a decision and the choice it changed, citing only principles whose leaf you read this session. Add a short "Why this way" in plain words for the key decisions, written for a developer still building experience: what the alternative was and why it lost. Frame impact for the consumer of the change and for its maintainer. Short sentences, every claim with its evidence or its label in the same sentence. Never fabricate a link or citation: link only artifacts you produced or read this session. Never hand over a check you could have run.
+What was built, what was chosen and why, the playbook plus skipped steps, open decisions. Name each principle that changed a decision and the choice it changed, citing only principles whose file you read this session. Add a short "Why this way" in plain words for the key decisions, written for a developer still building experience: what the alternative was and why it lost. Frame impact for the consumer of the change and for its maintainer. Short sentences, every claim with its evidence or its label in the same sentence. Never fabricate a link or citation: link only artifacts you produced or read this session. Never hand over a check you could have run.

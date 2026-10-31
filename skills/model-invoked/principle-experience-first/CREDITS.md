@@ -1,3 +1,0 @@
-# Credits
-
-Delight over implementation convenience, the every-control-must-be-justified bar, ship-less-ship-better, prototype-before-committing, tighten-the-core-loop, get-the-details-right, and the wide user definition (end user, importing colleague, next maintainer) with the sequence-vs-target split against foundational thinking adapted from the pstack `principle-experience-first` skill set by poteto ([Lauren Tan](https://x.com/poteto), MIT). Rewritten to this repo conventions: fixed leaf sections (rule, Why, scope, steps, repo example, reply contract), cross-references point at our skills. Copied in, not depended on, so standalone installs keep working without the upstream repo.

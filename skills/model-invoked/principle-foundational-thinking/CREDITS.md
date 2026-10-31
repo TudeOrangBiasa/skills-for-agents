@@ -1,3 +1,0 @@
-# Credits
-
-Data structures before logic, structural versus code-level decisions, DRY the structure not every line, the concurrency corollary, scaffold sequencing, coherent increments, and subtraction before scaffolding adapted from the pstack skill set by poteto ([Lauren Tan](https://x.com/poteto), MIT). Rewritten to this repo voice: rule-first shape with Why and a repo-local example, no harness-specific wording, with the OMP carrier named explicitly (the `codebase-design` vocabulary and the `whips` "name the data shape first" and `architect` triggers). Copied in, not depended on, so standalone installs keep working without the upstream repo.

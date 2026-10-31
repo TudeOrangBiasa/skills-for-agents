@@ -8,7 +8,7 @@ paths:
 
 # TypeScript best practices
 
-Apply the [type-system-discipline](../../model-invoked/principle-type-system-discipline/SKILL.md) principle skill first.
+Apply the [type-system-discipline](../principles/principles/type-system-discipline.md) principle (`principles` skill) first.
 
 | Rule | Summary |
 |------|---------|
@@ -23,7 +23,7 @@ Apply the [type-system-discipline](../../model-invoked/principle-type-system-dis
 | Type guards | Must verify the claim. A lying guard is worse than `as`. Name them `isX` or `hasX`. |
 | Exhaustiveness | Inline `const _exhaustive: never = x;` in default arms so the compiler errors when a new variant is added. |
 | `satisfies` over `as` | Validates the value without widening literal types. |
-| Boundary validation | Parse where data crosses in, into a named domain type. Trust types inside. See the [boundary-discipline](../../model-invoked/principle-boundary-discipline/SKILL.md) principle skill. |
+| Boundary validation | Parse where data crosses in, into a named domain type. Trust types inside. See the [boundary-discipline](../principles/principles/boundary-discipline.md) principle (`principles` skill). |
 | Schema-derived types | Reach for `Pick`/`Omit`/`Parameters`/`ReturnType`/`Awaited`/`typeof` before declaring a new interface. |
 | Object args | Pass objects, not positional, so argument order is self-documenting. Skip on hot paths. |
 | Real tests | Do not mock what you can run. Prefer the real test primitives of the repo. |
