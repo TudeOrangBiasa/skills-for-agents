@@ -48,6 +48,9 @@ load_config() {
   : "${RUNNER_TRIAGE_PER_TICK:=3}"
   : "${RUNNER_TRIAGE_AGENT_DECIDE:=0}"
   : "${RUNNER_TRIAGE_LIST_LIMIT:=60}"
+  : "${RUNNER_FIX_MAX_ATTEMPTS:=3}"
+  : "${RUNNER_FIX_AUTHORS:=}"
+  : "${RUNNER_FIX_PER_PASS:=10}"
 }
 
 require_config() {
@@ -431,10 +434,10 @@ run_one() { # dir n
   f_unclaim "$dir" "$n"
   sed -i "\|^$dir $n\$|d" "$(state active)"
   if [[ "$outcome" == pr_opened || "$outcome" == needs_info ]]; then
-    git -C "$dir" worktree remove --force "$wt" >/dev/null 2>&1 || true
+    git -C "$dir" worktree remove -f "$wt" >/dev/null 2>&1 || true
   else
     branch=""; if branch="$(push_wip "$dir" "$wt" "$n")"; then
-      git -C "$dir" worktree remove --force "$wt" >/dev/null 2>&1 || true
+      git -C "$dir" worktree remove -f "$wt" >/dev/null 2>&1 || true
     else
       log "wip push failed for $key, worktree kept at $wt"
     fi
@@ -868,6 +871,286 @@ cmd_triage() {
   else echo 'runner: triage found nothing eligible'; fi
 }
 
+# ---------- fix-ci: team CI/conflict repair pass (issue #56) ----------
+#
+# Team repos only: solo repos have no hosted CI to poll, so every repo here
+# must carry mode team in docs/agents/repo-mode.md. One pass lists the open
+# PRs per repo, classifies each with the whips pr-status script, claims the
+# red or conflicted ones through labels, and spawns RUNNER_AGENT_CMD once
+# per claim. State sits in GitHub labels and marker comments, so a reboot or
+# a rerun reads the same state. Never merges, never closes, never runs a
+# bare force push; the agent contract allows only a guarded lease push.
+FIX_LABEL_CLAIM="agent:fixing"
+FIX_LABEL_HUMAN="needs-human"
+fix_pr_status_bin() {
+  local sib override
+  sib="$(cd "$(dirname "$0")/../../whips/scripts" 2>/dev/null && pwd)/pr-status"
+  override="$(command -v pr-status 2>/dev/null || true)"
+  if [[ -n "$override" && "$override" != "$sib" ]]; then printf '%s' "$override"; return 0; fi
+  if [[ -x "$sib" ]]; then printf '%s' "$sib"; return 0; fi
+  if [[ -n "$override" ]]; then printf '%s' "$override"; return 0; fi
+  log "fix-ci: pr-status not found, skipping"; return 1
+}
+fix_repo_mode() { # dir -> solo|team|missing
+  local doc line
+  doc="$(repo_doc "$1" repo-mode.md || true)"
+  [[ -n "$doc" ]] || { printf 'missing'; return; }
+  line="$(grep -i 'mode' <<<"$doc" | sed -n 's/.*\(solo\|team\).*/\1/p' | head -n1 || true)"
+  printf '%s' "${line:-missing}"
+}
+fix_is_team_repo() { # dir ; fix-ci runs only where repo mode is team
+  [[ "$(fix_repo_mode "$1")" == "team" ]]
+}
+fix_pr_list() { # dir -> raw JSON array of open PRs (stub-safe field set)
+  (cd "$1" && gh pr list --state open --limit 100 \
+    --json number,headRefName,headRefOid,isCrossRepository,author,labels,mergeable)
+}
+fix_classify_one() { # dir n -> state line (pr-status exit codes signal state, so only an empty doc fails)
+  local doc
+  doc="$(cd "$1" && "$FIX_PR_STATUS" "$2" 2>/dev/null)" || true
+  [[ -n "$doc" ]] || return 1
+  jq -r '"\(.state // "?") \(.mergeable // "?")"' <<<"$doc"
+}
+fix_attempt_of() { # labels-json -> highest fix-attempt-N or 0
+  jq -r '[.[]? | select(type == "object") | .name // empty | capture("^fix-attempt-(?<k>[0-9]+)$")? | select(.) | .k | tonumber] | max // 0' <<<"$1"
+}
+fix_has_label() { # labels-json name -> yes/no
+  local hit
+  hit="$(jq -r --arg want "$2" '[.[]? | select(type == "object") | select(.name == $want)] | length' <<<"$1")"
+  if [[ "$hit" != "0" ]]; then printf 'yes'; else printf 'no'; fi
+}
+fix_claim_age_min() { # dir n -> minutes since the agent:fixing labeled event, or "none"
+  local owner name created now_ts then_ts
+  owner="$(cd "$1" && gh repo view --json owner -q .owner.login 2>/dev/null)" || { printf 'none'; return; }
+  name="$(cd "$1" && gh repo view --json name -q .name 2>/dev/null)" || { printf 'none'; return; }
+  created="$(gh api "repos/$owner/$name/issues/$2/events?per_page=100" -q \
+    '[.[] | select(.event == "labeled" and .label.name == "agent:fixing")] | last | .created_at // empty' 2>/dev/null)" || created=""
+  [[ -n "$created" ]] || { printf 'none'; return; }
+  now_ts="$(date +%s)"
+  then_ts="$(date -d "$created" +%s 2>/dev/null || date -u -j -f "%Y-%m-%dT%H:%M:%SZ" "$created" +%s 2>/dev/null)" || { printf 'none'; return; }
+  [[ "$then_ts" =~ ^[0-9]+$ ]] || { printf 'none'; return; }
+  printf '%s' "$(((now_ts - then_ts) / 60))"
+}
+fix_labels_of() { # dir n -> labels JSON array
+  (cd "$1" && gh pr view "$2" --json labels -q .labels 2>/dev/null) || echo '[]'
+}
+fix_edit_labels() { # dir n add... -- rm... ; add and remove label sets
+  local dir="$1" n="$2"; shift 2; local args=()
+  while (($# > 0)) && [[ "$1" != "--" ]]; do args+=(--add-label "$1"); shift; done
+  if [[ "${1:-}" == "--" ]]; then shift; fi
+  while (($# > 0)); do args+=(--remove-label "$1"); shift; done
+  (cd "$dir" && gh pr edit "$n" "${args[@]}" >/dev/null) || log "fix-ci: label write failed for $dir#$n, retry next tick"
+}
+fix_comment_body() { # dir n body
+  (cd "$1" && gh pr comment "$2" --body "$3" >/dev/null) || log "fix-ci: comment write failed for $1#$2, retry next tick"
+}
+fix_comment_edit() { # dir comment-id body
+  [[ "$2" =~ ^[0-9]+$ ]] || { fix_comment_body "$1" "$FIX_COMMENT_PR" "$3"; return; }
+  (cd "$1" && gh api "repos/{owner}/{repo}/issues/comments/$2" -X PATCH -f body="$3" >/dev/null 2>/dev/null) || \
+    fix_comment_body "$1" "$FIX_COMMENT_PR" "$3"
+}
+fix_marker_id() { # comments-json attempt -> comment id holding our marker, or empty
+  jq -r --arg m "<!-- runner-fix attempt=$2 " '[.[]? | select((.body // "") | contains($m)) | .id // empty] | last // empty' <<<"$1"
+}
+fix_comments_of() { # dir n -> JSON array of {id,body}
+  (cd "$1" && gh pr view "$2" --comments --json comments -q '.comments // [] | map({id, body})' 2>/dev/null) || echo '[]'
+}
+fix_upsert_marker() { # dir n attempt sha line ; edit our marker comment or post it once
+  local dir="$1" n="$2" body id comments
+  body="$(printf '<!-- runner-fix attempt=%s sha=%s -->\n%s' "$3" "$4" "$5")"
+  comments="$(fix_comments_of "$dir" "$n")"
+  id="$(fix_marker_id "$comments" "$3")"
+  if [[ -n "$id" ]]; then FIX_COMMENT_PR="$n"; fix_comment_edit "$dir" "$id" "$body";
+  else fix_comment_body "$dir" "$n" "$body"; fi
+}
+fix_author_ok() { # author allowed-list -> yes/no (empty list means @me only)
+  local author="$1" allowed="$2" me
+  me="$(gh_me_login)"
+  if [[ -z "$allowed" ]]; then
+    if [[ "$author" == "$me" ]]; then printf 'yes'; else printf 'no'; fi
+    return
+  fi
+  if [[ " $allowed " == *" $author "* ]]; then printf 'yes'; else printf 'no'; fi
+}
+fix_release_stale() { # dir n age_min ; drop a stale agent:fixing claim with a one-line comment
+  local dir="$1" n="$2"
+  fix_edit_labels "$dir" "$n" -- "$FIX_LABEL_CLAIM"
+  fix_comment_body "$dir" "$n" "runner: released stale agent:fixing claim (age ${3}m past the TTL)."
+  log "fix-ci: released stale claim $dir#$n"
+}
+fix_cap_out() { # dir n attempt logf ; cap reached: human label, disarm, one summary comment
+  local dir="$1" n="$2" body
+  (cd "$dir" && gh pr merge "$n" --disable-auto >/dev/null 2>&1) || true
+  fix_edit_labels "$dir" "$n" "$FIX_LABEL_HUMAN" -- "$FIX_LABEL_CLAIM"
+  body="$(printf 'runner: fix gave up after %s attempts (log: %s). Needs a human decision.' "$3" "$4")"
+  fix_comment_body "$dir" "$n" "<!-- needs-human reason=stuck-3x -->"$'\n'"$body"
+  record_fix "$dir" "$n" capped "" "$4" "attempt $3 reached the cap"
+  log "fix-ci: $dir#$n capped at attempt $3"
+}
+record_fix() { # repo n outcome pr log detail ; fix-ci rows in runs.jsonl
+  jq -cn --arg ts "$(date -Is)" --arg repo "$1" --arg pr "$2" --arg outcome "$3" \
+    --arg ref "$4" --arg log "$5" --arg detail "$6" --arg model "$RUNNER_MODEL" \
+    '{ts:$ts, repo:$repo, pr:$pr, outcome:$outcome, ref:$ref, model:$model, log:$log, detail:$detail}' >>"$(state runs.jsonl)"
+}
+fix_write_prompt() { # kind dir n head logf file ; placeholder prompt, #74 owns the CI log content
+  cat >"$6" <<PROMPT
+Fix PR #$3 ($1) in this checkout, a worktree created fresh for this attempt at head $4.
+
+- The failing CI log will be attached here by #74; this placeholder prompt names only the target.
+- Keep the fix inside this PR branch. Rebase only with a guarded lease push, never a bare force push.
+- Push the branch when the fix is ready so CI reruns.
+PROMPT
+  : "$2" "$5"
+}
+fix_one() { # dir n kind head branch labels-json
+  local dir="$1" n="$2" kind="$3" head="$4" branch="$5" labels="$6"
+  local attempt next ts wt logf prompt start_sha now_sha rc=0 outcome detail old_label
+  attempt="$(fix_attempt_of "$labels")"
+  next=$((attempt + 1))
+  if ((attempt >= RUNNER_FIX_MAX_ATTEMPTS)); then
+    logf="$(state logs)/$(basename "$dir")-pr-$n-capped.log"
+    : >"$logf"
+    fix_cap_out "$dir" "$n" "$attempt" "$logf"
+    FIX_SUMMARY+=("$(basename "$dir")#$n capped")
+    return 0
+  fi
+  ts="$(date +%Y%m%d-%H%M%S)-$$"
+  logf="$(state logs)/$(basename "$dir")-pr-$n-$ts.log"
+  prompt="${logf%.log}.prompt.md"
+  old_label=""; if ((attempt > 0)); then old_label="fix-attempt-$attempt"; fi
+  if [[ -n "$old_label" ]]; then fix_edit_labels "$dir" "$n" "$FIX_LABEL_CLAIM" "fix-attempt-$next" -- "$old_label";
+  else fix_edit_labels "$dir" "$n" "$FIX_LABEL_CLAIM" "fix-attempt-$next" --; fi
+  labels="$(fix_labels_of "$dir" "$n")"
+  if [[ "$(fix_has_label "$labels" "$FIX_LABEL_CLAIM")" != yes ]]; then log "fix-ci: claim lost on $dir#$n, skipping"; return 0; fi
+  if [[ "$(fix_attempt_of "$labels")" != "$next" ]]; then log "fix-ci: attempt label mismatch on $dir#$n, skipping"; return 0; fi
+  wt="$RUNNER_WORK_DIR/worktrees/$(basename "$dir")-pr-$n-$ts"
+  mkdir -p "$(dirname "$wt")"
+  FIX_ACTIVE_DIR="$dir"; FIX_ACTIVE_N="$n"; FIX_ACTIVE_DONE=0
+  FIX_ACTIVE_ATTEMPT="$next"; FIX_ACTIVE_LOG="$logf"; FIX_ACTIVE_HEAD="$head"
+  if ! git -C "$dir" worktree add --quiet --detach "$wt" "origin/$branch" >&2; then
+    fix_edit_labels "$dir" "$n" -- "$FIX_LABEL_CLAIM"
+    record_fix "$dir" "$n" fix_nochange "" "$logf" "worktree add failed for origin/$branch"
+    FIX_SUMMARY+=("$(basename "$dir")#$n fix_nochange")
+    FIX_ACTIVE_DONE=1
+    return 0
+  fi
+  start_sha="$(git -C "$wt" rev-parse HEAD)"
+  FIX_ACTIVE_HEAD="$start_sha"
+  fix_write_prompt "$kind" "$dir" "$n" "$head" "$logf" "$prompt"
+  log "fix-ci: running agent on $dir#$n (attempt $next, log: $logf)"
+  (
+    cd "$wt"
+    export RUNNER_MODEL RUNNER_PR="$n" RUNNER_KIND="$kind" RUNNER_LOG_FILE="$logf" RUNNER_PROMPT_FILE="$prompt"
+    RUNNER_PROMPT="$(cat "$prompt")"; export RUNNER_PROMPT
+    timeout --kill-after=60 "$((RUNNER_TIMEOUT_MIN * 60))" bash -c "$RUNNER_AGENT_CMD"
+  ) >"$logf" 2>&1 </dev/null || rc=$?
+  git -C "$dir" fetch --quiet origin "$branch" 2>/dev/null || true
+  now_sha="$(git -C "$dir" rev-parse "origin/$branch" 2>/dev/null)" || now_sha="$start_sha"
+  if ((rc == 124 || rc == 137)); then outcome=fix_timeout; detail="agent timed out (exit $rc)"
+  elif [[ "$now_sha" != "$start_sha" ]]; then outcome=fix_pushed; detail="head $start_sha -> $now_sha"
+  else outcome=fix_nochange; detail="agent exit $rc, head unchanged at $start_sha"; fi
+  fix_edit_labels "$dir" "$n" -- "$FIX_LABEL_CLAIM"
+  fix_upsert_marker "$dir" "$n" "$next" "$now_sha" "runner: $outcome on attempt $next ($detail)."
+  record_fix "$dir" "$n" "$outcome" "$now_sha" "$logf" "$detail"
+  if [[ "$outcome" == fix_pushed ]]; then git -C "$dir" worktree remove -f "$wt" >/dev/null 2>&1 || true;
+  else log "fix-ci: worktree kept at $wt for attempt $next inspection"; fi
+  FIX_ACTIVE_DONE=1
+  FIX_SUMMARY+=("$(basename "$dir")#$n $outcome")
+}
+fix_cleanup_active() { # EXIT trap: release the claim when the pass dies mid-flight
+  [[ "${FIX_ACTIVE_DONE:-1}" == "0" ]] || return 0
+  [[ -n "${FIX_ACTIVE_N:-}" ]] || return 0
+  fix_edit_labels "$FIX_ACTIVE_DIR" "$FIX_ACTIVE_N" -- "$FIX_LABEL_CLAIM" 2>/dev/null || true
+  fix_upsert_marker "$FIX_ACTIVE_DIR" "$FIX_ACTIVE_N" "${FIX_ACTIVE_ATTEMPT:-1}" \
+    "${FIX_ACTIVE_HEAD:-unknown}" "runner: pass died mid-flight; claim released, attempt kept." 2>/dev/null || true
+  record_fix "$FIX_ACTIVE_DIR" "$FIX_ACTIVE_N" fix_nochange "" "${FIX_ACTIVE_LOG:-}" "pass died mid-flight" 2>/dev/null || true
+  FIX_ACTIVE_DONE=1
+}
+fix_pass_repo() { # dir ; classify each open PR, claim and fix the red or conflicted ones
+  local dir="$1" raw row n branch head cross author labels state kind skip_reason age fix_class_out
+  local -a rows=()
+  raw="$(fix_pr_list "$dir" 2>/dev/null)" || { record_fix "$dir" - fetch_failed "" "" ""; return; }
+  while IFS= read -r row; do if [[ -n "$row" ]]; then rows+=("$row"); fi; done < <(jq -c '.[]' <<<"$raw" 2>/dev/null)
+  for row in ${rows[@]+"${rows[@]}"}; do
+    n="$(jq -r .number <<<"$row")"; branch="$(jq -r .headRefName <<<"$row")"; head="$(jq -r .headRefOid <<<"$row")"
+    cross="$(jq -r .isCrossRepository <<<"$row")"; author="$(jq -r '.author.login // empty' <<<"$row")"
+    labels="$(jq -c '.labels // []' <<<"$row")"
+    skip_reason=""
+    if [[ "$cross" == "true" ]]; then skip_reason="fork (cross-repo PR, not ours to push)"
+    elif [[ "$(fix_has_label "$labels" "$FIX_LABEL_HUMAN")" == yes ]]; then skip_reason="needs-human set"
+    elif [[ "$(fix_author_ok "$author" "$RUNNER_FIX_AUTHORS")" != yes ]]; then skip_reason="author @$author not in scope"
+    fi
+    if [[ -n "$skip_reason" ]]; then
+      log "fix-ci: skip $dir#$n: $skip_reason"
+      if ((FIX_DRY_RUN)); then printf 'would skip: %s#%s (%s)\n' "$(basename "$dir")" "$n" "$skip_reason"; fi
+      continue
+    fi
+    if ! fix_class_out="$(fix_classify_one "$dir" "$n")"; then
+      log "fix-ci: skip $dir#$n: pr-status failed"; continue
+    fi
+    read -r state _ <<<"$fix_class_out"
+    if [[ "$state" != red && "$state" != conflict ]]; then
+      if ((FIX_DRY_RUN)); then printf 'would skip: %s#%s (state %s, nothing to fix)\n' "$(basename "$dir")" "$n" "$state"; fi
+      continue
+    fi
+    kind=ci; if [[ "$state" == conflict ]]; then kind=conflict; fi
+    if [[ "$(fix_has_label "$labels" "$FIX_LABEL_CLAIM")" == yes ]]; then
+      age="$(fix_claim_age_min "$dir" "$n")"
+      if [[ "$age" == none ]] || ((age < RUNNER_CLAIM_TTL_MIN)); then
+        skip_reason="agent:fixing claim fresh (age ${age}m)"
+        log "fix-ci: skip $dir#$n: $skip_reason"
+        if ((FIX_DRY_RUN)); then printf 'would skip: %s#%s (%s)\n' "$(basename "$dir")" "$n" "$skip_reason"; fi
+        continue
+      fi
+      if ((FIX_DRY_RUN)); then
+        printf 'would release stale claim: %s#%s (age %sm)\n' "$(basename "$dir")" "$n" "$age"
+      else
+        fix_release_stale "$dir" "$n" "$age"
+        labels="$(fix_labels_of "$dir" "$n")"
+      fi
+    fi
+    if ((FIX_DRY_RUN)); then
+      printf 'would fix: %s#%s kind=%s state=%s attempt=%s\n' "$(basename "$dir")" "$n" "$kind" "$state" "$(fix_attempt_of "$labels")"
+      continue
+    fi
+    ((FIX_DONE < RUNNER_FIX_PER_PASS)) || { log "fix-ci: per-pass cap $RUNNER_FIX_PER_PASS reached"; return; }
+    fix_one "$dir" "$n" "$kind" "$head" "$branch" "$labels"
+    FIX_DONE=$((FIX_DONE + 1))
+  done
+}
+cmd_fix_ci() {
+  local arg
+  FIX_DRY_RUN=0
+  for arg in "$@"; do
+    if [[ "$arg" == "--dry-run" ]]; then FIX_DRY_RUN=1; else die "unknown fix-ci flag: $arg"; fi
+  done
+  load_config; require_config
+  if [[ -f "$(state stop)" ]]; then log stopped; exit 0; fi
+  FIX_PR_STATUS="$(fix_pr_status_bin)" || exit 0
+  exec 9>"$(state lock)"
+  flock -n 9 || { log "another run holds the lock"; exit 0; }
+  FIX_SUMMARY=(); FIX_DONE=0
+  trap fix_cleanup_active EXIT
+  local dir
+  for dir in $RUNNER_REPOS; do
+    git -C "$dir" fetch --quiet --prune origin || { record_fix "$dir" - fetch_failed "" "" ""; continue; }
+    resolve_repo "$dir"
+    [[ -z "$NOTE" ]] || log "$dir: $NOTE"
+    if [[ "$FORGE" != gh ]]; then record_fix "$dir" - unsupported_tracker "" "" "$NOTE"; continue; fi
+    if ! fix_is_team_repo "$dir"; then
+      log "$dir: fix-ci skips non-team repo (mode $(fix_repo_mode "$dir"))"
+      if ((FIX_DRY_RUN)); then printf 'would skip repo: %s (mode %s, fix-ci is team-only)\n' "$dir" "$(fix_repo_mode "$dir")"; fi
+      continue
+    fi
+    fix_pass_repo "$dir"
+  done
+  trap - EXIT
+  date -Is >"$(state last-finish)"
+  if ((${#FIX_SUMMARY[@]})); then printf 'runner: %s\n' "$(IFS=';'; echo "${FIX_SUMMARY[*]}")";
+  elif ((FIX_DRY_RUN)); then echo 'runner: fix-ci dry-run done, nothing mutated';
+  else echo 'runner: fix-ci found nothing eligible'; fi
+}
+
 case "${1:-}" in
   setup) shift; cmd_setup "$@" ;;
   detect) cmd_detect ;;
@@ -876,7 +1159,8 @@ case "${1:-}" in
   pause) load_config; cmd_pause ;;
   resume) load_config; cmd_resume ;;
   triage) shift; cmd_triage "$@" ;;
+  fix-ci) shift; cmd_fix_ci "$@" ;;
   status) shift; cmd_status "${1:-10}" ;;
   reset) shift; cmd_reset "${1:-}" ;;
-  *) echo 'usage: runner.sh setup [flags] | detect | check | run | pause | resume | triage [--dry-run] | status [N] | reset <repo-dir>#<n>' >&2; exit 2 ;;
+  *) echo 'usage: runner.sh setup [flags] | detect | check | run | pause | resume | triage [--dry-run] | fix-ci [--dry-run] | status [N] | reset <repo-dir>#<n>' >&2; exit 2 ;;
 esac

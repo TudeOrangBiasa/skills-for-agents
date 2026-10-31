@@ -45,3 +45,5 @@ Run `scripts/runner.sh check`, then one `scripts/runner.sh run` while the user w
 - The closing summary of a batch follows the ketchup shape ([ketchup](../ketchup/SKILL.md)): how many action items there are, what landed, and each item waiting on the human as a short executive summary.
 
 `triage` is the intake pass that feeds this queue: it labels unlabeled, needs-triage, and replied needs-info issues up to a per-tick cap, oldest first, using the repo vocab from `docs/agents/triage-labels.md`. See [CONTRACT.md](CONTRACT.md) Triage for flags, bounds, and outcomes, and `whips/playbooks/issue-triage-loop.md` for the on-loop playbook. Never prompt during `run` or `check` or `triage`; a missing config fails with a pointer to setup.
+
+`fix-ci` is the team-only repair pass: it claims red or conflicted PRs through labels, runs the agent once per claim, and caps out with `needs-human` after the attempt budget. See [CONTRACT.md](CONTRACT.md) Fix-ci for flags, bounds, and outcomes. Wire it on a timer per #61; solo repos skip since they poll no hosted CI.

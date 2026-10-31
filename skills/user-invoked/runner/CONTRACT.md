@@ -15,6 +15,7 @@ What `scripts/runner.sh` reads, does, and writes. A scheduler needs only this fi
 | `status [N]` | no | Config, last start and finish, last N outcomes | 0 |
 | `reset <repo-dir>#<n>` | no | Writes a reset marker on GitHub, clears the cached attempts | 0 |
 | `triage [--dry-run]` | no | Labels up to the triage cap of intake issues per repo, prints a summary | 0 done or lock busy, 2 config error |
+| `fix-ci [--dry-run]` | no | Team repos only: claims red or conflicted PRs, runs the agent once per claim | 0 done or lock busy, 2 config error |
 
 Setup flags: `--agent-cmd`, `--model`, `--repos`, `--allowlist`, `--max-issues`. Without a terminal, setup refuses unless `--agent-cmd` and `--model` are given.
 
@@ -37,6 +38,9 @@ Setup flags: `--agent-cmd`, `--model`, `--repos`, `--allowlist`, `--max-issues`.
 | `RUNNER_TRIAGE_PER_TICK` | `3` | Intake issues labeled per repo per `triage` tick |
 | `RUNNER_TRIAGE_AGENT_DECIDE` | `0` | `1` lets an ambiguous case use one agent call, else it goes to the human label |
 | `RUNNER_TRIAGE_LIST_LIMIT` | `60` | Open issues fetched in the single intake list call |
+| `RUNNER_FIX_MAX_ATTEMPTS` | `3` | Fix attempts per PR before the human label lands |
+| `RUNNER_FIX_AUTHORS` | empty | Space separated PR authors fix-ci may touch; empty means the bot only |
+| `RUNNER_FIX_PER_PASS` | `10` | Claims per fix-ci pass at most |
 
 Label strings and tracker commands are not config. They come from each repo's `docs/agents/`.
 
@@ -99,3 +103,24 @@ The reaper at the start of `run` releases an orphan claim only when all of these
 `triage` walks the same three intake buckets `/triage` shows: unlabeled issues, the needs-triage role, and the needs-info role with reporter activity. Oldest first, capped per repo at `RUNNER_TRIAGE_PER_TICK`. The tick never touches issues already carrying the ready or human role, so a re-run is a no-op on them. A `stop` file in the state dir ends the tick with exit 0, the same kill switch pause/resume writes. `--dry-run` prints each decision plus the comment file path and mutates nothing.
 
 One tick costs one list call per repo plus at most four calls per triaged issue (view, label edit, risk label edit, comment) and zero agent spawns unless `RUNNER_TRIAGE_AGENT_DECIDE=1`, in which case at most one spawn per ambiguous issue. Exact-title duplicate matching is local against the same intake list, so it adds zero calls. Comment bodies travel via `--body-file`, never as argv. The tick never closes an issue, never merges, and never writes code. Outcomes land in `runs.jsonl` as `triaged_complete`, `triaged_incomplete`, `triaged_product-call`, or `triaged_duplicate-of`.
+
+## Fix-ci (team repos only)
+
+`fix-ci` runs one repair pass for team repos. A repo joins the pass only when its `docs/agents/repo-mode.md` says team. Solo repos skip with a log line, since solo landing trusts the local verifier and polls no hosted CI. A scheduler calls this every 5 to 10 minutes; each pass exits fast when nothing needs work. `--dry-run` prints each planned claim or skip with its reason and mutates nothing.
+
+Per repo the pass lists open PRs with `gh pr list`, then classifies each PR with the whips `pr-status` script, which reads structured forge fields only. Candidates are PRs in state `red` or `conflict`. A conflicted PR qualifies even without a `ci-failed` label, because a conflicted PR often runs no workflow and gains no label. Other states need no fix and skip silently in a live pass.
+
+Skip reasons, each logged: cross-repository (fork) PRs, PRs carrying `needs-human`, PR authors outside scope, and PRs with a fresh `agent:fixing` claim. Author scope defaults to the authenticated user only; `RUNNER_FIX_AUTHORS` widens it to a space separated login list. A claim counts as fresh until `RUNNER_CLAIM_TTL_MIN` minutes pass since the `labeled` event. A stale claim is released with a one-line comment, then the PR becomes a candidate again in the same pass.
+
+Attempts count from `fix-attempt-N` labels, not from local files. The pass claims by adding `agent:fixing`, re-reads the labels to confirm the claim landed (check-after-write), and swaps `fix-attempt-N` to `N+1` before spawning, so a process that dies mid-flight still consumed its attempt. A stale or crashed claim keeps the attempt label and only drops `agent:fixing`. At `RUNNER_FIX_MAX_ATTEMPTS` the PR caps out: the pass sets `needs-human` with a `stuck-3x` reason marker, removes `agent:fixing`, runs `gh pr merge --disable-auto`, posts one summary comment, and never spawns again for that PR.
+
+Each claim gets a fresh detached worktree from `origin/<headRefName>` and a recorded start SHA. The agent spawns through `RUNNER_AGENT_CMD` with the issue-run env and four more vars: `RUNNER_PR`, `RUNNER_KIND` (`ci` or `conflict`), `RUNNER_LOG_FILE`, and `RUNNER_PROMPT_FILE`. The prompt is a placeholder naming the PR and the worktree; the CI log content belongs to #74. Outcome compares the branch head after the run against the start SHA: pushed means `fix_pushed`, unchanged means `fix_nochange`, a killed run means `fix_timeout`. The claim label always comes off through a trap, one marker comment (`<!-- runner-fix attempt=N sha=... -->`, edited in place, never stacked) records the outcome, and one `runs.jsonl` row with a `pr` field lands per attempt. A pushed worktree is removed; a non-push worktree stays on disk for inspection.
+
+Fix-ci never merges, never closes, never arms auto-merge, and never force pushes. The only force form the agent contract allows is a guarded lease push on a rebase. A bare force push is refused. `runs.jsonl` rows from fix-ci carry `pr` instead of `issue` so runs stay separable.
+
+| Outcome | Meaning | Worktree | Attempts |
+| --- | --- | --- | --- |
+| `fix_pushed` | Branch head moved during the run | removed | label already bumped before spawn |
+| `fix_nochange` | Head unchanged | kept for inspection | label already bumped before spawn |
+| `fix_timeout` | Killed at the timeout | kept for inspection | label already bumped before spawn |
+| `capped` | Attempt cap reached, `needs-human` set, auto-merge disabled | none | stays at the cap |
