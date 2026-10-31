@@ -184,6 +184,46 @@ else
   pass "no alias table to check"
 fi
 
+# 8. Harness-name gate (issue #190): denylisted names fail unless scripts/harness-name-allowlist.txt exempts the path (glob) or the line (path-glob:line-regex).
+HARNESS_ALLOW="scripts/harness-name-allowlist.txt"
+DENY_RE='\b(omp|opencode|codex|claude|orca|fedora|oh-my-pi)\b|~/\.omp|\.omp/|\.codex/|\.claude/|\.pi/|opencode\.json|claude\.md'
+match_path() { # file glob (a leading **/ also matches nested paths)
+  local f="$1" pat="$2"
+  [[ "$f" == $pat ]] && return 0
+  if [[ "$pat" == "**/"* ]]; then
+    local suffix="${pat#\*\*/}"
+    [[ "$f" == "$suffix" || "$f" == */"$suffix" ]] && return 0
+  fi
+  return 1
+}
+allowed_hit() { # file line
+  local f="$1" ln="$2" rule="" pat="" rx=""
+  while IFS= read -r rule || [[ -n "$rule" ]]; do
+    [[ -z "$rule" || "$rule" == \#* ]] && continue
+    if [[ "$rule" == *:* ]]; then
+      pat="${rule%%:*}"; rx="${rule#*:}"
+      if match_path "$f" "$pat" && grep -qE "$rx" <<<"$ln"; then return 0; fi
+    else
+      if match_path "$f" "$rule"; then return 0; fi
+    fi
+  done < "$HARNESS_ALLOW"
+  return 1
+}
+harness_hits=0
+if [[ -f "$HARNESS_ALLOW" ]]; then
+  while IFS= read -r hit; do
+    hfile="${hit%%:*}"; hrest="${hit#*:}"; hline="${hrest#*:}"
+    if ! allowed_hit "$hfile" "$hline"; then
+      fail "harness-specific name in $hfile: $hline"
+      harness_hits=$((harness_hits + 1))
+    fi
+  done < <(grep -rInE -e "$DENY_RE" skills README.md docs 2>/dev/null || true)
+else
+  fail "missing $HARNESS_ALLOW (the harness-name gate needs its allowlist)"
+  harness_hits=$((harness_hits + 1))
+fi
+[[ "$harness_hits" == "0" ]] && pass "no harness-specific names outside the allowlist"
+
 if [[ "$failures" -gt 0 ]]; then
   echo "check-docs: $failures check(s) failed."
   exit 1

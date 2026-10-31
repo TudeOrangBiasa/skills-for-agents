@@ -61,18 +61,39 @@ units_for() {
 
 check_harness() {
   # Fail closed when no documented non-interactive agent CLI is present.
-  if command -v omp >/dev/null 2>&1; then
-    if ! omp --help 2>/dev/null | grep -q -- '-p, --print'; then
-      echo "install-timers: omp on PATH but its --help shows no documented non-interactive flag; not writing units." >&2
-      echo "Install or repair omp so 'omp --help' documents '-p, --print', then re-run." >&2
-      exit 2
-    fi
-    return 0
+  # Generic probes only: the recorded agent command (RUNNER_AGENT_CMD, the host
+  # override, or a consumer docs/agents/harness.md via RUNNER_REPOS) or one
+  # opaque RUNNER_AGENT_PROBES binary whose --help documents a non-interactive
+  # mode. Setup records these with `runner.sh setup`; never name a harness here.
+  local config_path="${RUNNER_CONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}/runner/config.sh}"
+  if [[ -n "${RUNNER_AGENT_CMD:-}" ]]; then return 0; fi
+  if [[ -f "$config_path" ]]; then
+    # shellcheck disable=SC1090
+    . "$config_path"
+    if [[ -n "${RUNNER_AGENT_CMD:-}" ]]; then return 0; fi
   fi
-  echo "install-timers: no supported non-interactive agent CLI found on PATH." >&2
-  echo "Install omp (its --help documents '-p, --print' for headless runs)," >&2
-  echo "then run 'runner.sh setup --agent-cmd ... --model ... --repos ...' first." >&2
-  echo "Orca is not required and never installed by this script; it stays an optional note." >&2
+  if [[ -n "${RUNNER_REPOS:-}" ]]; then
+    local dir f cmd
+    for dir in $RUNNER_REPOS; do
+      f="$dir/docs/agents/harness.md"
+      [[ -f "$f" ]] || continue
+      cmd="$(sed -nE 's/^[-*][[:space:]]+\*\*Agent command:\*\*[[:space:]]*//p' "$f" | head -n1)"
+      if [[ -n "$cmd" ]]; then return 0; fi
+    done
+  fi
+  local probe
+  for probe in ${RUNNER_AGENT_PROBES:-}; do
+    if command -v "$probe" >/dev/null 2>&1; then
+      if ! "$probe" --help 2>/dev/null | grep -qiE 'non-interactive|headless|unattended|print'; then
+        echo "install-timers: '$probe' on PATH but its --help shows no documented non-interactive flag; not writing units." >&2
+        echo "Point RUNNER_AGENT_PROBES at a command whose --help documents a non-interactive mode, then re-run." >&2
+        exit 2
+      fi
+      return 0
+    fi
+  done
+  echo "install-timers: no supported non-interactive agent CLI found." >&2
+  echo "Run 'runner.sh setup --agent-cmd ... --model ... --repos ...' first (or set RUNNER_AGENT_PROBES), then re-run." >&2
   exit 2
 }
 
@@ -152,7 +173,6 @@ if ((DO_UNINSTALL)); then
   systemctl --user daemon-reload >/dev/null 2>&1 || true
   exit 0
 fi
-
 check_harness
 
 if ((DRY_RUN)); then
