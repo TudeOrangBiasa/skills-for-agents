@@ -12,9 +12,9 @@ Invoke when the user says "learn-reflect" or "/learn-reflect". Skip when the con
 
 ## 1. Locate the active transcript
 
-Before fanning out, find this conversation's transcript in the harness transcript store. Read only this workspace's store: the current project's session files (on OMP, `~/.omp/agent/sessions/` under this project's bucket; other harnesses name their own store).
+Before fanning out, find this conversation's transcript in the harness transcript store, in this order: first check consumer-repo config under `docs/agents/` for a transcript store path if that config is present, then ask the user once for the transcript store path, then detect a readable store only through generic user-set signals such as an environment variable, and finally fall back to a tight digest. Read only this workspace's store: the current project's session files.
 
-Match the file whose opening user prompt is this conversation's first message. Never glob across sibling buckets or other projects: that crosses workspace boundaries and reads private chats from unrelated projects. If no file matches, or the harness keeps no readable store, pass a tight digest of the session instead (what was tried, what failed, what got corrected, what was decided and why). A digest plus the PR diff or run log you already have beats a guessed transcript path.
+Match the file whose opening user prompt is this conversation's first message. Never glob across sibling buckets or other projects: that crosses workspace boundaries and reads private chats from unrelated projects. If no file matches, or no readable store was found, pass a tight digest of the session instead (what was tried, what failed, what got corrected, what was decided and why). A digest plus the PR diff or run log you already have beats a guessed transcript path.
 
 ## 2. Spawn three reviewers in parallel
 
