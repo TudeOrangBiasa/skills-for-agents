@@ -57,7 +57,7 @@ Pre-commit runs format plus lint plus the token gate only: batch the feedback at
 
 ### 4b. Create `.husky/pre-push`
 
-Slow gates live here and in CI, never in pre-commit:
+Slow gates live here and in the configured verifier (solo: docs/agents/verifier.md plus pre-push; team: CI running the same commands), never in pre-commit:
 
 ```
 npm run typecheck
