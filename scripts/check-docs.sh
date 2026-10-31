@@ -57,18 +57,30 @@ else
   done <<< "$changed_skills"
 fi
 
-# 2. Dead internal links in added markdown lines.
+# 2. Dead internal links in added markdown lines. Links inside fenced code
+#    blocks are template examples, not pointers, so added lines that sit
+#    within fences in the worktree file are skipped (a whole-file rename
+#    otherwise fails on its own placeholders).
 dead_links=0
 while IFS= read -r f; do
   [[ -z "$f" ]] && continue
   [[ "$f" == *.md ]] || continue
+  [[ -f "$f" ]] || continue
   dir="$(dirname "$f")"
-  while IFS= read -r target; do
+  fenced="$(awk 'BEGIN{f=0} /^```/{f=!f; next} f{print NR}' "$f")"
+  while IFS=$'\t' read -r lineno target; do
     [[ -z "$target" ]] && continue
     case "$target" in http*|mailto:*|"#"*) continue ;; esac
     target="${target%%#*}"
+    if grep -qx "$lineno" <<< "$fenced" 2>/dev/null; then continue; fi
     [[ -e "$dir/$target" ]] || { fail "dead link in $f: $target"; dead_links=1; }
-  done < <(git diff -U0 "$RANGE" -- "$f" | grep '^+' | grep -v '^+++' | grep -oE '\]\([^)]+\)' | sed 's/^](//;s/)$//;s/ "[^"]*"$//' || true)
+  done < <(git diff -U0 "$RANGE" -- "$f" | awk '
+    /^@@ -[0-9]+(,[0-9]+)? \+[0-9]+(,[0-9]+)? @@/ { s=$0; sub(/.*\+/, "", s); sub(/[, ].*/, "", s); n=s+0; next }
+    /^\+\+\+/ { next }
+    /^-/ { next }
+    /^\+/ { line=substr($0,2); rest=line; while (match(rest, /\]\([^)]+\)/)) { link=substr(rest, RSTART+2, RLENGTH-3); sub(/ ".*"$/, "", link); print n "\t" link; rest=substr(rest, RSTART+RLENGTH) } n++; next }
+    { n++ }
+  ' || true)
 done <<< "$(git diff --name-only --diff-filter=ACMR "$RANGE" -- '*.md' || true)"
 [[ "$dead_links" == "0" ]] && pass "no dead internal links in added lines"
 

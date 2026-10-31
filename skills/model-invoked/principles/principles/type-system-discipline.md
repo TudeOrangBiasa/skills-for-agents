@@ -17,4 +17,4 @@ Every impossible state the type allows is a case every reader must consider and 
 
 ## Example in this repo
 
-Skill identity is a typed model, not a bare string. A skill is named by its path (`model-invoked/how`), never by a bare word (`how`), so two buckets can hold the same leaf name without collision: the branded-primitive move. `scripts/check-docs.sh` parses the path once at the boundary into bucket and skill name, and every check downstream uses those derived values instead of re-parsing text at each use.
+Skill identity is a typed model, not a bare string. A skill is named by its path (`model-invoked/craft-how`), never by a bare word (`craft-how`), so two buckets can hold the same leaf name without collision: the branded-primitive move. `scripts/check-docs.sh` parses the path once at the boundary into bucket and skill name, and every check downstream uses those derived values instead of re-parsing text at each use.

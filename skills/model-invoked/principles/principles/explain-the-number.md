@@ -25,7 +25,7 @@ Do not use it to stall a decision the existing evidence already settles, or to d
 3. List what else the number could be measuring, and rule out each one with evidence: errors, skipped or cached work, code that never ran, an untuned side left on defaults, noise, a piece too small to matter end to end.
 4. Keep the evidence with the number: run count, spread, and limiter in the notes or a linked artifact.
 
-For a performance number, run the full procedure with the [benchmark-checklist](../../benchmark-checklist/SKILL.md) skill. For an eval result, ask the same of the trials: did every run do the task, does the gap hold across trials and models, and does the scenario matter.
+For a performance number, run the full procedure with the [verify-bench](../../verify-bench/SKILL.md) skill. For an eval result, ask the same of the trials: did every run do the task, does the gap hold across trials and models, and does the scenario matter.
 
 You skipped this when a run started without the result that would change a decision, when the evidence behind a number has no run count, no spread, or no named limiter, or when the time saved is larger than the time the changed piece took.
 

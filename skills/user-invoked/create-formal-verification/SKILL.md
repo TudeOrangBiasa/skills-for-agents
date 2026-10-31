@@ -8,7 +8,7 @@ name: create-formal-verification
 
 A test checks the cases someone thought to write. Formal verification checks every case in a stated scope: every order of steps in a model, every input up to a bound, or every input. This skill finds the part of the repo where that matters most, verifies one property of it, and leaves a project-local skill so the next agent can check a change against that property. Write that skill for an agent who reads it cold, mid-change, and has never seen your work. The user must be able to trust the result and act on it without learning the verification language.
 
-This is not `/create-verification`: that one drives the app like a user and proves behavior end to end. This one proves a property of code where tests rarely reach the breaking case.
+This is not `/verify-new`: that one drives the app like a user and proves behavior end to end. This one proves a property of code where tests rarely reach the breaking case.
 
 ## 1. Choose the target from the code
 
@@ -34,7 +34,7 @@ Pick the tool that answers the question at the lowest cost: a model checker, a p
 
 Write a project-local skill with frontmatter that names the area and says when to use it. Without frontmatter, the skill never registers. From the skill alone, the next agent must be able to tell whether a change touches the verified code, run the check, tell a real bug from a modeling error, and update the verification when a change is intended. Put the coverage record and the sync commit in the skill, and tell the next agent to move the sync commit forward only after it confirms that the verification describes the code at the new commit. Use this repo's real commands, paths, and nouns, and leave no placeholders. Place it where that repo keeps agent skills and note the harness it targets; never assume one editor or install path.
 
-If the check is a TLA+ model, tell the next agent to read every result with `/statechart`. It shows each invariant violation the checker finds as its shortest path in plain words. When the check passes, `/statechart` draws a chart of how the system moves between states. Refer to `/statechart` by name. Its commands, options, and file paths change between releases and machines, so copy none of them into the generated skill or its scripts.
+If the check is a TLA+ model, tell the next agent to read every result with `/verify-statechart`. It shows each invariant violation the checker finds as its shortest path in plain words. When the check passes, `/verify-statechart` draws a chart of how the system moves between states. Refer to `/verify-statechart` by name. Its commands, options, and file paths change between releases and machines, so copy none of them into the generated skill or its scripts.
 
 ## 5. Prove it before you hand off
 

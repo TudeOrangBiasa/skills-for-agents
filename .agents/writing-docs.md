@@ -1,6 +1,6 @@
 # Writing skill content
 
-There is no separate docs tree in this repo: each `SKILL.md` plus its co-located reference files is the single source of truth. Never duplicate skill content into a second location. This file covers how to write the inside of a skill (its body and its reference files). Structure, frontmatter, and invocation mechanics live in [writing-for-agents](../skills/model-invoked/writing-for-agents/SKILL.md) and [SKILL-MECHANICS.md](../skills/model-invoked/writing-for-agents/SKILL-MECHANICS.md).
+There is no separate docs tree in this repo: each `SKILL.md` plus its co-located reference files is the single source of truth. Never duplicate skill content into a second location. This file covers how to write the inside of a skill (its body and its reference files). Structure, frontmatter, and invocation mechanics live in [craft-agent-docs](../skills/model-invoked/craft-agent-docs/SKILL.md) and [SKILL-MECHANICS.md](../skills/model-invoked/craft-agent-docs/SKILL-MECHANICS.md).
 
 Most skills are **user-invoked**: the agent will never fire them, so *you* are the index that has to remember they exist and when to reach for them. That memory is **cognitive load**. Clear skill content relieves it: a reader who opens the skill can hold it in their head, know when to reach for it, and see where it sits in the system. The folder `README.md` files are collectively a distributed router; each entry is a node.
 
@@ -22,7 +22,7 @@ Four sections make a skill worth reading: `What it does`, `When to reach for it`
 
 ## What it does
 
-One or two plain-language paragraphs. Lead with the skill's one-sentence job, then state the **defining constraint**: the single fact that makes this skill behave differently from the obvious default (for `to-spec`: it does not interview the user again, it synthesises what is already known). Write it as a plain declarative sentence, never a labelled aside like "The defining constraint:" or "The key thing:"; the formula reads as filler. This line is the most valuable in the skill; never omit it.
+One or two plain-language paragraphs. Lead with the skill's one-sentence job, then state the **defining constraint**: the single fact that makes this skill behave differently from the obvious default (for `plan-spec`: it does not interview the user again, it synthesises what is already known). Write it as a plain declarative sentence, never a labelled aside like "The defining constraint:" or "The key thing:"; the formula reads as filler. This line is the most valuable in the skill; never omit it.
 
 ## When to reach for it
 
@@ -33,7 +33,7 @@ How and when you reach for the skill, in two beats that are both effectively alw
 
 ## Prerequisites
 
-Optional: include only when the skill needs something in place to be functional; omit the heading entirely otherwise. Covers: a **workspace it writes into** (a stateful skill like `discuss-with-docs` writes `GLOSSARY.md` and ADRs; `teach` builds a whole directory, so say what it writes and where), **prior setup** (`triage`/`to-spec`/`to-tickets` need `setup-meta` to have configured an issue tracker), or **repo-specific tooling**. A stateless skill that runs anywhere has no prerequisites, so drop the section.
+Optional: include only when the skill needs something in place to be functional; omit the heading entirely otherwise. Covers: a **workspace it writes into** (a stateful skill like `plan-grill-docs` writes `GLOSSARY.md` and ADRs; `learn-teach` builds a whole directory, so say what it writes and where), **prior setup** (`ship-triage`/`plan-spec`/`plan-tickets` need `setup-repo` to have configured an issue tracker), or **repo-specific tooling**. A stateless skill that runs anywhere has no prerequisites, so drop the section.
 
 ## <free-form middle>
 
@@ -62,7 +62,7 @@ A few bullets naming what the reader sees when the skill is doing its job. The b
 
 Always present. Situate the skill in the system in a sentence or two:
 
-- **Role.** Name it: a **chain step** (`discuss-with-docs → to-spec → to-tickets → implement → code-review`), a **run-once setup** (`setup-meta`), **periodic maintenance** (`deepen`, "every few days"), or a **reach-for-it-anytime standalone** (`diagnose`, `prototype`, `merge-fix`). A standalone's map is one honest sentence, which is far better than omitting the section.
+- **Role.** Name it: a **chain step** (`plan-grill-docs → plan-spec → plan-tickets → implement → review-code`), a **run-once setup** (`setup-repo`), **periodic maintenance** (`craft-deepen`, "every few days"), or a **reach-for-it-anytime standalone** (`craft-diagnose`, `craft-proto`, `ship-merge-fix`). A standalone's map is one honest sentence, which is far better than omitting the section.
 - **Neighbours.** The one or two siblings that matter, each with a because-clause, linked repo-relatively.
 - **The map.** Point to `guide`, the router over the whole set, so this skill stays a node and never has to redraw the graph.
 

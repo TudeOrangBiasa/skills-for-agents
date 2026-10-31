@@ -1,0 +1,199 @@
+#!/usr/bin/env bash
+# install-timers: opt-in systemd user timers for the ship-runner skill (issue #78).
+# Global skills never force-install this. The user opts in from setup-repo Section G.
+# Read-only default: --dry-run prints units and commands without writing.
+# Enable only after the user says yes: pass --yes to write, verify, and enable.
+set -euo pipefail
+
+SKILL_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+TEMPLATE_DIR="$SKILL_DIR/systemd"
+RUNNER_SH="skills/user-invoked/ship-runner/scripts/runner.sh"
+UNIT_DIR="${UNIT_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user}"
+ENV_FILE="${ENV_FILE:-${XDG_CONFIG_HOME:-$HOME/.config}/runner/timers.env}"
+MANAGED_MARK="Managed by setup-repo install-timers"
+DRY_RUN=0
+DO_YES=0
+DO_UNINSTALL=0
+DO_PAUSE=0
+DO_RESUME=0
+ONLY=""
+
+usage() {
+  cat >&2 <<'EOF'
+usage: install-timers [--dry-run] [--yes] [--only run|fix-ci|triage] [--unit-dir DIR] [--env-file FILE]
+       install-timers uninstall [--yes] [--unit-dir DIR]
+       install-timers pause | resume
+       install-timers cron-line [--only run|fix-ci|triage]
+EOF
+  exit 2
+}
+
+while (($#)); do
+  case "${1:-}" in
+    --dry-run) DRY_RUN=1 ;;
+    --yes) DO_YES=1 ;;
+    --only) ONLY="${2:-}"; shift ;;
+    --unit-dir) UNIT_DIR="${2:-}"; shift ;;
+    --env-file) ENV_FILE="${2:-}"; shift ;;
+    install) ;;
+    uninstall) DO_UNINSTALL=1 ;;
+    pause) DO_PAUSE=1 ;;
+    resume) DO_RESUME=1 ;;
+    cron-line) CRON_ONLY=1 ;;
+    -h|--help) usage ;;
+    *) echo "install-timers: unknown flag: $1" >&2; usage ;;
+  esac
+  shift
+done
+
+validate_only() {
+  if [[ -n "${ONLY:-}" && "$ONLY" != "run" && "$ONLY" != "fix-ci" && "$ONLY" != "triage" ]]; then
+    echo "install-timers: --only must be run, fix-ci, or triage" >&2; exit 2
+  fi
+}
+
+units_for() {
+  if [[ "$ONLY" == "run" ]]; then echo "runner-run.service runner-run.timer"; fi
+  if [[ "$ONLY" == "fix-ci" ]]; then echo "runner-fix-ci.service runner-fix-ci.timer"; fi
+  if [[ "$ONLY" == "triage" ]]; then echo "runner-triage.service runner-triage.timer"; fi
+  if [[ -z "${ONLY:-}" ]]; then echo "runner-run.service runner-run.timer runner-fix-ci.service runner-fix-ci.timer runner-triage.service runner-triage.timer"; fi
+}
+
+check_harness() {
+  # Fail closed when no documented non-interactive agent CLI is present.
+  if command -v omp >/dev/null 2>&1; then
+    if ! omp --help 2>/dev/null | grep -q -- '-p, --print'; then
+      echo "install-timers: omp on PATH but its --help shows no documented non-interactive flag; not writing units." >&2
+      echo "Install or repair omp so 'omp --help' documents '-p, --print', then re-run." >&2
+      exit 2
+    fi
+    return 0
+  fi
+  echo "install-timers: no supported non-interactive agent CLI found on PATH." >&2
+  echo "Install omp (its --help documents '-p, --print' for headless runs)," >&2
+  echo "then run 'runner.sh setup --agent-cmd ... --model ... --repos ...' first." >&2
+  echo "Orca is not required and never installed by this script; it stays an optional note." >&2
+  exit 2
+}
+
+render() { # template outfile
+  local timeout_min="${RUNNER_TIMEOUT_MIN:-120}" runner_abs
+  runner_abs="$(cd "$SKILL_DIR/../../.." && pwd)/skills/user-invoked/ship-runner/scripts/runner.sh"
+  sed -e "s|{{RUNNER_SH}}|$RUNNER_SH|g" \
+      -e "s|{{RUNNER_SH_ABS}}|$runner_abs|g" \
+      -e "s|{{PATH_VALUE}}|$PATH|g" \
+      -e "s|{{ENV_FILE}}|$ENV_FILE|g" \
+      -e "s|{{TIMEOUT_MIN}}|$timeout_min|g" \
+      -e "s|{{RUN_BOOT_SEC}}|5min|g" \
+      -e "s|{{RUN_EVERY}}|1d|g" \
+      -e "s|{{RUN_JITTER}}|30min|g" \
+      -e "s|{{FIXCI_BOOT_SEC}}|2min|g" \
+      -e "s|{{FIXCI_EVERY}}|10min|g" \
+      -e "s|{{FIXCI_JITTER}}|2min|g" \
+      -e "s|{{TRIAGE_BOOT_SEC}}|3min|g" \
+      -e "s|{{TRIAGE_EVERY}}|15min|g" \
+      -e "s|{{TRIAGE_JITTER}}|3min|g" \
+      "$TEMPLATE_DIR/$1" >"$2"
+}
+
+verify_unit() { # file
+  systemd-analyze --user verify "$1"
+}
+
+manual_probe() { # service
+  systemctl --user start "$1"
+  journalctl --user -u "$1" -n 20 --no-pager
+}
+
+validate_only
+
+if ((DO_PAUSE)); then
+  touch "${XDG_STATE_HOME:-$HOME/.local/state}/runner/stop"
+  echo "paused: runners will exit 0 with 'stopped' until 'install-timers resume'."
+  exit 0
+fi
+
+if ((DO_RESUME)); then
+  rm -f "${XDG_STATE_HOME:-$HOME/.local/state}/runner/stop"
+  echo "resumed."
+  exit 0
+fi
+
+if [[ "${CRON_ONLY:-0}" == "1" && ( "${ONLY:-}" == "" || "$ONLY" == "run" || "$ONLY" == "fix-ci" || "$ONLY" == "triage" ) ]]; then
+  if [[ "$ONLY" == "fix-ci" ]]; then
+    echo "*/10 * * * * $RUNNER_SH fix-ci >> ~/.local/state/runner/cron.log 2>&1"
+  elif [[ "$ONLY" == "triage" ]]; then
+    echo "*/15 * * * * $RUNNER_SH triage >> ~/.local/state/runner/cron.log 2>&1"
+  else
+    echo "17 7 * * * $RUNNER_SH run >> ~/.local/state/runner/cron.log 2>&1"
+  fi
+  exit 0
+fi
+
+if ((DO_UNINSTALL)); then
+  if ((DRY_RUN)); then
+    for u in $(units_for); do echo "would remove: $UNIT_DIR/$u"; done
+    exit 0
+  fi
+  if ((DO_YES == 0)); then
+    echo "install-timers: pass --yes to confirm uninstall." >&2
+    exit 2
+  fi
+  for u in $(units_for); do
+    f="$UNIT_DIR/$u"
+    if [[ -f "$f" ]] && grep -q "$MANAGED_MARK" "$f"; then
+      systemctl --user disable --now "$u" >/dev/null 2>&1 || true
+      rm -f "$f"
+      echo "removed $f"
+    elif [[ -f "$f" ]]; then
+      echo "kept $f (not managed by install-timers)"
+    fi
+  done
+  systemctl --user daemon-reload >/dev/null 2>&1 || true
+  exit 0
+fi
+
+check_harness
+
+if ((DRY_RUN)); then
+  tmp="$(mktemp -d)"
+  for u in $(units_for); do render "$u" "$tmp/$u"; echo "--- $u"; cat "$tmp/$u"; done
+  echo "--- commands (not run)"
+  echo "mkdir -p $UNIT_DIR"
+  for u in $(units_for); do echo "install $tmp/$u -> $UNIT_DIR/$u"; done
+  echo "systemd-analyze --user verify <each unit>"
+  echo "systemctl --user start runner-run.service   # manual probe, then journalctl --user -u runner-run.service"
+  echo "systemctl --user enable --now <timers>      # only after you say yes (pass --yes)"
+  echo "loginctl enable-linger \$USER               # run this yourself if timers must survive logout"
+  echo "fallback without systemd: install-timers cron-line"
+  rm -rf "$tmp"
+  exit 0
+fi
+
+if ((DO_YES == 0)); then
+  echo "install-timers: opt-in only. Re-run with --dry-run to preview, or --yes after you confirm." >&2
+  exit 2
+fi
+
+mkdir -p "$UNIT_DIR"
+for u in $(units_for); do
+  if [[ -f "$UNIT_DIR/$u" ]] && cmp -s <(render "$u" /dev/stdout) "$UNIT_DIR/$u"; then
+    echo "no-op: $u already installed"
+  else
+    render "$u" "$UNIT_DIR/$u"
+    echo "installed $UNIT_DIR/$u"
+  fi
+done
+for u in $(units_for); do verify_unit "$UNIT_DIR/$u"; echo "verify ok: $u"; done
+if [[ "$UNIT_DIR" == "${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user" ]]; then
+  systemctl --user daemon-reload
+  manual_probe runner-run.service || true
+  for u in runner-run.timer runner-fix-ci.timer runner-triage.timer; do
+    if [[ " $(units_for) " == *" $u "* ]]; then
+      systemctl --user enable --now "$u"
+    fi
+  done
+else
+  echo "UNIT_DIR override: skipped daemon-reload, manual start, and enable (units only rendered + verified)."
+fi
+echo "If timers must survive logout, run this yourself: loginctl enable-linger $USER"

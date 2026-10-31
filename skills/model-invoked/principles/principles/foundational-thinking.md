@@ -19,7 +19,7 @@ In practice:
 
 ## Where it lives in this repo
 
-Embedded, not a numbered rule: the PRINCIPLES.md header names it as `codebase-design` (see `SKILL.md` section 3). The carrier is the `whips` trigger "Any code: name the data shape first" plus the `codebase-design` vocabulary (module, interface, depth, seam, adapter, leverage, locality) and the `architect` skill that settles types, signatures, and module shape before code crosses a function boundary. The scaffold and concurrency halves surface in `playbooks/feature.md` (blocking gates before fan-out, shared state split by default) and in the small-units and separate-before-serializing leaves.
+Embedded, not a numbered rule: the PRINCIPLES.md header names it as `craft-vocab` (see `SKILL.md` section 3). The carrier is the `whips` trigger "Any code: name the data shape first" plus the `craft-vocab` vocabulary (module, interface, depth, seam, adapter, leverage, locality) and the `craft-architect` skill that settles types, signatures, and module shape before code crosses a function boundary. The scaffold and concurrency halves surface in `playbooks/feature.md` (blocking gates before fan-out, shared state split by default) and in the small-units and separate-before-serializing leaves.
 
 ## Example in this repo
 

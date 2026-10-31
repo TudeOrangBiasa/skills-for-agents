@@ -1,6 +1,6 @@
 # Hard limits on the number of questions during an interview
 
-The `/discuss` skill (and interview sessions inside other skills) does not enforce a maximum number of questions. Requests to add a configurable cap or hard ceiling are out of scope.
+The `/plan-grill` skill (and interview sessions inside other skills) does not enforce a maximum number of questions. Requests to add a configurable cap or hard ceiling are out of scope.
 
 ## Why this is out of scope
 

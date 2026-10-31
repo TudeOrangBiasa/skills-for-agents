@@ -2,7 +2,7 @@
 
 Every agent PR carries exactly one risk label and one paragraph saying why. The label says which extra verification runs on this PR, scaled to the diff's blast radius. Every PR opens ready, never as a draft; what holds a merge back is the verdict, not draft status. Who may land: low, the agent immediately on an independent PASS verdict (a fresh agent with no access to the author's reasoning, briefed by [VERIFIER-BRIEF.md](VERIFIER-BRIEF.md); never the worker's own claim), merging in the same run; medium, the agent only when every landing condition in `playbooks/ready-check.md` holds; high, the human always, and only after a PASS or PASS+NOTES verdict comment from a verifier that did not write the code (an independent agent or a human reviewer) on the current head SHA. Only high-risk PRs spend human review time. Verifier output and bot approvals are inputs, never verdicts: solo repos read the local verifier, team repos read CI. Neither runs the change as a user would.
 
-Pick the label from the diff against the rules below, and name the matched rule in `## Risk`. A label from a template, or high from doubt without a matched rule, is a misclassification: reclassify, and settle doubt with the `blast-radius` skill, never with automatic high.
+Pick the label from the diff against the rules below, and name the matched rule in `## Risk`. A label from a template, or high from doubt without a matched rule, is a misclassification: reclassify, and settle doubt with the `verify-blast` skill, never with automatic high.
 
 Label strings come from `docs/agents/triage-labels.md` when it has `risk-low`, `risk-medium`, and `risk-high` rows; otherwise use `risk:low`, `risk:medium`, and `risk:high`. Create a missing label once with the tracker CLI command from `docs/agents/issue-tracker.md`.
 
@@ -20,7 +20,7 @@ A PR is `risk:high` when any rule below matches. Check each against the diff, no
 8. **Large diff.** More than 400 changed lines or 15 files, not counting lockfiles, generated files, snapshots, fixtures, and new files no caller reaches yet. A large diff matching none of rules 1-7 is medium, not high.
 9. **Unproven.** The verify verdict is not VERIFIED.
 
-Stack examples live in `docs/agents/domain.md` (written by `/setup-meta` per repo). Path is a hint, the diff decides: a comment-only edit to a migration file is not a schema change.
+Stack examples live in `docs/agents/domain.md` (written by `/setup-repo` per repo). Path is a hint, the diff decides: a comment-only edit to a migration file is not a schema change.
 
 ## Medium
 
@@ -41,7 +41,7 @@ Everything else. Typical low-risk work: copy and docs, tests only, internal refa
 
 - **Low:** the repo verifier passes (solo: local verifier; team: required checks). That is the verifier.
 - **Medium:** low, plus an agent that did not write the code runs the affected surface (endpoint, page, tests) in a fresh context and checks `git patch-id` when a rebase landed.
-- **High:** medium, plus the `blast-radius` skill proves what can break outside the diff by running code, plus one adversarial reviewer in a fresh context (same model, no author reasoning, brief opens with "find how this PR breaks", lens correctness, security, or blast radius per #67). Data and secrets rules add a dry-run or rollback proof. Arming waits until this lane passes; FAIL means `needs-human`.
+- **High:** medium, plus the `verify-blast` skill proves what can break outside the diff by running code, plus one adversarial reviewer in a fresh context (same model, no author reasoning, brief opens with "find how this PR breaks", lens correctness, security, or blast radius per #67). Data and secrets rules add a dry-run or rollback proof. Arming waits until this lane passes; FAIL means `needs-human`.
 
 Cases: an isolated 500-line spike of new files with no runtime caller is medium or low, never high on size alone. A workflow change is high, verified against the gate it changes.
 

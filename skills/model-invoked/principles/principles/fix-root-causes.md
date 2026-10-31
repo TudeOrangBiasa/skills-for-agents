@@ -11,7 +11,7 @@ A symptom fix hides the evidence and leaves the fault free to surface somewhere 
 Any debugging: a failing check, a wrong output, a flaky run. Work the pattern:
 
 - Reproduce first. When stuck, instrument: read the actual error and the actual state instead of guessing.
-- Ask "why" at each step until the answer is a wrong decision in the code, not a consequence of an earlier one.
+- Ask "craft-why" at each step until the answer is a wrong decision in the code, not a consequence of an earlier one.
 - Ask whether the state that triggered the symptom is legitimate. If the system may be in that state, the code that broke on it is the root cause and handling it there is the fix. If the state should never exist, a check where it broke hides the bug: find what produced the state. Guards, retries, swallowed errors, clamped values, and discarded state are the usual ways to hide one.
 - When something fails only after a restart, suspect persisted state first: config files, caches, lock files, serialized state.
 - Fix the pattern, not just the instance: find every place with the same fault and fix them all.

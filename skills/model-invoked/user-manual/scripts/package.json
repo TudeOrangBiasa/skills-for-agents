@@ -1,9 +1,0 @@
-{
-  "name": "user-manual-scripts",
-  "version": "0.1.0",
-  "private": true,
-  "description": "Capture, trim, annotate, and QA dependencies for the user-manual skill CLI.",
-  "dependencies": {
-    "playwright-core": "^1.49.0"
-  }
-}
