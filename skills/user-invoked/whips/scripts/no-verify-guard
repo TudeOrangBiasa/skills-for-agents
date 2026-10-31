@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+# no-verify-guard: fail-closed ban on `git push --no-verify` in the agent path (issue #167).
+#
+# Git offers no server-side switch to reject --no-verify, so the ban lives
+# where agents run: opening-a-pr and shipping call this guard right before
+# every push (and ready-check reruns it before landing). The guard fails the
+# run when it finds evidence that a push skipped the hooks.
+#
+# Two modes, both exit 0 clean / 1 banned / 2 usage error:
+#   no-verify-guard -- <push argv...>
+#     scans one push command line for --no-verify / --no-verify=<bool>.
+#     --verify (explicit hooks-on) is clean. A bare `git push` with no
+#     verify flag is clean: hooks run by default.
+#   no-verify-guard --scan [<repo-path>]
+#     scans recent local proof that a bypass happened: reflog-free check of
+#     the last push states is impossible, so this mode checks the worktree
+#     instead (pre-push hook present and executable via ensure-worktree-hooks
+#     --check). A missing hook means any push from here skips the verifier,
+#     which the guard treats as a bypass and refuses.
+#
+# Usage: no-verify-guard -- <git push argv...>
+#        no-verify-guard --scan [<repo-path>]
+set -euo pipefail
+
+HERE="$(cd "$(dirname "$0")" && pwd)"
+
+usage() { sed -n '1,28p' "$0"; exit 2; }
+
+scan_mode=0
+if [[ "${1:-}" == "--scan" ]]; then
+  scan_mode=1; shift
+elif [[ "${1:-}" == "--" ]]; then
+  shift
+elif [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
+  usage
+elif [[ $# -eq 0 ]]; then
+  usage
+fi
+
+if ((scan_mode)); then
+  REPO="${1:-.}"
+  if [[ $# -gt 1 ]]; then usage; fi
+  if "$HERE/ensure-worktree-hooks" --check --worktree "$REPO" >/dev/null 2>&1; then
+    echo "no-verify-guard: ok: pre-push hook present in $REPO"
+    exit 0
+  fi
+  echo "no-verify-guard: refused: no pre-push hook in $REPO; every push from here skips the verifier" >&2
+  echo "fix: $HERE/ensure-worktree-hooks --worktree $REPO" >&2
+  exit 1
+fi
+
+# argv mode: refuse only an explicit bypass flag.
+for arg in "$@"; do
+  case "$arg" in
+    --no-verify|--no-verify=true|--no-verify=1|--no-verify=yes)
+      echo "no-verify-guard: refused: $arg bypasses the pre-push verifier; agents never push with it" >&2
+      exit 1
+      ;;
+  esac
+done
+echo "no-verify-guard: ok: no bypass flag in push argv"
