@@ -1,5 +1,5 @@
 ---
-description: 'Index of 24 engineering principles behind /whips triggers. Pick the file that fits the task, read it before the first design decision, cite only files read this session.'
+description: 'Index of 24 principles; read the fitting file before deciding.'
 disable-model-invocation: true
 name: principles
 ---
