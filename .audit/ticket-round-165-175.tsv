@@ -1,0 +1,16 @@
+ts	phase	decision	why	evidence	result
+2026-10-31T07:49:39Z	start	d1	w1	e1	r1
+2026-10-31T07:49:47Z	inventory	'3-scout-reports-mapped-tickets	requirements-per-issue	scout-transcripts	'165-175-ready
+2026-10-31T07:49:56Z	execute	batch1-172-168-169-165-parallel	disjoint-slices	PR-176-177-178-179	all-merged
+2026-10-31T07:49:56Z	execute	batch2-166-93-173-plus-182-rebase	'182-conflicted-with-180-181	PR-180-181-182	all-merged
+2026-10-31T07:50:03Z	execute	medium-170-171-167-all-PASS	stub-proofs-plus-reviews	PR-183-184-185	all-merged
+2026-10-31T07:50:03Z	execute	'174-index-FAIL-6093-trimmed-5999	exact-method-proof	PR-186-PASS-NOTES	merged-689f0b9
+2026-10-31T07:50:03Z	execute	'175-rename-59-skills-alias-notes-fixed	'310-files	PR-187-PASS-NOTES	merged-fe32d77
+2026-10-31T07:50:10Z	verify	zero-open-issues-and-PRs	gh-lists-plus-check-docs	issue-query	'13-13-closed
+2026-10-31T07:50:33Z	start	supersede-row2-test-placeholder	row2-d1-was-helper-repro-noise	this-row	row2-void
+2026-10-31T07:51:21Z	start	void-row2-d1-placeholder	helper-repro-noise-not-a-decision	row2-of-this-file	row2-void
+2026-10-31T07:51:21Z	inventory	scouts-QuickestSlug-PleasedBug-WilyEchidna	agent-transcripts-plus-issue-bodies	'165-175-and-93-mapped	done
+2026-10-31T07:51:21Z	execute	batch2-182-rebase-conflict	FACTORY-and-guide-SKILL-touched-by-180-181	rebase-fix-fold-182-to-5079c44	merged-a3a61b8
+2026-10-31T07:51:29Z	execute	medium-stubs-and-reviewers	test-no-verify-ban-8-8-repo-settings-7-7-reviewers-LesserToad-EthicalBobolink-CruelApe	PR-183-184-185-PASS	all-merged
+2026-10-31T07:51:29Z	execute	'174-tokens-catalog-plus-whips	plafond-6000-tokens-exact-snippet	'6093-fail-5999-pass	merged-689f0b9
+2026-10-31T07:51:29Z	verify	'13-tickets-165-175-plus-93-99	gh-issue-list-empty-plus-pr-list-empty	all-closed-plus-gate-green	done
