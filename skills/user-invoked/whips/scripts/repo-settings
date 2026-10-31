@@ -18,6 +18,9 @@
 # would run (apply --dry-run). 2 usage error or refused (auto-merge
 # landing with empty required checks). 3 no admin: UI steps printed,
 # nothing changed.
+# Stub tests: REPO_SETTINGS_FIXTURE=<json> replays a saved forge snapshot
+# for check (fixtures in scripts/fixtures/repo-settings/); apply under a
+# fixture is check-only and exits 2, so tests never reach the forge.
 #
 # Deps: bash, gh, jq. No new dependency.
 set -euo pipefail
@@ -73,7 +76,9 @@ detect_landing() { # flag wins, else a Landing: line in unattended.md, else dire
 # ---------- forge reads (no writes here) ----------
 
 resolve_repo() {
-  if [[ -z "$REPO" ]]; then
+  if [[ -n "${REPO_SETTINGS_FIXTURE:-}" ]]; then
+    REPO="$(jq -r .nameWithOwner <"$REPO_SETTINGS_FIXTURE")"
+  elif [[ -z "$REPO" ]]; then
     REPO="$(gh repo view --json nameWithOwner --jq .nameWithOwner)"
   fi
   [[ "$REPO" == */* ]] || die "cannot parse repo '$REPO', want owner/name"
@@ -82,6 +87,23 @@ resolve_repo() {
 repo_json="" protection_json="" protected=0
 actual_names=() have_labels=() required=()
 allow_merge="" delete_branch="" allow_squash="" branch="" is_admin=""
+
+load_fixture() { # REPO_SETTINGS_FIXTURE set: read the snapshot, never the forge
+  local fix="$REPO_SETTINGS_FIXTURE"
+  repo_json="$(jq -c .repo <"$fix")"
+  allow_merge="$(jq -r .allow_auto_merge <<<"$repo_json")"
+  delete_branch="$(jq -r .delete_branch_on_merge <<<"$repo_json")"
+  allow_squash="$(jq -r .allow_squash_merge <<<"$repo_json")"
+  branch="$(jq -r .default_branch <<<"$repo_json")"
+  is_admin="$(jq -r '.admin // false' <<<"$repo_json")"
+  protection_json="$(jq -c '.protection // {}' <"$fix")"
+  if jq -e '.protection != null' <"$fix" >/dev/null; then protected=1
+  else protected=0; fi
+  mapfile -t required < <(jq -r '[(.required_status_checks.checks[]?.context // empty), (.required_status_checks.contexts[]? // empty)] | unique | .[]' <<<"$protection_json" || true)
+  mapfile -t actual_names < <(jq -r '(.checkRuns // []) | .[]' <"$fix" || true)
+  while IFS= read -r job; do actual_names+=("$job"); done < <(jq -r '(.workflowJobs // []) | .[]' <"$fix" || true)
+  mapfile -t have_labels < <(jq -r '(.labels // []) | .[]' <"$fix" || true)
+}
 
 load_state() {
   local owner="${REPO%/*}" name="${REPO#*/}"
@@ -238,7 +260,7 @@ do_check() {
   fi
   landing="$(detect_landing)"
   resolve_repo
-  load_state
+  if [[ -n "${REPO_SETTINGS_FIXTURE:-}" ]]; then load_fixture; else load_state; fi
   compute
   print_report "repo-settings check $REPO (mode team, landing $landing)"
   if [[ "$landing" == auto-merge && ${#required[@]} == 0 ]]; then
@@ -262,6 +284,10 @@ do_apply() {
     die "apply needs --yes (the user said yes in setup) or use --dry-run"
   fi
   landing="$(detect_landing)"
+  if [[ -n "${REPO_SETTINGS_FIXTURE:-}" ]]; then
+    printf 'repo-settings: check-only under REPO_SETTINGS_FIXTURE, no forge writes from a snapshot.\n'
+    return 2
+  fi
   resolve_repo
   load_state
   compute >/dev/null

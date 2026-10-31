@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# repo-settings stub test: gap and green fixtures without the forge (issue #171).
+# A stub gh that fails loudly sits on PATH, so any forge call fails the run.
+# Deps: bash, jq. Run: scripts/repo-settings-test
+set -euo pipefail
+cd "$(dirname "$0")"
+S=./repo-settings
+F=./fixtures/repo-settings
+TMP="$(mktemp -d)"
+trap 'rm -rf "$TMP"' EXIT
+mkdir -p "$TMP/bin"
+cat >"$TMP/bin/gh" <<'STUB'
+#!/usr/bin/env bash
+echo "forbidden gh call: $*" >>"$STUB_CALLS"
+exit 3
+STUB
+chmod +x "$TMP/bin/gh"
+export PATH="$TMP/bin:$PATH"
+export STUB_CALLS="$TMP/gh-calls"; : >"$STUB_CALLS"
+pass=0 fail=0
+check() { # name fixture want_code want_text args...
+  local name="$1" fixture="$2" want="$3" want_text="$4"; shift 4
+  local out got=0
+  out="$(REPO_SETTINGS_FIXTURE="$F/$fixture" "$S" "$@" 2>&1)" || got=$?
+  if [[ "$got" == "$want" && "$out" == *"$want_text"* ]]; then
+    pass=$((pass+1)); printf 'ok %s (exit %s)\n' "$name" "$got"
+  else
+    fail=$((fail+1)); printf 'FAIL %s: want exit %s holding %s, got exit %s:\n%s\n' "$name" "$want" "$want_text" "$got" "$out"
+  fi
+}
+check gap4-auto-merge-refused gap-4.json 1 'refused' check --mode team --landing auto-merge
+check gap4-needs-human-marker gap-4.json 1 'needs-human reason=no-required-checks' check --mode team --landing auto-merge
+check gap4-direct-nonzero gap-4.json 1 '4 gaps' check --mode team --landing direct
+check green-auto-merge-ok green.json 0 'all ok' check --mode team --landing auto-merge
+check fixture-apply-refused gap-4.json 2 'check-only' apply --mode team --landing auto-merge --yes
+kurang="$(REPO_SETTINGS_FIXTURE="$F/gap-4.json" "$S" check --mode team --landing direct 2>&1 | grep -c '^kurang' || true)"
+if [[ "$kurang" == 4 ]]; then pass=$((pass+1)); printf 'ok gap4-four-kurang-rows\n'
+else fail=$((fail+1)); printf 'FAIL gap4-four-kurang-rows: want 4 got %s\n' "$kurang"; fi
+if [[ ! -s "$STUB_CALLS" ]]; then pass=$((pass+1)); printf 'ok no-gh-calls\n'
+else fail=$((fail+1)); printf 'FAIL no-gh-calls:\n%s\n' "$(cat "$STUB_CALLS")"; fi
+printf '%s passed, %s failed\n' "$pass" "$fail"
+[[ "$fail" == 0 ]]
