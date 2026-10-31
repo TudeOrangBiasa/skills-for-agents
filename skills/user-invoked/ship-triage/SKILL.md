@@ -78,7 +78,7 @@ Show counts and a one-line summary per item. Let the maintainer pick.
 4. **Interview (if needed).** If the request needs fleshing out, call the Skill tool twice, for "plan-interview" and "craft-domain", and shape it with a round of questions at a time, sharpening domain terms and updating `GLOSSARY.md`/ADRs inline as decisions land.
 
 5. **Apply the outcome:**
-   - `ready-for-agent`: post an agent brief comment ([AGENT-BRIEF.md](AGENT-BRIEF.md)).
+   - `ready-for-agent`: post an agent brief comment ([AGENT-BRIEF.md](AGENT-BRIEF.md)). A ticket collapsed from a cleared plan-map carries its Destination and Decisions-so-far as settled context: quote them into the brief, never re-interview them.
    - `ready-for-human` (issues only, never PRs): same structure as an agent brief, but note why it can't be delegated (judgment calls, external access, design decisions, manual testing).
    - `needs-info`: post triage notes (template below).
    - For `wontfix`, close the issue, with the comment depending on *why*:

@@ -9,9 +9,9 @@ Philosophy: sharpening is a conversation, shipping is a run. Grill skills (`plan
 | Stage | You type | Start when | Move on when |
 | --- | --- | --- | --- |
 | 1. Grill | `/plan-grill-docs` (or `/plan-grill` stateless), `/plan-sharpen` on a brief, `/craft-deepen` on a seam, `/craft-proto` when running code can answer | Idea has fog: branches undecided, terms loose | Map (components, data flow, expensive decisions) agreed; guardrails listed (must happen, must never happen, key failures) |
-| 2. Map (foggy efforts only) | `/plan-map`, then `/plan-spec` collapse, then `/plan-tickets` | Way not visible in one session | Map cleared: destination visible, decisions recorded |
-| 3. Spec | `/plan-spec` | Decisions agreed | Spec published on the tracker: problem, solution, stories, decisions, testing, out of scope |
-| 4. Tickets | `/plan-tickets` | Spec exists | Tracer-bullet tickets with blocking edges published and user-approved |
+| 2. Map (foggy efforts only) | whips `plan-map-handoff.md` inline, or `/plan-map` by hand, then collapse and tickets per the handoff | Way not visible in one session | Map cleared: destination visible, decisions recorded |
+| 3. Spec | collapse inline, or `/plan-spec` by hand | Decisions agreed | Spec published on the tracker: problem, solution, stories, decisions, testing, out of scope |
+| 4. Tickets | ticket inline, or `/plan-tickets` by hand | Spec exists | Tracer-bullet tickets with blocking edges published, each one type plus `Kompleksitas` plus `ready-for-agent` plus a risk label |
 | 5. Execute | `/whips` per ticket, blockers-first, fresh context between tickets | A ticket brief is sufficient (type, `Kompleksitas`, testable acceptance, still matches code) | Ready PR with proof per `opening-a-pr.md` |
 | 6. Review and merge | ready-check, then landing per RISK | PR green | Verdict plus risk label; land per tier |
 
@@ -19,7 +19,7 @@ Shortcuts: thin fog skips stage 2 and the session hops (drive-through inside `/w
 
 ## Stop conditions (every stage)
 
-- Human gate: a step naming a user-invoked skill never fires from inside `/whips`. Tell the user to run it and wait at that step.
+- Human gate: a step naming a user-invoked skill never fires from inside `/whips`. Tell the user to run it and wait at that step, except on the plan-map path: map, collapse, and tickets run inline per `plan-map-handoff.md` (the Invocation rule), so whips never stops merely to re-invoke `/plan-map`, `/plan-spec`, or `/plan-tickets`. Product HITL (a decision whose answer itself needs a human) still stops; re-asking settled Destination or Decisions-so-far never does.
 - Insufficient brief: missing type, missing `Kompleksitas`, no testable acceptance, or drifted from code. Post needs-info notes and stop; never implement from a guess.
 - Fog thicker than the stage: step back one stage. A spec over fog freezes the fog; tickets over dispute ship the dispute.
 - Pause list: merge above risk authority, force-push on shared branches, deploy, delete data, secrets or production config, closing issues, messaging outside the repo, `ask` threads, product calls no experiment can settle. Keep building everything else meanwhile.
@@ -30,9 +30,9 @@ Paths honor [docs-layout](../../setup-repo/docs-layout.md). Tracker means the tr
 
 | Artifact | Created by | Read by | Canonical path | Minimal format |
 | --- | --- | --- | --- | --- |
-| Map | `/plan-map` | `/plan-spec`, humans | Tracker issue labeled `plan-map:map` | Destination, Notes, Decisions-so-far index, Not-yet-specified, Out-of-scope |
-| Spec | `/plan-spec` | `/plan-tickets`, whips, ship-triage | Tracker issue (or `.scratch/<feature>/spec.md` local) | Problem, solution, user stories, implementation decisions, testing decisions, out of scope |
-| Ticket list | `/plan-tickets` | whips, ship-runner | Tracker issues with blocking edges (or `.scratch/<feature-slug>/issues/NN-slug.md` files) | Type, `Kompleksitas`, what to build, blocked-by, acceptance checkboxes, `ready-for-agent` |
+| Map | whips inline, or `/plan-map` by hand | collapse (whips inline, or `/plan-spec` by hand), humans | Tracker issue labeled `plan-map:map` | Destination, Notes, Decisions-so-far index, Not-yet-specified, Out-of-scope |
+| Spec | whips inline, or `/plan-spec` by hand | tickets (whips inline, or `/plan-tickets` by hand), whips, ship-triage | Tracker issue (or `.scratch/<feature>/spec.md` local) | Problem, solution, user stories, implementation decisions, testing decisions, out of scope |
+| Ticket list | whips inline, or `/plan-tickets` by hand | whips, ship-runner | Tracker issues with blocking edges (or `.scratch/<feature-slug>/issues/NN-slug.md` files) | One type, `Kompleksitas` (Big-O, gh calls, LLM calls), what to build, blocked-by, acceptance checkboxes, `ready-for-agent` plus a risk label |
 | ADR | `plan-grill-docs`, `craft-domain` | `plan-spec`, `craft-deepen`, `learn-retro` | `docs/adr/NNNN-slug.md` | Decision, context, options, consequences |
 | Glossary terms | `plan-grill-docs`, `craft-domain`, `craft-deepen` | Many skills | `GLOSSARY.md` | Term, definition, usage |
 | Research findings | `/craft-research` | Humans, `/plan-grill-docs` | `docs/research/<slug>.md` | Question, sources, cited findings |
