@@ -10,6 +10,8 @@ You don't remember every skill, so ask. Read only the section below that fits; e
 
 A **flow** is a path through the skills. Most paths run along one **main flow**, and two **on-ramps** merge onto it.
 
+Upstream rule: pstack owns automation and shipping, Matt owns ideas and planning only; see [upstream-map](../../../docs/upstream-map.md).
+
 ## Start here
 
 - Idea to build: read the main-flow recipe in [COOKBOOK.md](COOKBOOK.md) (grill, spec, tickets, whips, review, merge).
