@@ -173,6 +173,10 @@ Screenshots are S-tier - when the environment is set up for it and the change is
 
 Execution-based evidence is A-tier. Test results, console output. Show the exact test that now fails and passes, using pseudocode.
 
+### Demo order (folded from the demo skill, 2026-10-31)
+
+One screen per change, most important first: one plain sentence plus the smallest visual that proves it (before/after pair, diff sketch, screenshot, timeline link). Every claim rides a visual or an artifact link; a paragraph without either gets cut. Missing proof is itself a finding: name which pair never got captured instead of describing around it. Report only work that landed or is measurably in flight; plans and intentions belong in tickets, not in this body.
+
 #### Attachment rules (mandatory)
 
 Obey every rule below on every visual PR. Method detail (pair pattern, sizing, GitHub and Azure DevOps upload, gotchas): [`ATTACHMENTS.md`](./ATTACHMENTS.md).

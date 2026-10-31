@@ -1,5 +1,0 @@
-interface:
-  display_name: "Learn While Delegating"
-  short_description: "Delegate and learn it"
-policy:
-  allow_implicit_invocation: false

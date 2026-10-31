@@ -104,8 +104,8 @@ flowchart TD
 
 | Box | In this repo | Skill or playbook | Status |
 | --- | --- | --- | --- |
-| Ownership | Learning gates (deprecated from merge path; `/teach` or `interview` for the value), learn while delegating | [explain-diff-before-merge](../explain-diff-before-merge/SKILL.md) (deprecated 2026-10-31: not called from merge, ready-check, shipping, or opening-a-pr), [learn-while-delegating](../learn-while-delegating/SKILL.md) | ada |
-| On the same page | Catch-up, context rebuild, handoff note, demo, re-pitch | [ketchup](../ketchup/SKILL.md), [recall](../recall/SKILL.md), [handoff](../handoff/SKILL.md), [showcase](../showcase/SKILL.md), [wait-what](../wait-what/SKILL.md) | ada |
+| Ownership | Learning gates (deprecated from merge path; `/teach` or `interview` for the value, with delegated-learning notes folded in) | [explain-diff-before-merge](../explain-diff-before-merge/SKILL.md) (deprecated 2026-10-31: not called from merge, ready-check, shipping, or opening-a-pr) | ada |
+| On the same page | Catch-up, context rebuild, handoff note, re-pitch | [ketchup](../ketchup/SKILL.md), [recall](../recall/SKILL.md), [handoff](../handoff/SKILL.md), [wait-what](../wait-what/SKILL.md) | ada |
 | Leadership that backs it | Solo repo with no org layer, so no skill covers it | | gap |
 
 ## Gap list

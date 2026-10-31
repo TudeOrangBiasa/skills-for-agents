@@ -21,7 +21,6 @@ One door into where skills write and read. Scaffolded by `/setup-meta` Section J
 | Hillclimb log | `hillclimb` | `hillclimb` | `.scratch/whips/<run>/decisions.tsv` (hillclimb per-attempt schema) | lazy |
 | Feature map | `create-verification` | `maintain-verification`, `swarm` | `skills/verify-<app>/features/` | lazy |
 | Workflows | `worklog` | `worklog` | `workflows/*.md` | lazy |
-| Compounding log | `learn-while-delegating` | `teach` | root `LEARNED.md` | lazy |
 | Handoff | `handoff` | next session | `$TMPDIR` (outside the repo on purpose) | lazy |
 | Design tokens, standards | `/setup-meta` Section D | `retro`, `guide` | root `DESIGN.md`, standards file | scaffolded on yes |
 
