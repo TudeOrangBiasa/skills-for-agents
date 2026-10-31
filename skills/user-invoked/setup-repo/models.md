@@ -27,7 +27,9 @@ Write `inherit` in the Model column to run that role on the parent model. `inher
 
 Effort and Speed are optional and stay empty unless the harness names effort levels. Leave them blank to run the role's model as-is. When the harness does (a low/medium/high ladder, or model slugs with effort variants), write the level or slug: `/whips` shifts effort one step up for the hardest work and down for routine work, and uses fast speed only for urgent runs. The `review` role stays at standard speed and is never shifted down (whips SKILL.md section 6).
 
-Use the exact id your harness accepts (the string its config or CLI flag takes). Skills copy it through unchanged and never translate it between providers.
+## Effort ladder
+
+Match spend to the job, not the model. Cheap: one role, plain effort, for mechanical edits and small fixes. Default: the mapped effort above, for feature and bug paths. Deep: shift one step up from the mapped row (never shift `review` down), for cross-cutting design, subtle algorithms, and adversarial review. Escalate cheap to default when the first pass stalls, default to deep when the cause crosses a function boundary or two approaches still look valid. Solo fast-path starts at cheap unless the task already names design risk.
 
 ## Example: one model, effort per role
 
