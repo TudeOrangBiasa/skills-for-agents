@@ -1,0 +1,8 @@
+# Allowlist for the harness-name gate in scripts/check-docs.sh (issue #190).
+# One rule per line: a path glob exempts the whole file, or path-glob:line-regex exempts one matching line. Lines starting with # are reasons, not rules.
+# Per-skill CREDITS.md files may name upstreams (attribution is required there).
+**/CREDITS.md
+# test-detect-ask.sh names harnesses only inside self-test absence patterns that keep runner.sh agnostic (issue #188).
+skills/user-invoked/ship-runner/scripts/test-detect-ask.sh
+# README.md install story uses the canonical install-block example list, not a harness pin.
+README.md:.*any universal agent \(.*\).*
