@@ -208,6 +208,7 @@ first=$!
 sleep 2
 out2="$(RUNNER_CONFIG="$C3" "$RUNNER" fix-ci 2>&1)"
 wait "$first"
+[[ "$out2" == *"another run holds the lock"* ]] || fail "second pass did not report the lock: $out2"
 [[ "$(jq -r '.prs[] | select(.number==32) | [.labels[] | select(startswith("fix-attempt-"))] | length' "$STUB_STATE")" == "1" ]] || fail "double claim under lock"
 pass "second pass exits at the lock with no double claim"
 

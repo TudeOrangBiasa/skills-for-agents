@@ -939,12 +939,13 @@ fix_edit_labels() { # dir n add... -- rm... ; add and remove label sets
   while (($# > 0)) && [[ "$1" != "--" ]]; do args+=(--add-label "$1"); shift; done
   if [[ "${1:-}" == "--" ]]; then shift; fi
   while (($# > 0)); do args+=(--remove-label "$1"); shift; done
-  (cd "$dir" && gh pr edit "$n" "${args[@]}" >/dev/null)
+  (cd "$dir" && gh pr edit "$n" "${args[@]}" >/dev/null) || log "fix-ci: label write failed for $dir#$n, retry next tick"
 }
 fix_comment_body() { # dir n body
-  (cd "$1" && gh pr comment "$2" --body "$3" >/dev/null)
+  (cd "$1" && gh pr comment "$2" --body "$3" >/dev/null) || log "fix-ci: comment write failed for $1#$2, retry next tick"
 }
 fix_comment_edit() { # dir comment-id body
+  [[ "$2" =~ ^[0-9]+$ ]] || { fix_comment_body "$1" "$FIX_COMMENT_PR" "$3"; return; }
   (cd "$1" && gh api "repos/{owner}/{repo}/issues/comments/$2" -X PATCH -f body="$3" >/dev/null 2>/dev/null) || \
     fix_comment_body "$1" "$FIX_COMMENT_PR" "$3"
 }
@@ -993,7 +994,7 @@ record_fix() { # repo n outcome pr log detail ; fix-ci rows in runs.jsonl
 }
 fix_write_prompt() { # kind dir n head logf file ; placeholder prompt, #74 owns the CI log content
   cat >"$6" <<PROMPT
-Fix PR #$3 ($1) in this checkout, a fresh worktree at $4.
+Fix PR #$3 ($1) in this checkout, a worktree created fresh for this attempt at head $4.
 
 - The failing CI log will be attached here by #74; this placeholder prompt names only the target.
 - Keep the fix inside this PR branch. Rebase only with a guarded lease push, never a bare force push.
