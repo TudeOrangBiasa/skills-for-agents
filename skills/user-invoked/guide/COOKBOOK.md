@@ -6,7 +6,7 @@ title: "Cookbook: flows and recipes"
 
 Each recipe is one complete workflow: when to use it, which skills to type in order, and its diagram. Diagrams render in preview. The interactive router stays in [`SKILL.md`](./SKILL.md); this book is for reading directly. For the map of why this all works, read [FACTORY.md](./FACTORY.md).
 
-Conventions in every diagram: boxes are skills you type (`/whips`) or playbooks whips runs, diamonds are your decisions, dashed arrows are escalations. Every recipe closes with a real example from recent CMS work.
+Conventions in every diagram: boxes are skills you type (`/whips`) or playbooks whips runs, diamonds are your decisions, dashed arrows are escalations. Every recipe closes with a real example drawn from recent work across frontend, backend, and docs domains.
 
 ## 0. Which path (master map)
 
@@ -50,7 +50,7 @@ flowchart TD
     Q -->|no| S["/to-spec"]
     P --> S
     S --> T["/to-tickets"] --> W["/whips per ticket, fresh context between"]
-    W --> B["/babysit to green"] --> R["/ready-check: verdict + risk label"] --> M["Land per mode: solo verifier, team checks"]
+    W --> B["whips babysit playbook to green"] --> R["whips ready-check playbook: verdict + risk label"] --> M["Land per mode: solo verifier, team checks"]
 ```
 
 One unbroken window for discuss through tickets; each whips run starts fresh. Thin fog skips the hops via drive-through (recipe 0). Gate to a dedicated session only when the fog needs its own window.
@@ -83,12 +83,12 @@ When: sleep while the queue resolves itself.
 flowchart TD
     T["/triage: ripen issues"] --> N["/runner: queue runs itself"]
     N --> M["Morning: /ketchup"]
-    M --> R["/ready-check"] --> G["Land per mode; humans at triage"]
+    M --> R["whips ready-check playbook"] --> G["Land per mode; humans at triage"]
 ```
 
 Alternative for one long unattended run: `/whips` with a checkable predicate plus budget, not a queue. A queue of independent PRs with one owner each runs through the whips `autopilot-full` playbook (or `autopilot-stack` when the operator holds landing); `/runner` stays the pick for `ready-for-agent` issue intake on a schedule.
 
-Example: 5 `ready-for-agent` issues → `/runner` on schedule → morning `/ketchup` ("2 action items: land solo batch, triage Seeder") → `/ready-check` → land per mode, humans at triage.
+Example: 5 `ready-for-agent` issues → `/runner` on schedule → morning `/ketchup` ("2 action items: land solo batch, triage Seeder") → whips ready-check playbook via `/whips` → land per mode, humans at triage.
 
 ## 5. UI change with proof
 
@@ -217,7 +217,7 @@ Example: navbar variants scattered across 4 files, same assumption repeated. `/d
 
 **Multi-day program with one approval up front?** → `figure-it-out` for the designed phase list (approve once), `runner` or a single unattended run to execute, scheduled `ready-check` to land qualifying batches. Humans decide at triage; the design approval plus tiered verification carry the rest.
 
-**Must AFK with a deadline near, parallel tickets, no QA time?** → split first: frontier tickets (behavior already answers every open question) run now; tickets genuinely needing you wait with an explicit "needs decision X" note. Frontier goes to `/runner` before you leave (fresh worktree each, ready PRs only, set max-issues). QA does not vanish, it compacts: per-slice tests plus verification evidence ride in each PR, and your morning is `/ketchup` plus `/ready-check` (independent verdicts, land per mode, humans at triage). Decisions the requested behavior already answers are not decisions: say so in the ticket and let them run.
+**Must AFK with a deadline near, parallel tickets, no QA time?** → split first: frontier tickets (behavior already answers every open question) run now; tickets genuinely needing you wait with an explicit "needs decision X" note. Frontier goes to `/runner` before you leave (fresh worktree each, ready PRs only, set max-issues). QA does not vanish, it compacts: per-slice tests plus verification evidence ride in each PR, and your morning is `/ketchup` plus the whips ready-check playbook via `/whips` (independent verdicts, land per mode, humans at triage). Decisions the requested behavior already answers are not decisions: say so in the ticket and let them run.
 
 **Overnight run missed the spec, start over in a new session?** → no. Morning `/ketchup`, then check the Spec axis (`/code-review` Standards + Spec, or the ready-check verdict). Then `/whips` pickup on the open PR with the spec plus the missed point: small miss means a fix round on the same PR, big miss means a fresh ticket. Either way it runs fresh by design, never as a resume-chain of the night session.
 
@@ -227,4 +227,4 @@ Example: navbar variants scattered across 4 files, same assumption repeated. `/d
 
 **Screenshots requested, can they be automated?** → yes, end to end: `agent-browser` drives the flow and captures screenshots, video, and timeline pages; the visual-parity baseline harness screenshots every state; the `pr` skill attaches them (pair table, video, timeline link). The only human fallback: when `agent-browser` is not installed in the environment, the agent names the missing pairs and the human captures them by hand.
 
-**Deploy to hosting with no SSH or MCP (cPanel FTP + terminal only), scripts ready, env left to fill?** → `/wizard`. No SSH means the agent cannot reach the server, so deploying is a human gate by definition: the agent prepares everything preparable (build artifact, env template with empty values, ordered checklist) and the wizard walks you through uploading via FTP, filling env in the cPanel terminal, and verifying live. One run, no re-explaining next time.
+**Deploy to hosting with no SSH or MCP (cPanel FTP + terminal only), scripts ready, env left to fill?** → wizard (model-invoked, via the Skill tool). No SSH means the agent cannot reach the server, so deploying is a human gate by definition: the agent prepares everything preparable (build artifact, env template with empty values, ordered checklist) and the wizard walks you through uploading via FTP, filling env in the cPanel terminal, and verifying live. One run, no re-explaining next time.
