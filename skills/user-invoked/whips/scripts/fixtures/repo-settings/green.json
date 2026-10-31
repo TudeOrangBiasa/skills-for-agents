@@ -1,0 +1,35 @@
+{
+  "nameWithOwner": "acme/demo",
+  "repo": {
+    "allow_auto_merge": true,
+    "delete_branch_on_merge": true,
+    "allow_squash_merge": true,
+    "default_branch": "main",
+    "admin": true
+  },
+  "protection": {
+    "enforce_admins": true,
+    "required_status_checks": {
+      "strict": true,
+      "checks": [{"context": "verify"}]
+    }
+  },
+  "checkRuns": ["verify"],
+  "workflowJobs": [],
+  "labels": [
+    "needs-triage",
+    "needs-info",
+    "ready-for-agent",
+    "ready-for-human",
+    "wontfix",
+    "risk:low",
+    "risk:medium",
+    "risk:high",
+    "ci-failed",
+    "agent:fixing",
+    "fix-attempt-1",
+    "fix-attempt-2",
+    "fix-attempt-3",
+    "needs-human"
+  ]
+}
