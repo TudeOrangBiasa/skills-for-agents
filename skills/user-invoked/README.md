@@ -11,7 +11,6 @@ Skills that fire only when the human types their name. They orchestrate; they ne
 - **[statechart](./statechart/SKILL.md)**: Check a TLA+ model and draw it as a Mermaid statechart with shortest bug paths.
 - **[guide](./guide/SKILL.md)**: Ask which skill or flow fits your situation. A router over the skills in this repo.
 - **[handoff](./handoff/SKILL.md)**: Compact the conversation into a handoff doc for another session to continue.
-- **[judgment-drill](./judgment-drill/SKILL.md)**: Train taste with A/B picks: choose with reasons, rubric grades you.
 - **[ketchup](./ketchup/SKILL.md)**: Catch up on everything in this chat since your last message, with an executive summary for each action item.
 - **[learn-while-delegating](./learn-while-delegating/SKILL.md)**: Delegate beyond your reach and learn it: noted gaps, sliced diffs, three concepts, teach handoff.
 - **[recall](./recall/SKILL.md)**: Rebuild recent working context across chats into a tight capsule brief before starting or resuming.

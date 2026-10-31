@@ -75,7 +75,6 @@ Skills for daily work, fired by hand. Full list in [skills/user-invoked/](skills
 - **[explain-diff-before-merge](./skills/user-invoked/explain-diff-before-merge/SKILL.md)**: Learning gate (deprecated from the merge path 2026-10-31; execute path is `/whips` only).
 - **[guide](./skills/user-invoked/guide/SKILL.md)**: Ask which skill or flow fits your situation. A router over the skills in this repo. Prefer reading: [COOKBOOK.md](./skills/user-invoked/guide/COOKBOOK.md) shows every common flow as a recipe with diagrams.
 - **[handoff](./skills/user-invoked/handoff/SKILL.md)**: Compact the conversation into a handoff doc for another session to continue.
-- **[judgment-drill](./skills/user-invoked/judgment-drill/SKILL.md)**: Train taste with A/B picks: choose with reasons, rubric grades you.
 - **[ketchup](./skills/user-invoked/ketchup/SKILL.md)**: Catch up on everything in this chat since your last message, with an executive summary for each action item.
 - **[learn-while-delegating](./skills/user-invoked/learn-while-delegating/SKILL.md)**: Delegate beyond your reach and learn it: noted gaps, sliced diffs, three concepts, teach handoff.
 - **[recall](./skills/user-invoked/recall/SKILL.md)**: Rebuild recent working context across chats into a tight capsule brief.
