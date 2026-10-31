@@ -2,6 +2,12 @@
 
 Local skill names use the stage-prefix scheme (`setup-`, `plan-`, `craft-`, `ship-`, `review-`, `learn-`, `verify-`). Upstream repos keep their own names. This table maps local to upstream so sync diffs stay mechanical: find the local skill, read its upstream row, diff against that source. Per-skill detail lives in each skill's `CREDITS.md`.
 
+## Upstream policy: pstack owns automation, Matt owns planning
+
+Two upstreams, two jobs. **pstack (poteto)** owns automation and shipping: PRs, commits, the verifier, workflow loops, swarm, orchestration, and landing. That covers `whips`, `ship-runner`, `ship-pr` behavior, `craft-swarm`, the `verify-*` skills where pstack is the source, and the related playbooks. **Matt Pocock** owns ideas and planning only: `plan-grill`, `plan-grill-docs`, `plan-interview`, `plan-spec`, `plan-tickets`, and `plan-map` (the wayfinder for foggy work).
+
+When a skill's behavior and its credited upstream disagree, keep the credit row as the historical record and point the behavior at the owning side. The Audit section below tracks each case with a proposed fix per row: keep credit, change behavior pointer, or replace upstream.
+
 | Local | Upstream (pstack / Matt) | Source |
 |---|---|---|
 | `craft-agent-docs` | `writing-great-skills` | mattpocock/skills |
@@ -63,6 +69,45 @@ Local skill names use the stage-prefix scheme (`setup-`, `plan-`, `craft-`, `shi
 | `verify-tdd` | `tdd` + pstack hardening | mattpocock/skills + pstack |
 | `verify-upkeep` | `maintain-verification-skill` | pstack |
 | `whips` | `poteto-mode` router + playbooks | pstack |
+
+## Audit (2026-10-31): rows reviewed against the policy
+
+Each row below names the mismatch against the policy above and the proposed fix. Follow-up behavior migrations are separate tickets; this PR changes docs pointers only. Seed list from #191.
+
+### Matt-sourced but shipping or automation-shaped
+
+| Local | Credit today | Proposed fix |
+|---|---|---|
+| `setup-repo` | mattpocock/skills | Change behavior pointer to pstack-style setup (keep credit): setup configures tracker, labels, docs, autonomy, and jobs. |
+| `setup-hooks` | mattpocock/skills | Change behavior pointer to verifier loop ownership (keep credit): hooks gate commits in the shipping loop. |
+| `ship-triage` | mattpocock/skills | Replace upstream with pstack-side triage behavior (keep credit note): triage feeds the runner queue. |
+| `ship-merge-fix` | mattpocock/skills | Change behavior pointer to pstack landing behavior (keep credit): conflict resolution lands PRs. |
+| `review-code` | mattpocock/skills | Change behavior pointer to whips review flow (keep credit): two-axis review runs inside the shipping loop. |
+| `verify-tdd` (parts) | mattpocock/skills + pstack | Keep credit, confirm pstack hardening owns the red-green loop pointer. |
+
+### Matt-sourced craft and learn skills outside the planning five
+
+| Local | Credit today | Proposed fix |
+|---|---|---|
+| `craft-deepen` | mattpocock/skills | Keep credit; behavior already local (deep-module maintenance cadence). |
+| `craft-diagnose` | mattpocock/skills | Keep credit; behavior already local (tight feedback loop for hard bugs). |
+| `craft-domain` | mattpocock/skills | Keep credit; behavior already local (glossary vocabulary). |
+| `craft-proto` | mattpocock/skills | Keep credit; behavior already local (throwaway prototype answers one question). |
+| `craft-research` | mattpocock/skills | Keep credit; behavior already local (research before editing). |
+| `craft-vocab` | mattpocock/skills | Keep credit; behavior already local (seam vocabulary design). |
+| `craft-wizard` | mattpocock/skills | Keep credit; behavior already local (human-gated deploy walkthrough). |
+| `craft-agent-docs` | mattpocock/skills | Keep credit; behavior already local (skill authoring mechanics). |
+| `guide` | mattpocock/skills | Replace upstream with original router (keep credit note): the router serves the whole skill set, not one planning source. |
+| `learn-handoff` | mattpocock/skills | Keep credit; behavior already local (portable notes at phase boundaries). |
+| `learn-retro` | mattpocock/skills | Keep credit; behavior already local (blame-free retro). |
+| `learn-teach` | mattpocock/skills | Keep credit; behavior already local (teach-back directory builds). |
+
+### pstack-sourced planning-adjacent
+
+| Local | Credit today | Proposed fix |
+|---|---|---|
+| `plan-sharpen` | pstack | Keep as pstack unless the audit says otherwise: sharpening a brief is execution-adjacent, and no Matt planning row claims it. |
+
 
 ## Rename history (#175)
 
