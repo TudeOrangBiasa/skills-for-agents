@@ -67,6 +67,12 @@ When PRs are in scope, include external PRs in these buckets and tag each line `
 
 Show counts and a one-line summary per item. Let the maintainer pick.
 
+## Repeat ticks stay incremental
+
+List open issues with `updated:>=<cursor>` where the cursor is the last tick timestamp stored at `$RUNNER_STATE_DIR/triage-cursor` (the runner state dir, never a new top-level file). A steady tick then costs O(delta I): only issues updated since the cursor. A missing, unreadable, or corrupt cursor means a full open-issue rescan, never an empty tick. Write the cursor only after the tick succeeds, so a mid-tick crash reprocesses the same delta next time instead of skipping it. The helper is `scripts/triage-tick.sh`, and the stub is `scripts/test-triage-cursor.sh`.
+
+Match near-duplicate titles by normalized fingerprint, not raw string. Normalize: lowercase, strip punctuation, strip the type prefix (`fix(...)`, `enhancement(...)`, `feat(...)`, `deprecate(...)`, bare `fix:` and friends), collapse whitespace, reduce to a sorted token set, then hash. Build a fingerprint to first-seen-issue map in one pass over the working set (O(I) time, O(I) space): a later issue with a known fingerprint reads as a duplicate of the survivor with the same action shape as an exact-title hit. Never use pairwise loops or LLM calls for dedupe.
+
 ## Triage a specific issue or PR
 
 1. **Gather context.** Read the full issue or PR (body, comments, labels, author, dates; for a PR, the diff too). Parse any prior triage notes so you don't re-ask resolved questions. Explore the codebase using the project's domain glossary, respecting ADRs in the area. Run two checks against the codebase: (a) **redundancy**: search for an existing implementation of the requested behavior by domain concept (not just the request's wording), and report where you looked. If found, it's an already-implemented `wontfix` (step 5). (b) **prior rejection**: read `.out-of-scope/*.md` and surface any that resembles this request.
