@@ -35,6 +35,8 @@ npx skills@latest add TudeOrangBiasa/skills-for-agents --skill=<name>
 
 It writes the skills into your repo as ordinary files you own and can edit. Nothing updates behind your back; pull the latest changes when you want them with `npx skills update`.
 
+Renamed skills keep working through [docs/aliases.md](./docs/aliases.md) for one release; [docs/upstream-map.md](./docs/upstream-map.md) maps every skill to its upstream source.
+
 ### 2. Run `/setup-repo`
 
 In your agent, run it once per repo. It will:

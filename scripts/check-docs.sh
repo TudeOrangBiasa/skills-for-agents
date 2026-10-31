@@ -147,6 +147,18 @@ while IFS= read -r skill_file; do
 done < <(find skills -name SKILL.md)
 [[ "$name_mismatch" == "0" ]] && pass "skill names match folders"
 
+# 7. Alias table stays resolvable (issue #175). Old names must answer the
+#    new skill with matching frontmatter; otherwise the 1-release alias rots.
+if [[ -f docs/aliases.md && -f scripts/test-aliases.sh ]]; then
+  if bash scripts/test-aliases.sh >/dev/null 2>&1; then
+    pass "aliases resolve"
+  else
+    fail "docs/aliases.md no longer resolves (run: bash scripts/test-aliases.sh)"
+  fi
+else
+  pass "no alias table to check"
+fi
+
 if [[ "$failures" -gt 0 ]]; then
   echo "check-docs: $failures check(s) failed."
   exit 1
