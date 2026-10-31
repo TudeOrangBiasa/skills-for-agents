@@ -72,18 +72,18 @@ When a skill's behavior and its credited upstream disagree, keep the credit row 
 
 ## Audit (2026-10-31): rows reviewed against the policy
 
-Each row below names the mismatch against the policy above and the proposed fix. Follow-up behavior migrations are separate tickets; this PR changes docs pointers only. Seed list from #191.
+Each row below names the mismatch against the policy above and records its resolution (closed by #201 for the six shipping or automation-shaped rows, and by #203 for plan-sharpen). Follow-up behavior migrations are separate tickets; this change is docs pointers only. Seed list from #191.
 
-### Matt-sourced but shipping or automation-shaped
+### Matt-sourced but shipping or automation-shaped (resolved by #201)
 
-| Local | Credit today | Proposed fix |
+| Local | Credit today | Resolution |
 |---|---|---|
-| `setup-repo` | mattpocock/skills | Change behavior pointer to pstack-style setup (keep credit): setup configures tracker, labels, docs, autonomy, and jobs. |
-| `setup-hooks` | mattpocock/skills | Change behavior pointer to verifier loop ownership (keep credit): hooks gate commits in the shipping loop. |
-| `ship-triage` | mattpocock/skills | Replace upstream with pstack-side triage behavior (keep credit note): triage feeds the runner queue. |
-| `ship-merge-fix` | mattpocock/skills | Change behavior pointer to pstack landing behavior (keep credit): conflict resolution lands PRs. |
-| `review-code` | mattpocock/skills | Change behavior pointer to whips review flow (keep credit): two-axis review runs inside the shipping loop. |
-| `verify-tdd` (parts) | mattpocock/skills + pstack | Keep credit, confirm pstack hardening owns the red-green loop pointer. |
+| `setup-repo` | mattpocock/skills | Resolved: behavior pointer is pstack-style local setup (keep credit). The skill configures tracker, labels, docs, autonomy, and jobs, which is shipping setup rather than Matt install behavior. |
+| `setup-hooks` | mattpocock/skills | Resolved: behavior pointer is verifier loop ownership (keep credit). Hooks gate commits in the shipping loop (fast pre-commit, slow gates at pre-push plus verifier). |
+| `ship-triage` | mattpocock/skills | Resolved: behavior pointer is pstack-side triage (keep credit note). Triage feeds the runner queue via the runner state cursor and fingerprint dedupe. |
+| `ship-merge-fix` | mattpocock/skills | Resolved: behavior pointer is pstack landing behavior (keep credit). Conflict resolution lands PRs without inventing new behavior. |
+| `review-code` | mattpocock/skills | Resolved: behavior pointer is the whips review flow (keep credit). Two-axis review (Standards, Spec) runs inside the shipping loop. |
+| `verify-tdd` (parts) | mattpocock/skills + pstack | Resolved: credit kept, pstack hardening owns the red-green loop pointer (exit clause, undefined check, constant-pin rejection, no weakening assertions). |
 
 ### Matt-sourced craft and learn skills outside the planning five
 
@@ -102,11 +102,11 @@ Each row below names the mismatch against the policy above and the proposed fix.
 | `learn-retro` | mattpocock/skills | Keep credit; behavior already local (blame-free retro). |
 | `learn-teach` | mattpocock/skills | Keep credit; behavior already local (teach-back directory builds). |
 
-### pstack-sourced planning-adjacent
+### pstack-sourced planning-adjacent (decided by #203)
 
-| Local | Credit today | Proposed fix |
+| Local | Credit today | Resolution |
 |---|---|---|
-| `plan-sharpen` | pstack | Keep as pstack unless the audit says otherwise: sharpening a brief is execution-adjacent, and no Matt planning row claims it. |
+| `plan-sharpen` | pstack | Decided: keep on pstack as execution-adjacent brief sharpening. Sharpening rewrites the prompt before a run (it hands back a prompt ready to run and never executes the task), so it sits outside the Matt planning set and no Matt planning row claims it. |
 
 
 ## Rename history (#175)
