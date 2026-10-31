@@ -1,5 +1,5 @@
 ---
-description: "Merge gate for learning: explain the diff yourself, survive correction plus three why questions, then merge. Use before merging any agent PR."
+description: "Learning gate: explain the diff yourself, survive correction plus three why questions, then merge. Use before merging any agent PR."
 disable-model-invocation: true
 name: explain-diff-before-merge
 ---
@@ -21,3 +21,14 @@ A merge gate for learning: you may merge an agent PR only after proving you unde
 - Understanding is binary per claim: right or not yet. "Roughly" is not yet.
 - The agent asks, never lectures. Explanations longer than the correction signal a teach moment: hand it to `/teach`.
 - Log recurring misses (same concept missed twice) as future lesson material, not as merge blockers.
+
+## Delegated learning (folded from the delegated-learning skill, 2026-10-31)
+
+When the diff ahead is beyond your current reach but inside your learning zone, the same gate doubles as the classroom:
+
+1. **Note gaps first.** Name the concepts you cannot build unaided, in your own words, before the agent starts. Vague ("the backend part") means narrowing first: which call, which shape, which rule.
+2. **Sliced diffs.** The agent keeps the diff reviewable in small slices; each slice is one lesson. Never delegate what you could build in under an hour; never delegate two zones above your level.
+3. **Three concepts.** After the work lands, the agent picks the three load-bearing concepts and explains each against the exact lines that carry it. You restate each back until it holds without the code in front of you. A concept explained three times without sticking is a missing prerequisite: go one level down.
+4. **Shaky ground becomes a `/teach` handoff** (`/handoff` writes it): mission, what failed to stick, what to drill next.
+
+No `LEARNED.md` compounding log: `/teach` learning records already keep the durable record, so a second log file only splits it.

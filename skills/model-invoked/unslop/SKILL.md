@@ -24,7 +24,7 @@ Rule numbers are stable ids that other skills may cite. A removed rule leaves a 
 
 ### Words
 
-4. **AI vocabulary.** Additionally, crucial, delve, enduring, enhance, fostering, garner, intricate, interplay, landscape (abstract), pivotal, robust, seamless, showcase, testament, underscore, vibrant. Use the plain word.
+4. **AI vocabulary.** Additionally, crucial, delve, enduring, enhance, fostering, garner, intricate, interplay, landscape (abstract), pivotal, robust, seamless, testament, underscore, vibrant. Use the plain word.
 5. **Fancy "is".** "serves as", "stands as", "boasts", "features". Write "is" or "has".
 6. **Plain words over fancy ones.** Use, help, many, if, not utilize, facilitate, numerous, in the event that.
 7. **Abstract metaphor nouns.** Substrate, wedge, vector, north star, flywheel, paradigm, scaffolding (as a metaphor), gold-plating (more than the job needs), ratchet (the mechanism's real name), evacuate for moving code (move out), endgame (the last phase). Name the concrete thing.
