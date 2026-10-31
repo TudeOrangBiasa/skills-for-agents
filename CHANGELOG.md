@@ -1,5 +1,11 @@
 # skills-for-agents
 
+## 0.6.1
+
+### Patch Changes
+
+- [`132d813`](https://github.com/TudeOrangBiasa/skills-for-agents/commit/132d8138d3d75ac5cd8292ded15369f5bde0b53d) Thanks [@TudeOrangBiasa](https://github.com/TudeOrangBiasa)! - docs: use renamed skill names in README credits line
+
 ## 0.6.0
 
 ### Minor Changes
