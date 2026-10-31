@@ -116,6 +116,31 @@ else
   pass "whips pack $whips_tokens/$WHIPS_PACK_BUDGET_TOKENS tokens"
 fi
 
+# 4c. Guide thin-router pack budget (issue #193). The guide SKILL.md is
+#    the default load for the router, so it stays tiny; the whole pack
+#    (exact file set: SKILL.md, COOKBOOK.md, FACTORY.md,
+#    PHASE-BOUNDARIES.md, CREDITS.md) stays under its plafond so the
+#    deep module keeps a small interface. Tokens = bytes/4, same as 4b.
+GUIDE_ROUTER_BUDGET_TOKENS=400
+GUIDE_PACK_BUDGET_TOKENS=5300
+guide_router_bytes="$(wc -c < skills/user-invoked/guide/SKILL.md)"
+guide_router_tokens="$((guide_router_bytes / 4))"
+if [[ "$guide_router_tokens" -gt "$GUIDE_ROUTER_BUDGET_TOKENS" ]]; then
+  fail "guide router $guide_router_tokens tokens exceeds budget $GUIDE_ROUTER_BUDGET_TOKENS (shrink SKILL.md, move detail to COOKBOOK/FACTORY)"
+else
+  pass "guide router $guide_router_tokens/$GUIDE_ROUTER_BUDGET_TOKENS tokens"
+fi
+guide_pack_bytes=0
+for guide_file in SKILL.md COOKBOOK.md FACTORY.md PHASE-BOUNDARIES.md CREDITS.md; do
+  guide_pack_bytes="$((guide_pack_bytes + $(wc -c < "skills/user-invoked/guide/$guide_file")))"
+done
+guide_pack_tokens="$((guide_pack_bytes / 4))"
+if [[ "$guide_pack_tokens" -gt "$GUIDE_PACK_BUDGET_TOKENS" ]]; then
+  fail "guide pack $guide_pack_tokens tokens exceeds budget $GUIDE_PACK_BUDGET_TOKENS (cut the pack or raise the plafond in this script with reason)"
+else
+  pass "guide pack $guide_pack_tokens/$GUIDE_PACK_BUDGET_TOKENS tokens"
+fi
+
 if git diff -U0 "$RANGE" -- '*.md' | grep '^+' | grep -v '^+++' | grep -q '—'; then
   fail "em dash found in added markdown lines (rewrite with comma, colon, period, or parens)"
 else
