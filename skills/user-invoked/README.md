@@ -12,6 +12,7 @@ Skills that fire only when the human types their name. They orchestrate; they ne
 - **[guide](./guide/SKILL.md)**: Ask which skill or flow fits your situation. A router over the skills in this repo.
 - **[handoff](./handoff/SKILL.md)**: Compact the conversation into a handoff doc for another session to continue.
 - **[ketchup](./ketchup/SKILL.md)**: Catch up on everything in this chat since your last message, with an executive summary for each action item.
+- **[ketchup-video](./ketchup-video/SKILL.md)**: Catch up like `/ketchup`, but show what happened in a short subtitled video, with action items as text under it (text fallback when the harness cannot render video).
 - **[recall](./recall/SKILL.md)**: Rebuild recent working context across chats into a tight capsule brief before starting or resuming.
 - **[deepen](./deepen/SKILL.md)**: Scan a codebase for deepening opportunities, present them as a visual HTML report, then discuss through whichever one you pick.
 - **[worklog](./worklog/SKILL.md)**: Interview me about specs for the workflows I want to build, within this workspace.
