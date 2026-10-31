@@ -30,7 +30,7 @@ When a skill's behavior and its credited upstream disagree, keep the credit row 
 | `craft-why` | `why` | pstack |
 | `craft-wizard` | `wizard` | mattpocock/skills |
 | `create-formal-verification` | `create-formal-verification-skill` | pstack |
-| `guide` | `ask-matt` | mattpocock/skills |
+| `guide` | - (original router; credit note: shaped by Matt `ask-matt`) | - |
 | `learn-catchup` | `ketchup` | pstack |
 | `learn-catchup-video` | `ketchup` (video shape) | pstack |
 | `learn-diff-gate` | - (original) | - |
@@ -85,22 +85,22 @@ Each row below names the mismatch against the policy above and records its resol
 | `review-code` | mattpocock/skills | Resolved: behavior pointer is the whips review flow (keep credit). Two-axis review (Standards, Spec) runs inside the shipping loop. |
 | `verify-tdd` (parts) | mattpocock/skills + pstack | Resolved: credit kept, pstack hardening owns the red-green loop pointer (exit clause, undefined check, constant-pin rejection, no weakening assertions). |
 
-### Matt-sourced craft and learn skills outside the planning five
+### Matt-sourced craft and learn skills outside the planning five (resolved by #202)
 
-| Local | Credit today | Proposed fix |
+| Local | Credit today | Resolution |
 |---|---|---|
-| `craft-deepen` | mattpocock/skills | Keep credit; behavior already local (deep-module maintenance cadence). |
-| `craft-diagnose` | mattpocock/skills | Keep credit; behavior already local (tight feedback loop for hard bugs). |
-| `craft-domain` | mattpocock/skills | Keep credit; behavior already local (glossary vocabulary). |
-| `craft-proto` | mattpocock/skills | Keep credit; behavior already local (throwaway prototype answers one question). |
-| `craft-research` | mattpocock/skills | Keep credit; behavior already local (research before editing). |
-| `craft-vocab` | mattpocock/skills | Keep credit; behavior already local (seam vocabulary design). |
-| `craft-wizard` | mattpocock/skills | Keep credit; behavior already local (human-gated deploy walkthrough). |
-| `craft-agent-docs` | mattpocock/skills | Keep credit; behavior already local (skill authoring mechanics). |
-| `guide` | mattpocock/skills | Replace upstream with original router (keep credit note): the router serves the whole skill set, not one planning source. |
-| `learn-handoff` | mattpocock/skills | Keep credit; behavior already local (portable notes at phase boundaries). |
-| `learn-retro` | mattpocock/skills | Keep credit; behavior already local (blame-free retro). |
-| `learn-teach` | mattpocock/skills | Keep credit; behavior already local (teach-back directory builds). |
+| `craft-deepen` | mattpocock/skills | Resolved: keep credit; behavior already local (deep-module maintenance cadence). |
+| `craft-diagnose` | mattpocock/skills | Resolved: keep credit; behavior already local (tight feedback loop for hard bugs). |
+| `craft-domain` | mattpocock/skills | Resolved: keep credit; behavior already local (glossary vocabulary). |
+| `craft-proto` | mattpocock/skills | Resolved: keep credit; behavior already local (throwaway prototype answers one question). |
+| `craft-research` | mattpocock/skills | Resolved: keep credit; behavior already local (research before editing). |
+| `craft-vocab` | mattpocock/skills | Resolved: keep credit; behavior already local (seam vocabulary design). |
+| `craft-wizard` | mattpocock/skills | Resolved: keep credit; behavior already local (human-gated deploy walkthrough). |
+| `craft-agent-docs` | mattpocock/skills | Resolved: keep credit; behavior already local (skill authoring mechanics). |
+| `guide` | - (original router; credit note: shaped by Matt `ask-matt`) | Resolved: original router (keep credit note): the router serves the whole skill set, not one planning source. |
+| `learn-handoff` | mattpocock/skills | Resolved: keep credit; behavior already local (portable notes at phase boundaries). |
+| `learn-retro` | mattpocock/skills | Resolved: keep credit; behavior already local (blame-free retro). |
+| `learn-teach` | mattpocock/skills | Resolved: keep credit; behavior already local (teach-back directory builds). |
 
 ### pstack-sourced planning-adjacent (decided by #203)
 
