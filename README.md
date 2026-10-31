@@ -17,7 +17,7 @@ Idea path (grill, spec, tickets) comes from [Matt Pocock skills](https://github.
 
 ## Installation (30-second setup)
 
-One install story. **[skills.sh](https://skills.sh/TudeOrangBiasa/skills-for-agents)** copies editable skill files into your project, so you can hack on them and make them your own. They work the same in any universal agent (Codex, pi, oh-my-pi, agy, and the rest).
+One install story. **[skills.sh](https://skills.sh/TudeOrangBiasa/skills-for-agents)** copies editable skill files into your project, so you can hack on them and make them your own. They work the same in any agent that loads SKILL.md folders (for example Codex, pi, oh-my-pi, or agy).
 
 ### 1. Get the skills
 

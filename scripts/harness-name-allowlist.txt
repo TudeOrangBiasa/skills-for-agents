@@ -4,5 +4,5 @@
 **/CREDITS.md
 # test-detect-ask.sh names harnesses only inside self-test absence patterns that keep runner.sh agnostic (issue #188).
 skills/user-invoked/ship-runner/scripts/test-detect-ask.sh
-# README.md install story uses the canonical install-block example list, not a harness pin.
-README.md:.*any universal agent \(.*\).*
+# README.md install story uses the install-block example list (names as examples only), not a harness pin (issue #210).
+README.md:.*any agent that loads SKILL\.md folders \(for example .*\).*
