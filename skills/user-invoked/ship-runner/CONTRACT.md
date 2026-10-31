@@ -17,17 +17,18 @@ What `scripts/runner.sh` reads, does, and writes. A scheduler needs only this fi
 | `triage [--dry-run]` | no | Labels up to the triage cap of intake issues per repo, prints a summary | 0 done or lock busy, 2 config error |
 | `fix-ci [--dry-run]` | no | Team repos only: claims red or conflicted PRs, runs the agent once per claim | 0 done or lock busy, 2 config error |
 
-Setup flags: `--agent-cmd`, `--model`, `--repos`, `--allowlist`, `--max-issues`. Without a terminal, setup refuses unless `--agent-cmd` and `--model` are given.
+Setup flags: `--agent-cmd`, `--model`, `--repos`, `--allowlist`, `--max-issues`. Without a terminal, setup refuses unless every value comes from flags or a consumer `docs/agents/harness.md`.
 
 ## Config
 
-`$RUNNER_CONFIG`, else `~/.config/runner/config.sh`, written by setup. An env var of the same name overrides the file for one call.
+`$RUNNER_CONFIG`, else `~/.config/runner/config.sh`, written by setup as a thin override. An env var of the same name overrides the file for one call.
+
+The shared record lives in each consumer repo's `docs/agents/harness.md` (same shape as the `setup-repo` harness.md template): `- **Agent command:**` and `- **Model:**` lines, written by setup, read on every run like `repo-mode.md`. Precedence for `RUNNER_AGENT_CMD` and `RUNNER_MODEL`: host env, then the override file, then the first consumer harness doc. Nothing is defaulted: no preset table ships, and setup never invents a harness name.
 
 | Key | Default | Meaning |
 | --- | --- | --- |
 | `RUNNER_AGENT_CMD` | none, required | Shell command that runs the agent non-interactively |
 | `RUNNER_MODEL` | none, required | Passed to the command as `$RUNNER_MODEL` |
-| `RUNNER_REPOS` | none, required | Space separated paths to local clones |
 | `RUNNER_MODEL_ALLOWLIST` | empty | Space separated; a model outside it refuses |
 | `RUNNER_MAX_ISSUES` | `1` | Issues per run |
 | `RUNNER_MAX_ATTEMPTS` | `2` | Failures before an issue waits for `reset` |
@@ -41,6 +42,7 @@ Setup flags: `--agent-cmd`, `--model`, `--repos`, `--allowlist`, `--max-issues`.
 | `RUNNER_FIX_MAX_ATTEMPTS` | `3` | Fix attempts per PR before the human label lands |
 | `RUNNER_FIX_AUTHORS` | empty | Space separated PR authors fix-ci may touch; empty means the bot only |
 | `RUNNER_FIX_PER_PASS` | `10` | Claims per fix-ci pass at most |
+| `RUNNER_AGENT_PROBES` | empty | Space separated binary names `detect` echoes from PATH (opaque, never templates) |
 
 Label strings and tracker commands are not config. They come from each repo's `docs/agents/`.
 
@@ -52,16 +54,11 @@ Label strings and tracker commands are not config. They come from each repo's `d
 
 ## The agent command
 
-Runs through `bash -c` in the worktree, stdin closed, output to the per-issue log, killed at the timeout. Exported: `RUNNER_MODEL`, `RUNNER_PROMPT`, `RUNNER_PROMPT_FILE`, `RUNNER_ISSUE`, `RUNNER_WORKTREE`, `RUNNER_RESUME_BRANCH` (empty on a fresh start). An example, not a default:
+Runs through `bash -c` in the worktree, stdin closed, output to the per-issue log, killed at the timeout. Exported: `RUNNER_MODEL`, `RUNNER_PROMPT`, `RUNNER_PROMPT_FILE`, `RUNNER_ISSUE`, `RUNNER_WORKTREE`, `RUNNER_RESUME_BRANCH` (empty on a fresh start).
 
-```bash
-RUNNER_AGENT_CMD='opencode run --auto -m "$RUNNER_MODEL" "$RUNNER_PROMPT"'
-RUNNER_MODEL='opencode-go/muse-spark-1.3'
-```
+Setup detects or asks: it reads the agent command and model from flags, from the consumer repo's `docs/agents/harness.md`, or from the user's answers in a terminal, then persists them to the consumer repos plus a thin host override. The contract only requires `$RUNNER_AGENT_CMD` and `$RUNNER_MODEL`; no preset table ships, and detection never names a harness or reads harness-owned config paths.
 
 The allowlist only governs what the runner launches. Pin the agent's own subagent or fallback models in the agent's config.
-
-Documented `omp` preset (flags read from `omp --help`, not guessed): `omp -p --max-time "$RUNNER_TIMEOUT_MIN"m --mode text --auto-approve --model "$RUNNER_MODEL" "$RUNNER_PROMPT"`. Orca is never a dependency: setup-repo may note its presence, but nothing requires or installs it.
 
 The prompt opens with `/whips` and asks for ship-triage intake on exactly that issue, `opening-a-pr` to finish with tiered landing, and no waiting for answers. It is saved beside the log. When prior work exists on the claim branch or `wip/runner-issue-N`, the worktree checks that branch out and the prompt routes to `pickup` instead: continue from this branch, do not create a new one.
 
@@ -75,7 +72,7 @@ The prompt opens with `/whips` and asks for ship-triage intake on exactly that i
 | `no_pr` | Ended with neither | removed after a `wip/runner-issue-N` push | +1 |
 | `setup_failed` | `git worktree add` failed | none | +1 |
 | `interrupted` | An orphan claim, released at the next start | | +1 |
-| `fetch_failed`, `unsupported_tracker` | The repo was skipped | | |
+| `claim_lost` | A lost claim race, backed off after the re-read (no agent launch) | none | unchanged |
 
 State lives under `RUNNER_STATE_DIR`: `lock`, `active`, `attempts.json`, `runs.jsonl`, `last-start`, `last-finish`, `logs/`. `attempts.json` is a cache; the count of record lives on GitHub.
 
@@ -89,13 +86,15 @@ On `gh` repos the runner writes machine-readable comments on the issue. Only com
 
 The reaper at the start of `run` releases an orphan claim only when all of these hold: the marker age passes `RUNNER_CLAIM_TTL_MIN`, the authenticated user is the sole assignee, no open PR closes the issue, and the recorded branch has no commit newer than the TTL. A human assignee blocks the reaper. The reaper scans both the legacy `active` file and open issues assigned to the authenticated user.
 
+After every assign write, the runner re-reads the issue before launching the agent (check-after-write). It proceeds only when it is the sole assignee with no fresher same-login marker this tick, or the earliest claimant by claim-marker timestamp (run id breaks ties). Otherwise it unassigns itself when another login holds the claim, skips the issue this tick with outcome `claim_lost`, and launches nothing. The local `flock` still serializes one machine; the re-read is the cross-machine safety net.
+
 `timeout` and `no_pr` push their work before the worktree is removed: one `wip:` commit when the tree is dirty (per `pause.md`), then a push to `wip/runner-issue-N`. The next run checks that branch out and resumes through `pickup` instead of starting over.
 
 ## Limits
 
-- One machine per bot account is the supported shape. Two machines running `run` together are not safe: the lock is local (`flock`), so both can claim and push at once. That is a scope decision, not a bug.
+- One machine per bot account is the supported shape. Two machines running `run` together serialize only through the claim re-read: the loser backs off with `claim_lost`, so at most one agent works an issue per tick. The lock is local (`flock`); the re-read is the cross-machine net, not a queue.
 - A PR counts as linked only when its body says `Closes`, `Fixes`, or `Resolves #N`.
-- The open PR list is fetched once per repo per run and filtered locally, so filtering N candidates costs one API call. One refresh follows each processed issue to see its new PR.
+- The open PR list is fetched once per repo per run and filtered locally, so filtering N candidates costs one API call. One refresh follows each processed issue to see its new PR. Each claim adds a re-read (assignees plus claim markers) before the agent launches.
 - Needs `bash`, `git`, `jq`, `flock`, `timeout`, and the tracker CLI, authenticated.
 
 ## Triage

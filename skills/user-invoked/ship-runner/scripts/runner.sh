@@ -38,6 +38,14 @@ load_config() {
   [[ -f "$RUNNER_CONFIG_PATH" ]] && source "$RUNNER_CONFIG_PATH"
   for v in "${!caller[@]}"; do printf -v "$v" '%s' "${caller[$v]}"; done
   bridge_legacy
+  # Consumer record fills what the thin override leaves out (issue #188):
+  # the shared agent command and model live in each repo's
+  # docs/agents/harness.md, written by setup. Host env and the override
+  # file still win when set.
+  if [[ -z "${RUNNER_AGENT_CMD:-}" || -z "${RUNNER_MODEL:-}" ]] && [[ -n "${RUNNER_REPOS:-}" ]]; then
+    [[ -n "${RUNNER_AGENT_CMD:-}" ]] || RUNNER_AGENT_CMD="$(harness_first "Agent command" ${RUNNER_REPOS})"
+    [[ -n "${RUNNER_MODEL:-}" ]] || RUNNER_MODEL="$(harness_first Model ${RUNNER_REPOS})"
+  fi
   : "${RUNNER_MODEL_ALLOWLIST:=}"
   : "${RUNNER_MAX_ISSUES:=1}"
   : "${RUNNER_MAX_ATTEMPTS:=2}"
@@ -175,15 +183,79 @@ f_unclaim() {
   esac
 }
 
+# Check-after-write for the claim (issue #194). flock serializes runners on
+# one machine only; two runners on different hosts can both write an assign
+# before either reads. After my own assign write plus my claim marker,
+# re-read the issue and keep the claim only when I am the sole assignee with
+# no fresher same-login competitor, or the earliest claimant by runner-claim
+# marker timestamp. On a lost race, unassign myself (different-login race)
+# and skip the issue this tick, launching no agent.
+# Prints: proceed | lost-race | no-claim. Exits 0 on proceed, 1 otherwise.
+claim_check() { # dir n run_id
+  local dir="$1" n="$2" run_id="$3" me a seen_me=0
+  local -a others=()
+  me="$(my_login)"
+  [[ -n "$me" ]] || { printf 'no-claim'; return 1; }
+  while read -r a; do
+    [[ -n "${a:-}" ]] || continue
+    if [[ "$a" == "$me" ]]; then seen_me=1; else others+=("$a"); fi
+  done < <(f_assignees "$dir" "$n")
+  ((seen_me)) || { printf 'no-claim'; return 1; }
+  if [[ "$FORGE" != gh ]]; then
+    if ((${#others[@]})); then f_unclaim "$dir" "$n"; printf 'lost-race'; return 1; fi
+    printf 'proceed'; return 0
+  fi
+  local mine_ts c_author c_run c_ts
+  mine_ts="$(f_claim_ts "$dir" "$n" "$run_id")"
+  if [[ -z "$mine_ts" ]]; then f_unclaim "$dir" "$n"; printf 'no-claim'; return 1; fi
+  local have_competitor=0
+  local -a marked_others=()
+  while IFS=$'\t' read -r c_author c_run c_ts; do
+    [[ -n "${c_run:-}" ]] || continue
+    [[ "$c_run" == "$run_id" ]] && continue
+    if [[ "$c_author" == "$me" ]]; then
+      ((c_ts >= ${INVOKED_AT:-0})) || continue
+    else
+      in_array "$c_author" ${others[@]+"${others[@]}"} || continue
+      marked_others+=("$c_author")
+    fi
+    have_competitor=1
+    if ((c_ts < mine_ts)) || { ((c_ts == mine_ts)) && [[ "$c_run" < "$run_id" ]]; }; then
+      ((${#others[@]})) && f_unclaim "$dir" "$n"
+      printf 'lost-race'; return 1
+    fi
+  done < <(f_claim_markers_all "$dir" "$n")
+  if ((${#others[@]})); then
+    local o
+    for o in "${others[@]}"; do
+      in_array "$o" ${marked_others[@]+"${marked_others[@]}"} || { f_unclaim "$dir" "$n"; printf 'lost-race'; return 1; }
+    done
+  fi
+  printf 'proceed'; return 0
+}
+in_array() { local want="$1"; shift; local e; for e in "$@"; do [[ "$e" == "$want" ]] && return 0; done; return 1; }
+
 
 # Markers live in issue comments on GitHub, so a wiped state dir or a reboot
 # keeps the same count. Comments by other logins never count.
 me_login() { gh_me_login; }
+my_login() { # authenticated login for the active forge
+  case "$FORGE" in
+    gh) gh_me_login ;;
+    glab) glab_me_login ;;
+  esac
+}
 gh_me_login() {
   if [[ -z "${__ME_LOGIN:-}" ]]; then
     __ME_LOGIN="$(gh api user -q .login 2>/dev/null)" || __ME_LOGIN=""
   fi
   printf '%s' "$__ME_LOGIN"
+}
+glab_me_login() {
+  if [[ -z "${__GLAB_ME_LOGIN:-}" ]]; then
+    __GLAB_ME_LOGIN="$(glab api user 2>/dev/null | jq -r .username)" || __GLAB_ME_LOGIN=""
+  fi
+  printf '%s' "$__GLAB_ME_LOGIN"
 }
 f_comments() { # dir n -> JSON array of {id,author,body}
   case "$FORGE" in
@@ -218,6 +290,26 @@ f_claim_marker() { # dir n
   f_comments "$1" "$2" | jq -r --arg me "$me" '
     [.[] | select(.author == $me) | .body // "" | capture("<!-- runner-claim run=(?<r>[^ >]+) ts=(?<t>[0-9]+) branch=(?<b>[^ >]+) -->")? | select(.) | "\(.r) \(.t) \(.b)"]
     | last // empty'
+}
+# Every runner-claim marker on the issue, all authors: "author<TAB>run<TAB>ts"
+# per line. Same-login races cannot show in the assignee list, so the race
+# check (#194) reads markers from every author, not just mine.
+f_claim_markers_all() { # dir n
+  f_comments "$1" "$2" | jq -r '
+    .[] | select(.body // "" | contains("<!-- runner-claim")) | "\(.author)\t\(.body)"' |
+  while IFS=$'\t' read -r author body; do
+    if [[ "$body" =~ \<!--\ runner-claim\ run=([^[:space:]>]+)\ ts=([0-9]+) ]]; then
+      printf '%s\t%s\t%s\n' "$author" "${BASH_REMATCH[1]}" "${BASH_REMATCH[2]}"
+    fi
+  done
+}
+# My own marker ts for this run id, or empty when the write never landed.
+f_claim_ts() { # dir n run_id
+  local author run ts
+  while IFS=$'\t' read -r author run ts; do
+    [[ "$run" == "$3" ]] && { printf '%s' "$ts"; return; }
+  done < <(f_claim_markers_all "$1" "$2")
+  return 0
 }
 f_claim_write() { # dir n run_id branch ; one comment per claim, edited is folded into the reaper
   case "$FORGE" in
@@ -383,7 +475,7 @@ push_wip() { # dir wt n ; prints the pushed branch or empty
 }
 
 run_one() { # dir n
-  local dir="$1" n="$2" key="$1#$2" ts wt logf prompt rc=0 resume="" run_id branch="" resume_add_failed=""
+  local dir="$1" n="$2" key="$1#$2" ts wt logf prompt rc=0 resume="" run_id branch="" resume_add_failed="" verdict=""
   ts="$(date +%Y%m%d-%H%M%S)-$$"
   logf="$(state logs)/$(basename "$dir")-$n-$ts.log"
   prompt="${logf%.log}.prompt.md"
@@ -396,6 +488,13 @@ run_one() { # dir n
 
   f_claim "$dir" "$n" || { log "could not claim $key"; return; }
   [[ "$FORGE" == gh ]] && f_claim_write "$dir" "$n" "$run_id" "${resume:-wip/runner-issue-$n}"
+  verdict="$(claim_check "$dir" "$n" "$run_id")" || true
+  if [[ "$verdict" != proceed ]]; then
+    log "skip $key: claim $verdict after re-read, backing off (no agent launch)"
+    record "$dir" "$n" claim_lost "" "" "claim $verdict on re-read after write"
+    SUMMARY+=("$(basename "$dir")#$n claim_lost")
+    return
+  fi
   printf '%s %s\n' "$dir" "$n" >>"$(state active)"
   wt="$RUNNER_WORK_DIR/worktrees/$(basename "$dir")-issue-$n-$ts"
   mkdir -p "$(dirname "$wt")"
@@ -467,6 +566,7 @@ cmd_run() {
   if [[ -f "$(state stop)" ]]; then log stopped; exit 0; fi
   exec 9>"$(state lock)"
   flock -n 9 || { log "another run holds the lock"; exit 0; }
+  INVOKED_AT="$(date +%s)"; export INVOKED_AT
   date -Is >"$(state last-start)"
   recover_stale
   SUMMARY=()
@@ -528,38 +628,49 @@ cmd_reset() {
 }
 
 # ---------- setup: detect, ask, persist ----------
+#
+# Harness-agnostic by construction (issue #188): no preset table ships here,
+# and detection never names a harness or reads harness-owned config paths.
+# The agent command and model come from flags, from the consumer repo's
+# docs/agents/harness.md (written by a previous setup, same shape as the
+# setup-repo harness.md template), or from asking the user. PATH probes only
+# echo opaque binary names the user listed in RUNNER_AGENT_PROBES.
 
-AGENTS="opencode pi omp codex claude grok gemini cursor-agent aider goose amp droid kimi qwen crush"
-
-# Offered only where the CLI documents a non-interactive mode; verify with '<agent> --help'.
-# omp preset, flags read from `omp --help` on the host (issue #78): -p/--print
-# for non-interactive runs, --max-time for the session timeout, --mode for
-# structured output, --auto-approve / --approval-mode to skip TUI approval.
-preset_cmd() {
-  case "$1" in
-    omp) printf '%s' 'omp -p --max-time "$RUNNER_TIMEOUT_MIN"m --mode text --auto-approve --model "$RUNNER_MODEL" "$RUNNER_PROMPT"' ;;
-    opencode) printf '%s' 'opencode run --auto -m "$RUNNER_MODEL" "$RUNNER_PROMPT"' ;;
-    codex) printf '%s' 'codex exec --full-auto -m "$RUNNER_MODEL" "$RUNNER_PROMPT"' ;;
-    claude) printf '%s' 'claude -p --model "$RUNNER_MODEL" "$RUNNER_PROMPT"' ;;
-    *) return 1 ;;
-  esac
+# One "- **Key:** value" line from a consumer harness.md, or empty.
+harness_value() { # file key
+  local v
+  v="$(sed -nE "s/^[-*][[:space:]]+\*\*$2:\*\*[[:space:]]*//p" "$1" 2>/dev/null | head -n1)"
+  v="${v%"${v##*[![:space:]]}"}"
+  printf '%s' "$v"
+}
+# First non-empty value for key across repo harness docs, or empty.
+harness_first() { # key dir...
+  local key="$1"; shift
+  local dir f v
+  for dir in "$@"; do
+    f="$dir/docs/agents/harness.md"
+    [[ -f "$f" ]] || continue
+    v="$(harness_value "$f" "$key")"
+    [[ -n "$v" ]] && { printf '%s' "$v"; return; }
+  done
+  return 0
 }
 
-detect_agents() { local a; for a in $AGENTS; do command -v "$a" >/dev/null 2>&1 && echo "$a"; done; return 0; }
+detect_agents() {
+  local a
+  for a in ${RUNNER_AGENT_PROBES:-}; do command -v "$a" >/dev/null 2>&1 && printf '%s\n' "$a"; done
+  return 0
+}
 
 detect_models() {
-  local c="${XDG_CONFIG_HOME:-$HOME/.config}" f
-  command -v opencode >/dev/null 2>&1 && { timeout 30 opencode models 2>/dev/null | grep -E '^[^[:space:]]+/[^[:space:]]+$' || true; }
-  for f in "$c/opencode/opencode.json" "$c/opencode/opencode.jsonc"; do
-    [[ -f "$f" ]] && sed -nE 's/.*"(model|small_model)"[[:space:]]*:[[:space:]]*"([^"]+)".*/\2/p' "$f"
+  local dir f v
+  for dir in ${RUNNER_REPOS:-}; do
+    f="$dir/docs/agents/harness.md"
+    [[ -f "$f" ]] || continue
+    v="$(harness_value "$f" Model)"
+    [[ -n "$v" ]] && printf '%s\n' "$v"
   done
-  for f in "$HOME/.pi/agent/settings.json" "$HOME/.omp/agent/settings.json"; do
-    [[ -f "$f" ]] && jq -r 'select(.defaultModel) | [.defaultProvider, .defaultModel] | map(select(.)) | join("/")' "$f" 2>/dev/null
-  done
-  f="$HOME/.codex/config.toml"
-  [[ -f "$f" ]] && sed -nE 's/^[[:space:]]*model[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/p' "$f"
-  f="$HOME/.claude/settings.json"
-  [[ -f "$f" ]] && jq -r '.model // empty' "$f" 2>/dev/null
+  [[ -n "${RUNNER_MODEL:-}" ]] && printf '%s\n' "$RUNNER_MODEL"
   return 0
 }
 
@@ -572,8 +683,8 @@ cmd_resume() { rm -f "$(state stop)"; log resumed; }
 cmd_detect() {
   load_config
   printf 'config: %s (%s)\n' "$RUNNER_CONFIG_PATH" "$([[ -f "$RUNNER_CONFIG_PATH" ]] && echo exists || echo missing)"
-  printf '\nagents on PATH:\n'; detect_agents | sed 's/^/  /'
-  printf '\nmodels in harness configs:\n'; detect_models | sort -u | sed 's/^/  /'
+  printf '\nagent binaries on PATH (RUNNER_AGENT_PROBES, opaque names only):\n'; detect_agents | sed 's/^/  /'
+  printf '\nmodels in consumer harness docs:\n'; detect_models | sort -u | sed 's/^/  /'
   printf '\nprovider env vars (names only):\n'; detect_env_keys | sed 's/^/  /'
   local dir
   for dir in ${RUNNER_REPOS:-}; do
@@ -597,22 +708,44 @@ ask() { local r; read -r -p "$1${2:+ [$2]}: " r </dev/tty; printf '%s' "${r:-$2}
 
 cmd_setup() {
   load_config
-  local agent_cmd="" model="" repos="" allow="" maxi="" tty=0 a dir
+  local agent_cmd="" model="" repos="" allow="" maxi="" tty=0 a dir flag_cmd=0 flag_model=0
   while (($#)); do
     case "$1" in
-      --agent-cmd) agent_cmd="$2" ;; --model) model="$2" ;; --repos) repos="$2" ;;
-      --allowlist) allow="$2" ;; --max-issues) maxi="$2" ;;
+      --agent-cmd) agent_cmd="$2"; flag_cmd=1 ;; --model) model="$2"; flag_model=1 ;;
+      --repos) repos="$2" ;; --allowlist) allow="$2" ;; --max-issues) maxi="$2" ;;
       *) die "unknown setup flag: $1" ;;
     esac
-    shift 2
+    shift 2 || die "setup flag $1 needs a value"
   done
   { : </dev/tty; } 2>/dev/null && tty=1
+  repos="${repos:-${RUNNER_REPOS:-}}"
+  if [[ -z "$repos" ]]; then
+    ((tty)) || die "setup needs a terminal to ask, or --agent-cmd, --model, and --repos"
+    repos="$(ask 'local clones to work on (space separated paths)' "")"
+  fi
+  [[ -n "$repos" ]] || die "no repos given"
+  local abs=()
+  for dir in $repos; do
+    dir="$(cd "${dir/#\~/$HOME}" 2>/dev/null && pwd)" || die "not a directory: $dir"
+    git -C "$dir" rev-parse --git-dir >/dev/null 2>&1 || die "not a git clone: $dir"
+    abs+=("$dir")
+  done
+  if [[ -z "$agent_cmd" ]]; then
+    agent_cmd="$(harness_first "Agent command" "${abs[@]}")"
+    [[ -n "$agent_cmd" ]] && log "agent command from ${abs[0]}/docs/agents/harness.md"
+  fi
+  if [[ -z "$model" ]]; then
+    model="$(harness_first "Model" "${abs[@]}")"
+    [[ -n "$model" ]] && log "model from ${abs[0]}/docs/agents/harness.md"
+  fi
   if [[ -z "$agent_cmd" ]]; then
     ((tty)) || die "setup needs a terminal to ask, or --agent-cmd and --model"
-    local opts=()
-    while read -r a; do opts+=("$(preset_cmd "$a" || echo "$a <type the full non-interactive command>")"); done < <(detect_agents)
-    agent_cmd="$(choose 'Agent command (it sees $RUNNER_MODEL, $RUNNER_PROMPT, $RUNNER_PROMPT_FILE):' "${opts[@]}")"
-    [[ "$agent_cmd" != *"<type the full"* ]] || agent_cmd="$(ask 'full command' "")"
+    local found=()
+    mapfile -t found < <(detect_agents)
+    ((${#found[@]})) && printf '\nagent binaries on PATH: %s\n' "${found[*]}" >&2
+    printf '%s\n' 'No preset table ships with the runner: type the full non-interactive' \
+      'command (it sees $RUNNER_MODEL, $RUNNER_PROMPT, $RUNNER_PROMPT_FILE).' >&2
+    agent_cmd="$(ask 'agent command' "")"
   fi
   if [[ -z "$model" ]]; then
     ((tty)) || die "setup needs a terminal to ask, or --model"
@@ -621,28 +754,51 @@ cmd_setup() {
     model="$(choose 'Model for every run:' "${models[@]}")"
   fi
   if ((tty)); then
-    [[ -n "$repos" ]] || repos="$(ask 'local clones to work on (space separated paths)' "${RUNNER_REPOS:-}")"
     [[ -n "$allow" ]] || allow="$(ask 'model allowlist (space separated, empty for none)' "${RUNNER_MODEL_ALLOWLIST:-}")"
     [[ -n "$maxi" ]] || maxi="$(ask 'issues per run' "$RUNNER_MAX_ISSUES")"
   fi
   [[ -n "$agent_cmd" && -n "$model" ]] || die "agent command and model are required"
-  repos="${repos:-${RUNNER_REPOS:-}}"; [[ -n "$repos" ]] || die "no repos given"
-  local abs=()
-  for dir in $repos; do
-    dir="$(cd "${dir/#\~/$HOME}" 2>/dev/null && pwd)" || die "not a directory: $dir"
-    git -C "$dir" rev-parse --git-dir >/dev/null 2>&1 || die "not a git clone: $dir"
-    abs+=("$dir")
-  done
+  write_consumer_harness "$agent_cmd" "$model" "${abs[@]}"
   mkdir -p "$(dirname "$RUNNER_CONFIG_PATH")"
   {
     printf '# Written by "runner.sh setup" on %s. Re-run setup to change.\n' "$(date -Is)"
-    printf 'RUNNER_AGENT_CMD=%q\nRUNNER_MODEL=%q\nRUNNER_MODEL_ALLOWLIST=%q\n' "$agent_cmd" "$model" "$allow"
+    printf '# Thin override: values here win for this host; the consumer repos hold the shared record.\n'
+    ((flag_cmd)) && printf 'RUNNER_AGENT_CMD=%q\n' "$agent_cmd"
+    ((flag_model)) && printf 'RUNNER_MODEL=%q\n' "$model"
+    printf 'RUNNER_MODEL_ALLOWLIST=%q\n' "$allow"
     printf 'RUNNER_REPOS=%q\nRUNNER_MAX_ISSUES=%q\n' "${abs[*]}" "${maxi:-$RUNNER_MAX_ISSUES}"
   } >"$RUNNER_CONFIG_PATH"
   unset RUNNER_AGENT_CMD RUNNER_MODEL RUNNER_MODEL_ALLOWLIST RUNNER_REPOS RUNNER_MAX_ISSUES
   load_config; require_config
   echo "saved $RUNNER_CONFIG_PATH"
   cmd_detect | sed -n '/^\//,$p'
+}
+# Write the shared record into each consumer repo, mirroring repo-mode storage.
+write_consumer_harness() { # agent_cmd model dir...
+  local agent_cmd="$1" model="$2"; shift 2
+  local dir f old_cmd old_model old_probes
+  for dir in "$@"; do
+    mkdir -p "$dir/docs/agents"
+    f="$dir/docs/agents/harness.md"
+    old_cmd=""; old_model=""; old_probes=""
+    if [[ -f "$f" ]]; then
+      old_cmd="$(harness_value "$f" "Agent command")"
+      old_model="$(harness_value "$f" "Model")"
+      old_probes="$(harness_value "$f" "PATH probes")"
+    fi
+    if [[ "$old_cmd" == "$agent_cmd" && "$old_model" == "$model" ]]; then
+      log "kept $f (unchanged)"; continue
+    fi
+    {
+      printf '# Harness\n\n'
+      printf 'Which agent command and model the runner launches in this repo. Written by `runner.sh setup`; re-run setup to change. The runner reads this file on every run, like `repo-mode.md`.\n\n'
+      printf -- '- **Agent command:** %s\n' "$agent_cmd"
+      printf -- '- **Model:** %s\n' "$model"
+      [[ -n "$old_probes" ]] && printf -- '- **PATH probes:** %s\n' "$old_probes"
+    } >"$f"
+    git -C "$dir" add docs/agents/harness.md 2>/dev/null || true
+    log "wrote $f"
+  done
 }
 
 # ---------- triage: on-loop issue intake (issue #81) ----------

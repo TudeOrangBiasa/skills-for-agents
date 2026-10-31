@@ -7,7 +7,7 @@ name: ship-runner
 
 Loop runner for the agent-ready queue, on any schedule (cron, an interval loop, or one manual run; renamed from nightshift, which sounded nights-only). Hand the queue to an agent while nobody is watching. Distinct from `/plan-worklog`, which designs personal workflows and never runs them: ship-runner runs repo issue queues, nothing else. One script, [scripts/runner.sh](scripts/runner.sh), claims each `ready-for-agent` issue, runs `/whips` ship-triage intake on it in a fresh worktree, and lands per the risk tier. The human reviews high-risk in the morning; low-risk already landed.
 
-The agent command and the model are the user's choice, made once at setup and saved to a config file. Nothing is defaulted. [CONTRACT.md](CONTRACT.md) holds the config keys, commands, exit codes, and outcomes. Any scheduler can call `runner.sh run`; wiring one is out of scope here.
+The agent command and the model are the user's choice, made once at setup and saved to each consumer repo's `docs/agents/harness.md` plus a thin host override. Nothing is defaulted. [CONTRACT.md](CONTRACT.md) holds the config keys, commands, exit codes, and outcomes. Any scheduler can call `runner.sh run`; wiring one is out of scope here.
 
 ## 1. Check the repos
 
@@ -19,11 +19,11 @@ A missing file means stop for that repo and tell the user to run `/setup-repo` i
 
 ## 2. Set up: detect, then ask
 
-Run `scripts/runner.sh detect` and show the user what it found: agent CLIs on PATH, models read from harness configs, provider key env var names (never values), and per repo the tracker and label strings it resolved.
+Run `scripts/runner.sh detect` and show the user what it found: agent binaries on PATH (opaque names from `RUNNER_AGENT_PROBES`), models recorded in consumer harness docs, provider key env var names (never values), and per repo the tracker and label strings it resolved.
 
 Then ask, one question at a time, leading with what detection found:
 
-- Which agent command. Presets exist only for CLIs with a documented non-interactive mode; anything else, the user types.
+- Which agent command. No preset table ships: confirm the full non-interactive command with the user.
 - Which model. Never pick one for them.
 - Which local clones to work on.
 - An optional model allowlist. When set, a model outside it makes every command refuse.
@@ -37,7 +37,7 @@ Run `scripts/runner.sh check`, then one `scripts/runner.sh run` while the user w
 
 ## What a run guarantees
 
-- One run per machine at a time (`flock`). Each issue is claimed with the tracker's own claim, assigning it to the authenticated user, plus one `runner-claim` marker comment, and released when the run ends. Assigned issues are never picked.
+- One run per machine at a time (`flock`). Each issue is claimed with the tracker's own claim, assigning it to the authenticated user, plus one `runner-claim` marker comment, and released when the run ends. Assigned issues are never picked. After the assign write the runner re-reads the issue and backs off with `claim_lost` when another runner holds or beat the claim, so a cross-machine race launches at most one agent.
 - An issue with an open PR that says `Closes #N` is skipped. Failures count on GitHub (`runner-attempt` markers), and an issue stops being picked after the attempt cap until `reset`.
 - A claim left by a run that died is released at the next start once its marker passes the TTL with no fresh branch commit, so a missed run is picked up by the next one. Timeout work is pushed to `wip/runner-issue-N` and resumed through `pickup`, never restarted.
 - Landing follows the risk tier: low-risk PASS lands in the run, the rest wait for `ready-check` or the human.
