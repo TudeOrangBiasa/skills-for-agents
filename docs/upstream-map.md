@@ -1,7 +1,6 @@
 # Upstream map
 
-Local skill names use the stage-prefix scheme (`setup-`, `plan-`, `craft-`, `ship-`, `review-`, `learn-`, `verify-`). Upstream repos keep their own names. This table maps local to upstream so sync diffs stay mechanical: find the local skill, read its upstream row, diff against that source. Per-skill detail lives in each skill's `CREDITS.md`.
-
+Local skill names use the stage-prefix scheme (`setup-`, `plan-`, `craft-`, `ship-`, `review-`, `learn-`, `verify-`). Upstream repos keep their own names. This table maps local to upstream so sync diffs stay mechanical: find the local skill, read its upstream row, diff against that source. Per-skill detail lives in each skill's `CREDITS.md`. Last resync against the pstack tip: 2026-10-27 (`ab1f702`), see [upstream-resync-2026-10-27.md](./upstream-resync-2026-10-27.md).
 ## Upstream policy: pstack owns automation, Matt owns planning
 
 Two upstreams, two jobs. **pstack (poteto)** owns automation and shipping: PRs, commits, the verifier, workflow loops, swarm, orchestration, and landing. That covers `whips`, `ship-runner`, `ship-pr` behavior, `craft-swarm`, the `verify-*` skills where pstack is the source, and the related playbooks. **Matt Pocock** owns ideas and planning only: `plan-grill`, `plan-grill-docs`, `plan-interview`, `plan-spec`, `plan-tickets`, and `plan-map` (the wayfinder for foggy work).
