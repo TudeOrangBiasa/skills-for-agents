@@ -175,7 +175,7 @@ Execution-based evidence is A-tier. Test results, console output. Show the exact
 
 ### Demo order (folded from the demo skill, 2026-10-31)
 
-One screen per change, most important first: one plain sentence plus the smallest visual that proves it (before/after pair, diff sketch, screenshot, timeline link). Every claim rides a visual or an artifact link; a paragraph without either gets cut. Missing proof is itself a finding: name which pair never got captured instead of describing around it. Report only work that landed or is measurably in flight; plans and intentions belong in tickets, not in this body.
+One screen per change, most important first: one plain sentence plus the smallest visual that proves it (before/after pair, diff sketch, screenshot, timeline link). Every claim rides a visual or an artifact link; a paragraph without either gets cut. Missing proof is itself a finding: name which pair never got captured instead of describing around it. Report only work that landed or is measurably in flight; plans and intentions belong in tickets, not in this body. A PR closing a ticket collapsed from a cleared plan-map links the ticket plus the map issue; the map Destination reads as the shipped scope, quoted, never re-argued.
 
 #### Attachment rules (mandatory)
 

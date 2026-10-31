@@ -60,9 +60,9 @@ Iterate until the user approves the breakdown.
 Publish the approved tickets. **How** depends on the tracker `/setup-repo` configured; the tickets are the same either way, only the shape of the blocking edges changes:
 
 - **Local files** → write one file per ticket under `.scratch/<feature-slug>/issues/<NN>-<slug>.md`, numbered from `01` in dependency order (blockers first). Each file's "Blocked by" lists the numbers/titles it depends on. Use the per-ticket file template below: one ticket per file, never a single combined file.
-Every ticket carries one type (`bug`, `feature`, `enhancement`, `deprecation`) and one `## Kompleksitas` line (verification cost: files, tests, scripts touched). A brief missing either is not agent-ready: route it to `needs-info` with one concrete question pointing at the missing section, never to `ready-for-agent`.
+Every ticket carries exactly one type (`bug`, `feature`, `enhancement`, `deprecation`), one `## Kompleksitas` section (Big-O in named inputs, gh calls, LLM calls), testable acceptance checkboxes, and `ready-for-agent` plus one risk label. A brief missing any of these is not agent-ready: route it to `needs-info` with one concrete question pointing at the missing section, never to `ready-for-agent`. When the tickets collapse a cleared plan-map, quote the map's Destination and Decisions-so-far verbatim instead of re-asking them; the next `/whips` (or ship-runner tick) picks the tickets up into feature or bug flows ending in `opening-a-pr.md` or `ship-pr` with no second fog interview.
 
-- **A real issue tracker (GitHub, Linear, ...)** → publish one issue per ticket in dependency order (blockers first) so each ticket's blocking edges can reference real identifiers. Use the platform's native blocking / sub-issue relationship where it has one; otherwise set each ticket's "Blocked by" to the blocking issues. Apply the `ready-for-agent` triage label unless instructed otherwise; the tickets are agent-grabbable by construction.
+- **A real issue tracker (GitHub, Linear, ...)** → publish one issue per ticket in dependency order (blockers first) so each ticket's blocking edges can reference real identifiers. Use the platform's native blocking / sub-issue relationship where it has one; otherwise set each ticket's "Blocked by" to the blocking issues. Apply the `ready-for-agent` triage label (plus one risk label) unless instructed otherwise; the tickets are agent-grabbable by construction.
 
 Work the **frontier**: any ticket whose blockers are all done. For a purely linear chain that means top to bottom.
 
@@ -74,7 +74,7 @@ Do NOT close or modify any parent issue.
 
 **Tipe:** bug | feature | enhancement | deprecation
 
-**Kompleksitas:** verification cost, e.g. O(1) file, 1 test.
+**Kompleksitas:** Big-O in named inputs plus gh and LLM calls, e.g. O(T) tickets, 2 gh calls, 0 LLM calls.
 
 **What to build:** the end-to-end behaviour this ticket makes work, from the user's perspective, not a layer-by-layer implementation list.
 
@@ -97,7 +97,7 @@ Satu dari `bug`, `feature`, `enhancement`, `deprecation`. Tulis di judul (`[bug]
 
 ## Kompleksitas
 
-Satu baris biaya verifikasi: berapa file, tes, skrip yang disentuh (mis. `O(1) file, 1 tes`). Tanpa baris ini tiket belum siap agent.
+Satu bagian biaya: Big-O dalam input bernama, panggilan gh, panggilan LLM (mis. `O(T) tiket, 2 panggilan gh, 0 panggilan LLM`). Tanpa bagian ini tiket belum siap agent.
 
 ## What to build
 

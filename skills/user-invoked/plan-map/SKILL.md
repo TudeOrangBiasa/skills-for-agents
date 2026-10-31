@@ -18,7 +18,7 @@ Every map and ticket is an issue, so it has a **name**: its title. In everything
 
 ## The Map
 
-The map is a single issue on this repo's issue tracker, labelled `plan-map:map`, the canonical artifact. Its tickets are child issues of the map.
+The map is a single issue on this repo's issue tracker, labelled `plan-map:map`, the canonical artifact. Its tickets are child issues of the map. A repo-local pointer under `.scratch/` or `docs/` is optional, and only when the tracker doc allows; the tracker issue stays canonical.
 
 The map is an **index**, not a store. It lists the decisions made and points at the tickets that hold their detail; a decision lives in exactly one place, its ticket, so the map never restates it, only gists it and links.
 
@@ -124,5 +124,10 @@ User invokes with a map (URL or number). A ticket is **optional**: without one, 
 3. Resolve it. **Zoom as needed**: fetch the full body of any related or closed ticket on demand; call the Skill tool for whichever skills the `## Notes` block names. If in doubt, call the Skill tool twice, for "plan-interview" and "craft-domain".
 4. Record the resolution: post the answer as a **resolution comment**, **close** the issue, and **append a context pointer** to the map's Decisions-so-far.
 5. Add newly-surfaced tickets (create-then-wire); graduate any fog the answer has made specifiable, clearing each graduated patch from **Not yet specified** so it lives only as its new ticket. If the answer reveals that a ticket (this one or another) sits beyond the destination, **rule it out of scope** rather than resolving it on the route. If the decision invalidates other parts of the map, update or delete those tickets.
-
 The user may run unblocked tickets in parallel, so expect other sessions to be editing the tracker concurrently.
+
+## Whips handoff
+
+You invoke this skill by typing `/plan-map`, and the agent will not reach for it on its own. When the same effort runs under `/whips`, the model walks the map, its collapse, and its tickets inline per [plan-map-handoff](../whips/playbooks/plan-map-handoff.md), using model-invoked primitives plus tracker writes, without asking the user to re-type `/plan-map`, `/plan-spec`, or `/plan-tickets`. Either path produces the same artifact: the tracker map plus child decision tickets.
+
+When the map clears (destination visible, no blocking undecided fog), it collapses via the plan-spec shape then the plan-tickets shape into build tickets. Each ticket carries exactly one type (`bug`, `feature`, `enhancement`, or `deprecation`), a `## Kompleksitas` section (Big-O in named inputs, gh calls, LLM calls), testable acceptance, and `ready-for-agent` plus a risk label. The collapse reuses Destination and Decisions-so-far verbatim; settled questions are quoted, never re-asked.

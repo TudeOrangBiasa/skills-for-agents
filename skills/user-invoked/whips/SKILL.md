@@ -28,7 +28,7 @@ Read the task and match exactly one row. First match wins.
 | Structure changes, behavior must not: rename, extract, dedupe, move | `playbooks/refactor.md` |
 | New or changed behavior, a migration | `playbooks/feature.md` |
 | A read-only question | `playbooks/investigation.md` |
-| A huge, foggy effort | `playbooks/plan-map-handoff.md` |
+| A huge, foggy effort, way not visible in one session (thin fog drives through below, never this row) | `playbooks/plan-map-handoff.md` |
 | A foggy idea through the full grill-to-execute pipeline | `playbooks/stage-pipeline.md` |
 | Codebase health on a spare moment | `playbooks/upkeep.md` |
 | A live process to instrument: spin, leak, or glitch with no diagnosis | `playbooks/runtime-forensics.md` |
@@ -86,13 +86,13 @@ Every prose surface (reply, PR body, commit message, tracker comment, code comme
 
 A skill that breaks mid-run gets fixed in this PR, never silently worked around, never blocking the unit on it.
 
-A step that names a user-invoked skill (`/plan-map`, `/plan-spec`, `/plan-tickets`, `/craft-deepen`, `/plan-grill-docs`) is a human gate: tell the user to run it and wait at that step. No skill can fire a user-invoked one, `/whips` included.
+A step that names a user-invoked skill (`/plan-map`, `/plan-spec`, `/plan-tickets`, `/craft-deepen`, `/plan-grill-docs`) is a human gate: tell the user to run it and wait at that step, except the plan-map path, which runs map, collapse, and tickets inline per `playbooks/plan-map-handoff.md`. No skill can fire a user-invoked one, `/whips` included; on this one path whips does the same work directly instead of re-invoking.
 
 [PRINCIPLES.md](PRINCIPLES.md) indexes the principles behind these triggers. Read the file for each principle you use before deciding.
 
 ## 4. Enforce the HIT gates, in order
 
-Map before Guardrails, Guardrails before Walk. When the map is vague, return to the Map: call the Skill tool with "craft-proto" when running code can answer the question, else tell the user to run `/plan-grill-docs` or `/plan-map`. Drive through instead of gating when the fog is thin (one interview round settles it, single-session scope, context still fresh): run the interview, the spec sketch, and the tickets inline, then proceed. Never drive through a human-only step (`craft-wizard`) or above risk authority. When guardrails are missing, call the Skill tool with "verify-tdd" and write behavior plus negative cases first.
+Map before Guardrails, Guardrails before Walk. When the map is vague, return to the Map: call the Skill tool with "craft-proto" when running code can answer the question, else tell the user to run `/plan-grill-docs`, or walk `playbooks/plan-map-handoff.md` inline when the fog is multi-session. Drive through instead of gating when the fog is thin (one interview round settles it, single-session scope, context still fresh): run the interview, the spec sketch, and the tickets inline, then proceed. Never drive through a human-only step (`craft-wizard`) or above risk authority. When guardrails are missing, call the Skill tool with "verify-tdd" and write behavior plus negative cases first.
 
 ## 5. Autonomy
 
@@ -109,18 +109,15 @@ Always pause for the human, and keep building everything else meanwhile:
 
 A fork that running code can settle is no pause: settle it with "craft-proto" and report the result.
 
-Under a full-autonomy grant (an unattended run, "don't stop", a ship-runner queue, a scheduled tick), covered decisions are decided, executed, and reported without asking. A decision only the operator can answer gets the default applied and reported in full, with the plain words the operator could have used instead. Operator gates and the pause list still need a human.
+Under a full-autonomy grant (an unattended run, "don't stop", a ship-runner queue, a scheduled tick), covered decisions are decided, executed, and reported without asking. A decision only the operator can answer gets the default applied and reported in full, with the plain words the operator could have used instead. The pause list still needs a human.
 
 No is an acceptable answer. Reply with your real judgment: decline, push back, and disagree when the evidence points that way. Agreement is not the default; candor beats sycophancy.
 
 ## 6. Drive skills and subagents
 
-Give every delegate a self-contained brief: GOAL, SCOPE, CONTEXT, ACCEPTANCE, VERIFY, TIMEBOX, FORBIDDEN, REPORT, STANDING. A field you cannot fill is a unit you have not scoped yet, so refuse to spawn until it is filled. Prefer a follow-up turn on the same worker inside one unit. Use a fresh subagent with consolidated scope for a new unit, a fix round after failure, or a retry. Resume only for state that is costly to move: uncommitted changes or a still running process. Interrupt-chained resumes are banned.
-Bulk goes to subagents, summaries stay in this thread. An independent reviewer is a fresh agent with no access to the author's reasoning or summary: diff, ticket, and repo access only, briefed by [VERIFIER-BRIEF.md](VERIFIER-BRIEF.md). The model may be the same; the context must be fresh.
-
-Pick each subagent's model by role from `docs/agents/models.md` when the repo has it (roles `code`, `hard-code`, `judgment`, `review`). A missing file or a missing role means the subagent runs on your own model. Never name a model or provider yourself.
-
-Match effort and speed to the job, never the model family. Start from the role's model, shift effort one step up for the hardest work and down one or more steps for routine work; verification runs on the `review` role at standard speed, never shifted down. Fast mode is for urgent runs only: a red trunk or CI, or a human blocked waiting on the result. Shift only effort and fast/standard, so a diverse panel stays diverse. When the harness rejects a shifted slug, fall back to the role's plain model and say so; never try another slug.
+Bulk goes to subagents, summaries stay in this thread. An independent reviewer is a fresh agent with no access to the author's reasoning or summary: diff, ticket, and repo access only, briefed by [VERIFIER-BRIEF.md](VERIFIER-BRIEF.md).
+Pick each subagent's model by role from `docs/agents/models.md` when the repo has it (roles `code`, `hard-code`, `judgment`, `review`). A missing file or role means the subagent runs on your own model. Never name a model or provider yourself.
+Match effort to the job, never the model family. Start from the role's model, shift effort one step up for the hardest work and down for routine work; verification runs on the `review` role at standard speed, never shifted down. Fast mode is for urgent runs only: a red trunk or CI, or a human blocked waiting on the result. When the harness rejects a shifted slug, fall back to the role's plain model and say so; never try another slug.
 
 ## 7. Verify, gate, open the PR ready
 
