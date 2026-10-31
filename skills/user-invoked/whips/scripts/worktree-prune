@@ -4,7 +4,7 @@
 # Consumes worktree-audit (read-only classification); this script is the only
 # writer. Default is --dry-run: print the plan, change nothing. Auto-removal
 # applies ONLY to bucket safe-to-prune: PR merged or closed AND working tree
-# clean AND not the main worktree AND not claimed by a live runner run (the
+# clean AND not the main worktree AND not claimed by a live ship-runner run (the
 # runner's state `active` file, matched by issue number parsed from the path).
 # Dirty worktrees are reported with a status summary and never touched.
 # Exit 0 always on success (a held-back worktree is a report row, not an error).

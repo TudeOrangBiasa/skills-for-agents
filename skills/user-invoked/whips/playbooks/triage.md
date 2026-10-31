@@ -1,8 +1,8 @@
 # Playbook: triage
 
-Two modes. Intake picks up one agent-ready issue and routes it to a build playbook. Review mode sorts the comments on an open agent PR. This playbook reuses the `/triage` label vocabulary and brief format; it never invokes `/triage`.
+Two modes. Intake picks up one agent-ready issue and routes it to a build playbook. Review mode sorts the comments on an open agent PR. This playbook reuses the `/ship-triage` label vocabulary and brief format; it never invokes `/ship-triage`.
 
-Resolve the tracker and label strings from `docs/agents/issue-tracker.md` and `docs/agents/triage-labels.md` first. A missing file means you tell the user to run `/setup-meta` and stop.
+Resolve the tracker and label strings from `docs/agents/issue-tracker.md` and `docs/agents/triage-labels.md` first. A missing file means you tell the user to run `/setup-repo` and stop.
 
 Every comment posted to the tracker starts with this disclaimer:
 
@@ -13,7 +13,7 @@ Every comment posted to the tracker starts with this disclaimer:
 ## Intake
 
 1. Pick one issue per run: the one the user named, else the oldest open `ready-for-agent` issue with no assignee and no open blocker. Nothing ready means report that and stop.
-2. Read the issue, its comments, and the latest agent brief (the `/triage` AGENT-BRIEF.md shape: summary, current and desired behavior, key interfaces, acceptance criteria, out of scope). The brief is the contract; the body and discussion are context. Restate the goal and the problem in your own words before routing, so misunderstandings surface now instead of mid-build.
+2. Read the issue, its comments, and the latest agent brief (the `/ship-triage` AGENT-BRIEF.md shape: summary, current and desired behavior, key interfaces, acceptance criteria, out of scope). The brief is the contract; the body and discussion are context. Restate the goal and the problem in your own words before routing, so misunderstandings surface now instead of mid-build.
 3. Confirm it still holds against the current code: the behavior is not already built, the named interfaces still exist or have a clear successor, and a bug still reproduces. Already built means you comment where it lives and ask the human to close it. Never close it yourself.
 4. A brief that is missing, has no testable acceptance criteria, has no type, has no `## Kompleksitas` line, or no longer matches the code is insufficient. Post triage notes (what is established, what is still needed, each question specific, pointing at the missing section), move the label from `ready-for-agent` to `needs-info`, and stop. Never implement from a guess.
 5. Route a sufficient brief by its category: `bug` goes to `playbooks/bug.md`, `enhancement` to `playbooks/feature.md` (plus `playbooks/ui.md` for a UI ticket). Carry the issue number so `playbooks/opening-a-pr.md` links it.

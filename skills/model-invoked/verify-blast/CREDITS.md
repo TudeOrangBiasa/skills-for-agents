@@ -1,0 +1,5 @@
+# Credits
+
+Writeup distrust with the evidence ladder, the one-safety-fact focus, where-grep-stops hunting, honesty rules, and the handoff shape adapted from the pstack `blast-radius` skill set by poteto ([Lauren Tan](https://x.com/poteto), MIT). Depth sync added the pstack rigor: the five-step How-sure-are-you ladder with step 4 as the one-small-script norm, the `craft-why` code-anchor pull in step 1, the full What-to-hand-back shape (What it does, one fact with ladder step, Risks, Cleared, Before you merge), and the Reply contract (safety fact proven or marked unproven). Rewritten to this repo conventions: no model pins, craft-arena fallback keeps model diversity when the harness offers it, cross-references point at our skills. Copied in, not depended on, so standalone installs keep working without the upstream repo.
+
+Local rename history: `blast-radius` became `verify-blast` in #175 (stage-prefix scheme); upstream source names above are unchanged.

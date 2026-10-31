@@ -18,7 +18,7 @@ Tests alone are not sufficient verification. A PR is verified only when its unit
 - [ ] Read these from trunk at program start. Re-read them at every tick.
   - [ ] `git show origin/main:skills/user-invoked/whips/playbooks/orchestrate.md`
   - [ ] `git show origin/main:skills/verify-acme/SKILL.md`
-- [ ] On the operator's go, arm the audit wake on a schedule and never leave the cadence to memory. Use a runner tick with the `runner` skill.
+- [ ] On the operator's go, arm the audit wake on a schedule and never leave the cadence to memory. Use a ship-runner tick with the `ship-runner` skill.
 - [ ] Use this tick prompt, verbatim. "Post a short status message naming every tracked change, or end with no reply text."
 - [ ] On the operator's hold or stand-down, send every owner a zero-writes order at once.
 
@@ -34,7 +34,7 @@ Tests alone are not sufficient verification. A PR is verified only when its unit
 - [ ] Resolve the forge and labels once per `playbooks/opening-a-pr.md`. Record any fallback.
 - [ ] Open the PR ready, never draft, per `playbooks/opening-a-pr.md`. A stack child targets its parent branch.
 - [ ] Run the repo's lint and typecheck plus the verifier once before the PR-facing push. Push with hooks on, never with `--no-verify`.
-- [ ] Run `unslop` on every prose surface, `no-comments` before review, and `code-review` before shipping.
+- [ ] Run `review-unslop` on every prose surface, `review-nocomment` before review, and `review-code` before shipping.
 - [ ] Triage every review and bot comment per `references/bot-triage.md`.
 - [ ] Rebase onto current trunk before the code-ready report and babysit. Keep that merge base in fix rounds.
 
@@ -106,4 +106,4 @@ Each live lane runs in its own worktree at the PR head on the local machine. Dri
 
 ## Appendix A. Prototype evidence
 
-No open questions needed a prototype run.
+No open questions needed a craft-proto run.

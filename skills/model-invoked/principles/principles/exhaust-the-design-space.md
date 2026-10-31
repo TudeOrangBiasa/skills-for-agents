@@ -18,7 +18,7 @@ In practice:
 
 ## Where it lives in this repo
 
-Embedded, not a numbered rule: the PRINCIPLES.md header names it as design-it-twice. The carrier is the `codebase-design` method in `skills/model-invoked/codebase-design/DESIGN-IT-TWICE.md`: parallel subagents design radically different interfaces, then compare on depth, locality, and seam placement. It fires through the `whips` trigger "Code crosses a function boundary" (`architect` on `codebase-design` vocabulary), through `playbooks/prototype.md` for forks running code can settle, and through the `arena` skill for bakeoffs.
+Embedded, not a numbered rule: the PRINCIPLES.md header names it as design-it-twice. The carrier is the `craft-vocab` method in `skills/model-invoked/craft-vocab/DESIGN-IT-TWICE.md`: parallel subagents design radically different interfaces, then compare on depth, locality, and seam placement. It fires through the `whips` trigger "Code crosses a function boundary" (`craft-architect` on `craft-vocab` vocabulary), through `playbooks/prototype.md` for forks running code can settle, and through the `craft-arena` skill for bakeoffs.
 
 ## Example in this repo
 

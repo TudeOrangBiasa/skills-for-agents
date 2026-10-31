@@ -1,0 +1,12 @@
+# Managed by setup-repo install-timers (issue #78). Remove with: install-timers uninstall.
+[Unit]
+Description=Daily runner issue queue pass (opt-in)
+
+[Timer]
+OnBootSec={{RUN_BOOT_SEC}}
+OnUnitActiveSec={{RUN_EVERY}}
+Persistent=true
+RandomizedDelaySec={{RUN_JITTER}}
+
+[Install]
+WantedBy=timers.target

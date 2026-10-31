@@ -6,13 +6,13 @@ You own the plan, never the code. The plan is a checklist an owner runs box by b
 2. Settle open questions by prototype before you write. Run `playbooks/prototype.md` for each. Keep the branch, the SHA, and the screenshots for Appendix A. Ask the operator only about a product or preference call that no run can settle, and give options per the `principles` skill file `never-block-on-the-human`.
 3. Explore in subagents briefed per `SKILL.md` section 6. Each returns file pointers, conventions, test commands, and entry points. No inlined dumps.
 4. Copy the skeleton below into the plan file and fill every placeholder. Unless the operator names a path, write the file under `.scratch/whips/<run>/plan.md`. Keep every heading and every sub-block in the order shown. One section per PR. One PR is one change with its own evidence, per the `principles` skill file `sequence-verifiable-units`. Name the execution playbook in How to read this. A standing program takes `playbooks/orchestrate.md`. Narrower work takes per-PR `playbooks/feature.md` or `playbooks/bug.md` with landing per `playbooks/shipping.md`.
-5. Write under `technical-writing` in full, then `unslop`. The body is one Diataxis mode, how-to. Appendices hold explanation and reference. Each heading states the task or the finding. No long dashes. No mid-sentence colons.
+5. Write under `review-prose` in full, then `review-unslop`. The body is one Diataxis mode, how-to. Appendices hold explanation and reference. Each heading states the task or the finding. No long dashes. No mid-sentence colons.
 6. Run `node skills/user-invoked/whips/scripts/check-plan.mjs <plan.md>` and fix every line it prints, per the `principles` skill file `encode-lessons-in-structure`.
 7. Hand back. Post the plan path and the script output, then stop. Execution starts on the operator's explicit go, under the execution playbook the plan names.
 
-**Verification.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked (the `principles` skill file `prove-it-works`). That sentence is the verification rule. Every verification block opens with it. The live block is mandatory. Ten lanes at the PR head drive the real surface through its control skill, per the `swarm` skill, each in its own worktree on the local machine. Each lane is one box with a concrete scenario, the screenshot it saves, and its pass predicate. One lane is the Regression lane against trunk. It runs the same load-bearing scenario on trunk and head. If trunk does not have the feature, the lane records that fact and gates the behavior the diff adds plus the end state the user waits for instead of inventing a trunk result. The perf gate is dual-sided. Trunk and head must both produce the named metric. If trunk lacks the feature, also isolate the work the diff adds and set an absolute budget for that work plus the end-to-end state the user waits for. Do not claim a ratio between unlike scenarios. The perf block names the metric, the interleaved probe, the trunk baseline measured first, and the rule with the number that fails. The review gate is optional per PR. A gated PR stops at merge-ready with `needs-human` and waits for the operator. An ungated PR writes `**Review gate.** None. <PR id> is not review-gated.` and keeps no boxes under it.
+**Verification.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked (the `principles` skill file `prove-it-works`). That sentence is the verification rule. Every verification block opens with it. The live block is mandatory. Ten lanes at the PR head drive the real surface through its control skill, per the `craft-swarm` skill, each in its own worktree on the local machine. Each lane is one box with a concrete scenario, the screenshot it saves, and its pass predicate. One lane is the Regression lane against trunk. It runs the same load-bearing scenario on trunk and head. If trunk does not have the feature, the lane records that fact and gates the behavior the diff adds plus the end state the user waits for instead of inventing a trunk result. The perf gate is dual-sided. Trunk and head must both produce the named metric. If trunk lacks the feature, also isolate the work the diff adds and set an absolute budget for that work plus the end-to-end state the user waits for. Do not claim a ratio between unlike scenarios. The perf block names the metric, the interleaved probe, the trunk baseline measured first, and the rule with the number that fails. The review gate is optional per PR. A gated PR stops at merge-ready with `needs-human` and waits for the operator. An ungated PR writes `**Review gate.** None. <PR id> is not review-gated.` and keeps no boxes under it.
 
-**Control skill.** The lanes drive through the project's verification skill, generated once by `/create-verification`. A PR that touches two surfaces gets lanes on both. A surface with no verification skill is a risk in Appendix C, its live block still names how each lane drives it, and the first gated step tells the user to run `/create-verification` and waits.
+**Control skill.** The lanes drive through the project's verification skill, generated once by `/verify-new`. A PR that touches two surfaces gets lanes on both. A surface with no verification skill is a risk in Appendix C, its live block still names how each lane drives it, and the first gated step tells the user to run `/verify-new` and waits.
 
 ## Deviations from pstack
 
@@ -20,9 +20,9 @@ You own the plan, never the code. The plan is a checklist an owner runs box by b
 - Verification is the repo verifier plus self-proof. Solo repos read the local verifier and team repos read required checks, per `playbooks/shipping.md`. No independent swarm verdict.
 - The merge box follows `playbooks/shipping.md` and `playbooks/ready-check.md`. The agent merges when the risk tier allows. No operator-only landing.
 - The review gate is optional per PR and means `needs-human` per `playbooks/opening-a-pr.md`. No default operator review.
-- The audit tick is a scheduled wake. Use cron, an interval loop, or a runner tick. No Cursor `/loop`.
-- Prose passes `no-comments` plus `unslop` plus `code-review`. No `/deslop`.
-- The control skill is the `/create-verification` output. No `control-ui` or `control-cli`.
+- The audit tick is a scheduled wake. Use cron, an interval loop, or a ship-runner tick. No Cursor `/loop`.
+- Prose passes `review-nocomment` plus `review-unslop` plus `review-code`. No `/deslop`.
+- The control skill is the `/verify-new` output. No `control-ui` or `control-cli`.
 
 ````markdown
 # <Program> plan
@@ -48,7 +48,7 @@ Tests alone are not sufficient verification. A PR is verified only when its unit
   - [ ] `git show origin/main:skills/user-invoked/whips/playbooks/opening-a-pr.md`
   - [ ] `git show origin/main:skills/user-invoked/whips/playbooks/shipping.md`
   - [ ] `git show origin/main:skills/<each other leaf skill the program uses>`
-- [ ] On the operator's go, arm the audit wake on a schedule and never leave the cadence to memory. Use cron, an interval loop, or a runner tick with the `runner` skill.
+- [ ] On the operator's go, arm the audit wake on a schedule and never leave the cadence to memory. Use cron, an interval loop, or a ship-runner tick with the `ship-runner` skill.
 - [ ] Use this tick prompt, verbatim. "Re-read the execution playbook from trunk. Audit the operation against it and fix drift in this tick. Probe every active lane and judge progress by side effects only. Stand down a stuck lane and dispatch its replacement now. Then post a short status message to the operator in chat only when the audit found a tracked change that no earlier status message reported, such as a PR opened, a code-ready head, a round launched or closed, a verdict, a merge, a stuck agent and the action taken, a blocker added or cleared, or a decision only the operator can make. Name every such change and nothing else. Do not repeat a table, the merged list, or an unchanged blocker. If the audit found none, end the turn with no reply text. Either way, log this tick's row in your decision trail. The row names the items reported, or none."
 - [ ] On the operator's hold or stand-down, send every owner a zero-writes order at once.
 
@@ -66,7 +66,7 @@ Tests alone are not sufficient verification. A PR is verified only when its unit
 - [ ] Resolve the forge and labels once per `playbooks/opening-a-pr.md`. Record any fallback.
 - [ ] Open the PR ready, never draft, per `playbooks/opening-a-pr.md`. A stack child targets its parent branch.
 - [ ] Run the repo's lint and typecheck plus the verifier once before the PR-facing push. Push with hooks on, never with `--no-verify`.
-- [ ] Run `unslop` on every prose surface, `no-comments` before review, and `code-review` before shipping.
+- [ ] Run `review-unslop` on every prose surface, `review-nocomment` before review, and `review-code` before shipping.
 - [ ] Triage every review and bot comment per `references/bot-triage.md`.
 - [ ] Rebase onto current trunk before the code-ready report and babysit. Keep that merge base in fix rounds. Rebase again only at merge prep, on a `git merge-tree` conflict with trunk, on a CI failure that comes from a change on trunk, or when a known concurrent change to the same files lands.
 
@@ -159,7 +159,7 @@ Each live lane runs in its own worktree at the PR head on the local machine. Dri
 
 ## Appendix D. Links and reading list
 
-<Docs to read before editing. Which PRs get `how` and `interrogate`. The trail per `show-me-your-work`.>
+<Docs to read before editing. Which PRs get `craft-how` and `review-adversary`. The trail per `craft-trail`.>
 ````
 
 **Reply:** the plan path, the PR ids with their dependencies and the review-gated set, what the prototypes proved and what stays unproven, and the check script output.

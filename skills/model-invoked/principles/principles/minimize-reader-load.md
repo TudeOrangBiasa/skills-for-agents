@@ -22,7 +22,7 @@ The test: can a new reader answer "where does X come from?" and "what can change
 
 ## Where it lives in this repo
 
-Embedded, not a numbered rule: the PRINCIPLES.md header names it as the `codebase-design` vocabulary. The carrier is `skills/model-invoked/codebase-design/SKILL.md`: depth as leverage at the interface, the deletion test, the interface as the test surface, one adapter as a hypothetical seam. Every `whips` trigger that routes through that vocabulary (deepening, architect, refactor and upkeep playbooks) carries reader load with it.
+Embedded, not a numbered rule: the PRINCIPLES.md header names it as the `craft-vocab` vocabulary. The carrier is `skills/model-invoked/craft-vocab/SKILL.md`: depth as leverage at the interface, the deletion test, the interface as the test surface, one adapter as a hypothetical seam. Every `whips` trigger that routes through that vocabulary (deepening, architect, refactor and upkeep playbooks) carries reader load with it.
 
 ## Example in this repo
 

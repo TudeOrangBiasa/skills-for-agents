@@ -1,0 +1,5 @@
+# Credits
+
+Prompt-sharpening flow adapted from [Lauren Tan (poteto)](https://github.com/poteto)'s `sharpen` in `pstack` ([cursor/plugins](https://github.com/cursor/plugins), folder `pstack`): make the task deeper, not bigger, then rewrite the prompt. The four-question core follows upstream #729 (restore the original prompt: top-professional moves, rawest material, specific methods, and non-human proof of rightness). Interview beats guessing, assumptions get marked before the run, and sharpening never executes the task itself. Copied in, not depended on, so standalone installs keep working without the upstream repo.
+
+Local rename history: `sharpen` became `plan-sharpen` in #175 (stage-prefix scheme); upstream source names above are unchanged.

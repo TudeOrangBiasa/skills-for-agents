@@ -6,7 +6,7 @@ Naming convention (so the scripts can match a worktree to its PR): runner issue 
 
 ## Auto mode (on-loop, no human confirm)
 
-After a PR reads back MERGED (or CLOSED), run `../scripts/worktree-prune --apply --pr <N>` for that PR; the timer tick runs `worktree-prune --apply --all`. Removal applies ONLY to bucket `safe-to-prune` from `../scripts/worktree-audit` (PR merged or closed AND working tree clean AND not main AND not claimed by a live runner run). Bare `worktree-prune` without `--apply` is `--dry-run`: it prints the plan and changes nothing. Dirty worktrees are reported, never removed.
+After a PR reads back MERGED (or CLOSED), run `../scripts/worktree-prune --apply --pr <N>` for that PR; the timer tick runs `worktree-prune --apply --all`. Removal applies ONLY to bucket `safe-to-prune` from `../scripts/worktree-audit` (PR merged or closed AND working tree clean AND not main AND not claimed by a live ship-runner run). Bare `worktree-prune` without `--apply` is `--dry-run`: it prints the plan and changes nothing. Dirty worktrees are reported, never removed.
 
 ## Reclaim mode (manual, human confirms)
 

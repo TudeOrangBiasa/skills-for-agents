@@ -2,7 +2,7 @@
 # ensure-worktree-hooks: copy/install the pre-push verifier hook into a worktree (issue #167).
 #
 # New git worktrees ship with empty .git/hooks, so the solo pre-push verifier
-# from setup-meta Section I would silently not run there. This script copies
+# from setup-repo Section I would silently not run there. This script copies
 # the pre-push hook from the source hooks dir into the target worktree and
 # fails closed: a worktree without a pre-push hook is incomplete, so the
 # script exits nonzero when the hook is still absent after the copy.

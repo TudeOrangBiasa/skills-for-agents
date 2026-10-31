@@ -20,8 +20,8 @@ Tests alone are not sufficient verification. A PR is verified only when its unit
   - [ ] `git show origin/main:skills/verify-acme/SKILL.md`
   - [ ] `git show origin/main:skills/user-invoked/whips/playbooks/opening-a-pr.md`
   - [ ] `git show origin/main:skills/user-invoked/whips/playbooks/shipping.md`
-  - [ ] `git show origin/main:skills/model-invoked/swarm/SKILL.md`
-- [ ] On the operator's go, arm the audit wake on a schedule and never leave the cadence to memory. Use a runner tick with the `runner` skill.
+  - [ ] `git show origin/main:skills/model-invoked/craft-swarm/SKILL.md`
+- [ ] On the operator's go, arm the audit wake on a schedule and never leave the cadence to memory. Use a ship-runner tick with the `ship-runner` skill.
 - [ ] Use this tick prompt, verbatim. "Re-read the execution playbook from trunk. Audit the operation against it and fix drift in this tick. Probe every active lane and judge progress by side effects only. Stand down a stuck lane and dispatch its replacement now. Then post a short status message to the operator in chat only when the audit found a tracked change that no earlier status message reported, such as a PR opened, a code-ready head, a round launched or closed, a verdict, a merge, a stuck agent and the action taken, a blocker added or cleared, or a decision only the operator can make. Name every such change and nothing else. Do not repeat a table, the merged list, or an unchanged blocker. If the audit found none, end the turn with no reply text. Either way, log this tick's row in your decision trail. The row names the items reported, or none."
 - [ ] On the operator's hold or stand-down, send every owner a zero-writes order at once.
 
@@ -39,7 +39,7 @@ Tests alone are not sufficient verification. A PR is verified only when its unit
 - [ ] Resolve the forge and labels once per `playbooks/opening-a-pr.md`. Record any fallback.
 - [ ] Open the PR ready, never draft, per `playbooks/opening-a-pr.md`. A stack child targets its parent branch.
 - [ ] Run the repo's lint and typecheck plus the verifier once before the PR-facing push. Push with hooks on, never with `--no-verify`.
-- [ ] Run `unslop` on every prose surface, `no-comments` before review, and `code-review` before shipping.
+- [ ] Run `review-unslop` on every prose surface, `review-nocomment` before review, and `review-code` before shipping.
 - [ ] Triage every review and bot comment per `references/bot-triage.md`.
 - [ ] Rebase onto current trunk before the code-ready report and babysit. Keep that merge base in fix rounds. Rebase again only at merge prep, on a `git merge-tree` conflict with trunk, on a CI failure that comes from a change on trunk, or when a known concurrent change to the same files lands.
 
@@ -180,4 +180,4 @@ P2 layout risk is the total line wrapping on narrow screens. The owner watches l
 
 ## Appendix D. Links and reading list
 
-Read `src/pricing/README.md` before P1. P2 gets `interrogate`. The trail follows `show-me-your-work`.
+Read `src/pricing/README.md` before P1. P2 gets `review-adversary`. The trail follows `craft-trail`.

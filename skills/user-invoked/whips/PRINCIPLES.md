@@ -22,7 +22,7 @@ Twenty-four rules behind the `/whips` triggers. Read the full file for each prin
 - [Experience first](../../model-invoked/principles/principles/experience-first.md): for product tradeoffs, choose user delight over implementation convenience.
 - [Explain the number](../../model-invoked/principles/principles/explain-the-number.md): before trusting a measured number, name what bounds it.
 - [Guard the context window](../../model-invoked/principles/principles/guard-the-context-window.md): when context fills up, route bulk to delegates.
-- [Exhaust the design space](../../model-invoked/principles/principles/exhaust-the-design-space.md): for novel decisions with no precedent, sketch candidates first (carried by `codebase-design` and `architect`).
-- [Foundational thinking](../../model-invoked/principles/principles/foundational-thinking.md): before writing logic, choose core types first (carried by `codebase-design`).
+- [Exhaust the design space](../../model-invoked/principles/principles/exhaust-the-design-space.md): for novel decisions with no precedent, sketch candidates first (carried by `craft-vocab` and `craft-architect`).
+- [Foundational thinking](../../model-invoked/principles/principles/foundational-thinking.md): before writing logic, choose core types first (carried by `craft-vocab`).
 - [Laziness protocol](../../model-invoked/principles/principles/laziness-protocol.md): when tempted to add abstractions, bias to subtraction (carried by rule 1).
-- [Minimize reader load](../../model-invoked/principles/principles/minimize-reader-load.md): for hard-to-trace code, count layers and hide indirection (carried by the `codebase-design` vocabulary).
+- [Minimize reader load](../../model-invoked/principles/principles/minimize-reader-load.md): for hard-to-trace code, count layers and hide indirection (carried by the `craft-vocab` vocabulary).
