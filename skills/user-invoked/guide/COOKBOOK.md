@@ -139,6 +139,7 @@ Example: menu N+1 query, p95 2.1s, target under 500ms. `perf-issue` (baseline + 
 When: the chat outran you, or one agent message does not land.
 
 - Behind on news: `/ketchup` (everything since your last message + executive summary per action item).
+- Prefer watching: `/ketchup-video` (same catch-up as a subtitled slide video; plain-text `/ketchup` when the harness cannot render video).
 - Confused by one message: `/wait-what` (visual re-pitch + plain sentences).
 - Both run mid-conversation inside other skills.
 

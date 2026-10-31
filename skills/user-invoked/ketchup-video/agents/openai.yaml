@@ -1,0 +1,5 @@
+interface:
+  display_name: "Ketchup Video"
+  short_description: "Catch me up since my last message, as a video"
+policy:
+  allow_implicit_invocation: false
