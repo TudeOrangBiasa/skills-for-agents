@@ -1,3 +1,0 @@
-# Credits
-
-Reader load as the two axes of layers to trace and state to hold, collapsing one-caller wrappers and pass-through layers, interface compression, shrinking state scope, naming invariants at the boundary, and the thirty-second test adapted from the pstack skill set by poteto ([Lauren Tan](https://x.com/poteto), MIT). Rewritten to this repo voice: rule-first shape with Why and a repo-local example, no harness-specific wording, with the OMP carrier named explicitly (the `codebase-design` vocabulary). Copied in, not depended on, so standalone installs keep working without the upstream repo.

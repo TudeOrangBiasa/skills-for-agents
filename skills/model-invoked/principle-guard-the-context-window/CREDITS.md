@@ -1,3 +1,0 @@
-# Credits
-
-The bulk-to-delegates summaries-in-thread pattern, phased sizing with file caps and turn budgets, and the context-overflow Why (degraded reasoning, compression artifacts, stalled progress) adapted from the pstack `principle-guard-the-context-window` skill set by poteto ([Lauren Tan](https://x.com/poteto), MIT). Rewritten to this repo conventions: PRINCIPLES.md rule 20 specifics (raw payloads never ride along, large-artifact parsing in a subagent) folded in, fixed leaf sections (rule, Why, scope, steps, repo example, reply contract). Copied in, not depended on, so standalone installs keep working without the upstream repo.

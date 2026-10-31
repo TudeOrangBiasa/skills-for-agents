@@ -36,7 +36,7 @@ One spawn on the `reflect-synthesizer` role (missing file or row means the paren
 
 ## 4. Structural enforcement check
 
-Move any Accepted item that a lint rule, script, metadata flag, or runtime check would enforce more reliably to Backlog. See the `principle-encode-lessons-in-structure` skill.
+Move any Accepted item that a lint rule, script, metadata flag, or runtime check would enforce more reliably to Backlog. See the `principles` skill file `encode-lessons-in-structure`.
 
 ## 5. Apply
 

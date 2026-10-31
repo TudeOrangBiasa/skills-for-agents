@@ -1,3 +1,0 @@
-interface:
-  display_name: "Minimize Reader Load"
-  short_description: "Cut layers and state readers hold"
