@@ -39,7 +39,6 @@ Read the task and match exactly one row. First match wins.
 | A metric to improve iteratively against a target | `playbooks/hillclimb.md` |
 | Disk full of stale worktrees and caches | `playbooks/worktree-cleanup.md` |
 | A program outliving any single agent (multi-day, many PRs) | `playbooks/orchestrate.md` |
-| A program outliving any single agent (multi-day, many PRs) | `playbooks/orchestrate.md` |
 | A lintable cross-phase or cross-PR plan you own, not the code | `playbooks/multi-phase-plan.md` |
 | A queue of independent PRs to MERGED, one owner each | `playbooks/autopilot-full.md` |
 | A PR queue built and verified, held for the operator to land | `playbooks/autopilot-stack.md` |
