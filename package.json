@@ -10,6 +10,7 @@
   "license": "MIT",
   "scripts": {
     "changeset": "changeset",
+    "test": "bash scripts/test-all.sh",
     "version": "changeset version"
   },
   "devDependencies": {

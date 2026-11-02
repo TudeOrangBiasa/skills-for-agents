@@ -28,6 +28,6 @@ npx skills update <name>
 
 </canonical-block>
 
-`skills@latest` is the pinned spelling in all three. It writes the skills into the repo as ordinary files that any universal agent (Codex, pi, oh-my-pi, agy, and the rest) reads the same way. Nothing updates behind your back; pull the latest changes when you want them with `npx skills update`.
+`skills@latest` is the pinned spelling in all three. It writes the skills into the repo as ordinary files that any agent loading SKILL.md folders reads the same way (Codex, pi, oh-my-pi, agy, and the rest are examples, never requirements). Nothing updates behind your back; pull the latest changes when you want them with `npx skills update`.
 
-This repo ships plain skill files plus `agents/openai.yaml` per skill for universal agents: keep every skill harness-agnostic, with no Claude Code plugin and no harness-specific packaging. There is no local symlink script: install only through the commands above.
+This repo ships plain skill files plus `agents/openai.yaml` per skill: keep every skill harness-agnostic, with no harness-specific plugin or packaging. `agents/openai.yaml` carries the display name, short description, and invocation policy any SKILL.md loader can read. There is no local symlink script: install only through the commands above.

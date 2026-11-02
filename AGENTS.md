@@ -10,4 +10,4 @@ Hard-to-reverse decisions for this repo live in [.agents/adr/](./.agents/adr/) (
 
 Merging: in this repo, a `risk:high` PR may be merged by the delegated agent only after an independent PASS or PASS+NOTES verdict on the current head.
 
-No em dashes anywhere in this repo prose; rewrite the sentence instead of substituting a character. `scripts/check-docs.sh origin/main` checks this and the rules above before every PR.
+Prove the pack with `npm test` (runs `scripts/test-all.sh` across check-docs, aliases, and every stub suite) before every PR.
