@@ -1,6 +1,6 @@
 ---
 name: ship-pr
-description: "Use when writing a PR body."
+description: "Use when writing a PR body. Pulls Why, What changed, Scope, Tradeoffs, Blast Radius, and Verification into the Summary, Evidence, and Merge Danger shape."
 metadata:
   credits:
     skill: show-me
@@ -24,20 +24,16 @@ Use this template for writing the PR body:
 
   | Before | After |
   | --- | --- |
-  | ![before](<url>) | ![after](<url>) |
+  | ![before](attach the before image) | ![after](attach the after image) |
 - When a recording shows the change better than stills, attach the video below the pair. When the recording needs explaining (load sequence, auth flow, what painted when), call the Skill tool with "craft-ui-timeline" first and link its timeline page alongside the video. Motion proof over a minute long, or with idle stretches, ships as a timeline page plus a trimmed cut, not raw video.
 - Evidence hotlinks only from `main` (or a permanent store). Branch URLs rot on branch deletion; a body containing one fails review.
 - Proof renders inline in the body (pair table, video, timeline link). A list of file paths is not proof.
 
 ## Merge Danger
 
-**Door:** <one-way or two-way>
+**Door:** one-way or two-way (delete the other).
 
-<optional: description>
-
-**Blast Radius:** <one-word description>
-
-<optional: potential ramifications of merge>
+**Blast Radius:** one line naming who feels this change, plus what could go wrong.
 ```
 
 
