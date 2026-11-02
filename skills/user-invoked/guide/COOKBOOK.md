@@ -88,9 +88,18 @@ flowchart TD
     M --> R["whips ready-check playbook"] --> G["Land per mode; humans at triage"]
 ```
 
-Alternative for one long unattended run: `/whips` with a checkable predicate plus budget, not a queue. Execute stays `/whips` only.
+Alternative for one long unattended run: `/whips` with a checkable predicate plus budget, not a queue. Execute stays `/whips` only. With a clear predicate, run the [autonomous-run](../whips/playbooks/autonomous-run.md) playbook: predicate, wake, smallest change per iteration, decision trail, never relax the predicate.
 
-Example: 5 `ready-for-agent` issues → `/ship-runner` on schedule → morning `/learn-catchup` ("2 action items: land solo batch, triage Seeder") → whips ready-check playbook via `/whips` → land per mode, humans at triage.
+## 4b. Overnight trust contract
+
+When: the queue runs while you sleep (#214).
+
+```mermaid
+flowchart TD
+    D["Done predicate written"] --> W["Wake: cron, interval loop, or ship-runner tick"] --> R["Run: smallest change per iteration, verify, commit or revert"] --> S["Stop rules fire"] --> M["Morning: decision trail plus catchup"]
+```
+
+Done means: a falsifiable predicate written before the run, checked on the real artifact after each iteration. Stop rules: the predicate holds, the iteration or hour budget runs out, or no approach is left (write what was tried and hand back). Never relax the predicate to declare victory. Work lands per risk tier; humans decide at triage and on irreversible actions. Wake wording stays harness-neutral: cron, an interval loop, or a ship-runner tick. Morning audit reads the decision trail (`.scratch/whips/<run>/decisions.tsv`) plus `/learn-catchup`.
 
 ## Advanced (off the main flow)
 

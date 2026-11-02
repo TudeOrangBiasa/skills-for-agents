@@ -40,6 +40,7 @@ Read the task and match exactly one row. First match wins.
 | Disk full of stale worktrees and caches | `playbooks/worktree-cleanup.md` |
 | A program outliving any single agent (multi-day, many PRs) | `playbooks/orchestrate.md` |
 | A lintable cross-phase or cross-PR plan you own, not the code | `playbooks/multi-phase-plan.md` |
+| A run until a checkable predicate holds, overnight or unattended | `playbooks/autonomous-run.md` |
 | A queue of independent PRs to MERGED, one owner each | `playbooks/autopilot-full.md` |
 | A PR queue built and verified, held for the operator to land | `playbooks/autopilot-stack.md` |
 | A large migration or multi-part change no row above fits | `playbooks/figure-it-out.md` |
@@ -47,7 +48,7 @@ Read the task and match exactly one row. First match wins.
 
 Truly nothing fits (a question, a small ask): answer directly in chat. Real work with no matching row goes to `figure-it-out.md`. Never invent a playbook on the spot.
 
-Before matching, restate the goal and the problem in your own words: compress a noisy issue, thread, or prompt into a plain problem statement. Thin fog needs one or two sentences in the reply. Misunderstandings caught here are cheap; misunderstood work is not. Only stop and ask when the restate surfaces a genuine ambiguity.
+Before matching, restate the goal, the problem, and the smallest change that meets it in your own words: compress a noisy issue, thread, or prompt into a plain problem statement plus the minimal user-visible change. Thin fog needs one or two sentences in the reply. Name the smallest change before scoping bigger; on feature and bug paths the playbook turns it into the MVP slice and stops after VERIFIED. Misunderstandings caught here are cheap; misunderstood work is not. Only stop and ask when the restate surfaces a genuine ambiguity. This is the always-on goal lock; `learn-restate` is the separate recovery skill for when one confusing message already landed.
 
 ## 2. Open the todo, verbatim
 
@@ -86,8 +87,7 @@ Every prose surface (reply, PR body, commit message, tracker comment, code comme
 
 A skill that breaks mid-run gets fixed in this PR, never silently worked around, never blocking the unit on it.
 
-A step that names a user-invoked skill (`/plan-map`, `/plan-spec`, `/plan-tickets`, `/plan-grill-docs`) is a human gate: tell the user to run it and wait at that step, except the plan-map path, which runs map, collapse, and tickets inline per `playbooks/plan-map-handoff.md`. No skill can fire a user-invoked one, `/whips` included; on this one path whips does the same work directly instead of re-invoking.
-
+A step that names a user-invoked skill (`/plan-map`, `/plan-spec`, `/plan-tickets`, `/plan-grill-docs`) is a human gate: tell the user to run it and wait at that step, except the plan-map path, which runs map, collapse, and tickets inline per `playbooks/plan-map-handoff.md`. Solo or thin fog also drives through `/plan-spec` and `/plan-tickets` inline (interview, spec sketch, tickets) when the user says ship now or solo, the fog settles in one interview round, and context stays fresh; human-only and above-risk-authority steps still pause. No skill can fire a user-invoked one, `/whips` included; on these paths whips does the same work directly instead of re-invoking.
 [PRINCIPLES.md](PRINCIPLES.md) indexes the principles behind these triggers. Read the file for each principle you use before deciding.
 
 ## 4. Enforce the HIT gates, in order
