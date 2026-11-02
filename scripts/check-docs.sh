@@ -184,9 +184,9 @@ else
   pass "no alias table to check"
 fi
 
-# 8. Harness-name gate (issue #190): denylisted names fail unless scripts/harness-name-allowlist.txt exempts the path (glob) or the line (path-glob:line-regex).
+# 8. Harness-name gate (issues #190, #209): denylisted names fail unless scripts/harness-name-allowlist.txt exempts the path (glob) or the line (path-glob:line-regex). Cursor forms are names (#209); generic pagination cursors and CSS cursor: stay out of the pattern.
 HARNESS_ALLOW="scripts/harness-name-allowlist.txt"
-DENY_RE='\b(omp|opencode|codex|claude|orca|fedora|oh-my-pi)\b|~/\.omp|\.omp/|\.codex/|\.claude/|\.pi/|opencode\.json|claude\.md'
+DENY_RE='\b(omp|opencode|codex|claude|orca|fedora|oh-my-pi|cursor-agent|cursor-cli|Cursor)\b|~/\.omp|\.omp/|\.codex/|\.claude/|\.cursor/|\.pi/|opencode\.json|claude\.md|\.cursorrules|cursor-rules'
 match_path() { # file glob (a leading **/ also matches nested paths)
   local f="$1" pat="$2"
   [[ "$f" == $pat ]] && return 0
@@ -223,6 +223,29 @@ else
   harness_hits=$((harness_hits + 1))
 fi
 [[ "$harness_hits" == "0" ]] && pass "no harness-specific names outside the allowlist"
+
+# 9. Anti-slop phrase gate (issue #227): a small allowlisted set of stock AI
+#    phrases fails when added to prose skill diffs. Fences skipped: examples
+#    that quote the pattern do not count. Extend SLOPS with care; keep each
+#    entry a distinctive multi-word phrase so plain words never trip it.
+SLOPS='delve into|game-changer|game changer|unlock the power|a testament to|tapestry of|fast-paced world'
+slop_hits=0
+while IFS= read -r f; do
+  [[ -z "$f" ]] && continue
+  [[ "$f" == *.md ]] || continue
+  [[ -f "$f" ]] || continue
+  case "$f" in skills/model-invoked/review-unslop/*) continue ;; esac
+  fenced="$(awk 'BEGIN{f=0} /^```/{f=!f; next} f{print NR}' "$f")"
+  while IFS=$'\t' read -r lineno line; do
+    [[ -z "$line" ]] && continue
+    if grep -qx "$lineno" <<<"$fenced" 2>/dev/null; then continue; fi
+    if grep -qiE "$SLOPS" <<<"$line"; then
+      fail "stock AI phrase in added line $f:$lineno"
+      slop_hits=$((slop_hits + 1))
+    fi
+  done < <(git diff -U0 "$RANGE" -- "$f" | awk '/^@@ -[0-9]+(,[0-9]+)? \+[0-9]+(,[0-9]+)? @@/ { s=$0; sub(/.*\+/, "", s); sub(/[, ].*/, "", s); n=s+0; next } /^\+\+\+/ { next } /^-/ { next } /^\+/ { line=substr($0,2); print n "\t" line; n++; next } { n++ }' || true)
+done <<< "$(git diff --name-only --diff-filter=ACMR "$RANGE" -- '*.md' || true)"
+[[ "$slop_hits" == "0" ]] && pass "no stock AI phrases in added prose lines"
 
 if [[ "$failures" -gt 0 ]]; then
   echo "check-docs: $failures check(s) failed."

@@ -9,9 +9,9 @@
 # Cost: O(delta I) filter work on a steady tick (O(I) on full-rescan
 # fallback), O(I) normalize plus O(1) map ops per issue for dedupe.
 #
-# Cursor path: $RUNNER_STATE_DIR/triage-cursor (default
+# Resume point: $RUNNER_STATE_DIR/triage-cursor (default
 # ~/.local/state/runner/triage-cursor), the existing runner state dir, never
-# a new top-level file. The cursor advances only after the tick succeeds.
+# a new top-level file. The resume point advances only after the tick succeeds.
 #
 # Usage:
 #   triage-tick.sh --issues FILE [--cursor FILE] [--dry-run] [--fail-before-write]

@@ -20,7 +20,7 @@ You own the plan, never the code. The plan is a checklist an owner runs box by b
 - Verification is the repo verifier plus self-proof. Solo repos read the local verifier and team repos read required checks, per `playbooks/shipping.md`. No independent swarm verdict.
 - The merge box follows `playbooks/shipping.md` and `playbooks/ready-check.md`. The agent merges when the risk tier allows. No operator-only landing.
 - The review gate is optional per PR and means `needs-human` per `playbooks/opening-a-pr.md`. No default operator review.
-- The audit tick is a scheduled wake. Use cron, an interval loop, or a ship-runner tick. No Cursor `/loop`.
+- The audit tick is a scheduled wake. Use cron, an interval loop, or a ship-runner tick. No harness-specific loop command.
 - Prose passes `review-nocomment` plus `review-unslop` plus `review-code`. No `/deslop`.
 - The control skill is the `/verify-new` output. No `control-ui` or `control-cli`.
 
