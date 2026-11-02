@@ -17,10 +17,10 @@ Dependencies are expressed as an explicit instruction to **call the Skill tool**
 
 This is about **operative** instructions: a skill's own steps telling the agent to go run another skill right now. Router prose that just names skills for a human to pick from (`guide`, folder `README.md`s) isn't invoking anything, so it keeps `/skill`-style names as plain labels.
 
-The Skill tool takes one skill per call. A step that needs two skills is two calls, not one call with two names: say so (`Call the Skill tool twice, for "plan-interview" and "craft-domain"`), not "call it with X and Y," which reads as a single call taking both.
+The Skill tool takes one skill per call. A step that needs two skills is two calls, not one call with two names: say so (`Call the Skill tool twice, for "plan-interview" and "craft-how"`), not "call it with X and Y," which reads as a single call taking both.
 
 This whole convention only holds when the named skill is **model-invoked**. A user-invoked skill can never be reached this way, full stop: per the invariant above, no other skill can call it, including by naming it to the Skill tool. When a step's precondition is a user-invoked skill (e.g. `setup-repo`), phrase it as an instruction for the human to act on: "tell the user to run `/setup-repo`", never as a Skill tool call.
 
 ## Passive vs active domain work
 
-Merely _reading_ `GLOSSARY.md` for vocabulary is a one-line prose pointer, not the `craft-domain` skill. Only the active build/sharpen discipline (challenge terms, edge-case scenarios, write ADRs, update `GLOSSARY.md` inline) is `craft-domain`.
+Merely _reading_ `GLOSSARY.md` for vocabulary is a one-line prose pointer, not a skill call. Only the active build/sharpen discipline (challenge terms, edge-case scenarios, write ADRs, update `GLOSSARY.md` inline) is a skill call.

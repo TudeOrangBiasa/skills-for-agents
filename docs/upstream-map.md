@@ -14,32 +14,21 @@ When a skill's behavior and its credited upstream disagree, keep the credit row 
 | `craft-architect` | `architect` | pstack |
 | `craft-arena` | `arena` | pstack |
 | `craft-break` | `break` | jakubkrehel/skills |
-| `craft-correct` | `correct` | pstack |
-| `craft-deepen` | `improve-codebase-architecture` | mattpocock/skills |
-| `craft-diagnose` | `diagnosing-bugs` | mattpocock/skills |
-| `craft-domain` | `domain-modeling` | mattpocock/skills |
 | `craft-how` | `how` | pstack |
 | `craft-manual` | - (original: Linkbook case study) | - |
-| `craft-proto` | `prototype` | mattpocock/skills |
-| `craft-research` | `research` | mattpocock/skills |
 | `craft-swarm` | `swarm` | pstack |
 | `craft-trail` | `show-me-your-work` | pstack |
 | `craft-ts` | `typescript-best-practices` | pstack |
 | `craft-ui-timeline` | `ui-recording-timeline` | rauchg/skills |
-| `craft-vocab` | `codebase-design` | mattpocock/skills |
 | `craft-why` | `why` | pstack |
-| `craft-wizard` | `wizard` | mattpocock/skills |
 | `create-formal-verification` | `create-formal-verification-skill` | pstack |
 | `guide` | - (original router; credit note: shaped by Matt `ask-matt`) | - |
 | `learn-catchup` | `ketchup` | pstack |
 | `learn-catchup-video` | `ketchup` (video shape) | pstack |
 | `learn-diff-gate` | - (original) | - |
-| `learn-handoff` | `handoff` | mattpocock/skills |
 | `learn-recall` | `recall` | pstack |
 | `learn-reflect` | `reflect` | pstack |
 | `learn-restate` | `show-me` (visual catalog) | humanlayer/skills (Dex Horthy) |
-| `learn-retro` | `retro` | mattpocock/skills |
-| `learn-teach` | `teach` | mattpocock/skills |
 | `maintain-formal-verification` | `maintain-formal-verification-skill` | pstack |
 | `plan-grill` | `grill-me` | mattpocock/skills |
 | `plan-grill-docs` | `grill-with-docs` | mattpocock/skills |
@@ -89,18 +78,13 @@ Each row below names the mismatch against the policy above and records its resol
 
 | Local | Credit today | Resolution |
 |---|---|---|
-| `craft-deepen` | mattpocock/skills | Resolved: keep credit; behavior already local (deep-module maintenance cadence). |
-| `craft-diagnose` | mattpocock/skills | Resolved: keep credit; behavior already local (tight feedback loop for hard bugs). |
-| `craft-domain` | mattpocock/skills | Resolved: keep credit; behavior already local (glossary vocabulary). |
-| `craft-proto` | mattpocock/skills | Resolved: keep credit; behavior already local (throwaway prototype answers one question). |
-| `craft-research` | mattpocock/skills | Resolved: keep credit; behavior already local (research before editing). |
-| `craft-vocab` | mattpocock/skills | Resolved: keep credit; behavior already local (seam vocabulary design). |
-| `craft-wizard` | mattpocock/skills | Resolved: keep credit; behavior already local (human-gated deploy walkthrough). |
 | `craft-agent-docs` | mattpocock/skills | Resolved: keep credit; behavior already local (skill authoring mechanics). |
 | `guide` | - (original router; credit note: shaped by Matt `ask-matt`) | Resolved: original router (keep credit note): the router serves the whole skill set, not one planning source. |
-| `learn-handoff` | mattpocock/skills | Resolved: keep credit; behavior already local (portable notes at phase boundaries). |
-| `learn-retro` | mattpocock/skills | Resolved: keep credit; behavior already local (blame-free retro). |
-| `learn-teach` | mattpocock/skills | Resolved: keep credit; behavior already local (teach-back directory builds). |
+
+
+### Matt trim plus quarantine (closed by #221, #225, #226)
+
+Kept for the planning handoff: `plan-map`, `plan-spec`, `plan-tickets`, `plan-grill`, `plan-grill-docs`, `plan-interview` (credit rows above stay). `setup-repo`, `setup-hooks`, `ship-triage`, `ship-merge-fix`, `review-code`, `verify-tdd` keep credit-only rows; behavior already points at the pstack side. Deleted: `craft-diagnose` (folded into the whips `bug` playbook), `craft-research` (folded into investigation and plan-map research tickets), `craft-proto` (folded into the feature spike and `prototype.md`), `craft-deepen`, `craft-domain`, `craft-vocab`, `craft-correct`, `craft-wizard`, `learn-handoff`, `learn-retro`, `learn-teach`. Quarantined (shipped, off the main flow): `craft-agent-docs`, `setup-ts-modules`, `learn-diff-gate`, `create-formal-verification`, `maintain-formal-verification`. Alias rows for deleted skills drop with this change; the one-release stub promise in [aliases.md](./aliases.md) ends for the trim batch.
 
 ### pstack-sourced planning-adjacent (decided by #203)
 

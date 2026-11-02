@@ -4,4 +4,4 @@ description: A relentless interview to sharpen a plan or design, which also crea
 disable-model-invocation: true
 ---
 
-Call the Skill tool twice, for "plan-interview" and "craft-domain".
+Call the Skill tool with "plan-interview", and record agreed terms in `GLOSSARY.md` plus decisions as ADRs inline.

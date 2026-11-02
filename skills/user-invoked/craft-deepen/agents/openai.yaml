@@ -1,5 +1,0 @@
-interface:
-  display_name: "Deepen"
-  short_description: "Find and discuss architecture improvements"
-policy:
-  allow_implicit_invocation: false

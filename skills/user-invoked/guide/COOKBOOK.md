@@ -46,7 +46,7 @@ When: an idea to build within one session or a few tickets.
 ```mermaid
 flowchart TD
     D["/plan-grill-docs"] --> Q{"Runnable answer needed?"}
-    Q -->|yes| P["/craft-proto, carry the answer as a note"]
+    Q -->|yes| P["prototype sketch, carry the answer as a note"]
     Q -->|no| S["/plan-spec"]
     P --> S
     S --> T["/plan-tickets"] --> W["/whips per ticket, fresh context between"]
@@ -92,6 +92,10 @@ Alternative for one long unattended run: `/whips` with a checkable predicate plu
 
 Example: 5 `ready-for-agent` issues → `/ship-runner` on schedule → morning `/learn-catchup` ("2 action items: land solo batch, triage Seeder") → whips ready-check playbook via `/whips` → land per mode, humans at triage.
 
+## Advanced (off the main flow)
+
+These ship but sit outside the COOKBOOK and FACTORY main path; reach for them only when the task names them. Formal proof: `/create-formal-verification`, `/maintain-formal-verification`. Skill authoring: `/craft-agent-docs` via the authoring playbook. Optional repo layout: `/setup-ts-modules`. Quarantined: `/learn-diff-gate` (deprecated from the merge path; stays installed but off the default flow).
+
 ## FAQ
 
 For the full catalog of skills, see the skill sections in [README.md](../../../README.md). Each answer below is one pointer; the owning skill holds the detail.
@@ -106,11 +110,11 @@ For the full catalog of skills, see the skill sections in [README.md](../../../R
 
 **PRD in hand but the stack is undecided?** → [`/plan-grill-docs`](../plan-grill-docs/SKILL.md) to settle it, then the main flow (recipe 2).
 
-**MVP scoped but deploy target unknown?** → `/plan-grill-docs` for constraints plus [`/craft-research`](../../model-invoked/craft-research/SKILL.md) for platform facts, decided into an ADR.
+**MVP scoped but deploy target unknown?** → `/plan-grill-docs` for constraints plus primary-source reading for platform facts, decided into an ADR.
 
 **Sharpening a task or ticket before a run?** → [`/plan-sharpen`](../plan-sharpen/SKILL.md) for a brief, [`/plan-grill`](../plan-grill/SKILL.md) for a plan with no repo under it.
 
-**Learning something over multiple sessions?** → [`/learn-teach`](../learn-teach/SKILL.md).
+**Learning something over multiple sessions?** → [`/learn-catchup`](../learn-catchup/SKILL.md) to resume, then `/whips` to build.
 
 **Automating loops in your own life?** → [`/plan-worklog`](../plan-worklog/SKILL.md); repo-work checkpoints hand off to `/whips` or `/ship-runner`.
 
@@ -120,15 +124,15 @@ For the full catalog of skills, see the skill sections in [README.md](../../../R
 
 **Monorepo built and developed together?** → [`/setup-repo`](../setup-repo/SKILL.md) multi-context (per-context glossaries).
 
-**Starting TypeScript packages that import across each other?** → [`/setup-ts-modules`](../setup-ts-modules/SKILL.md) once, before agents start importing.
+**Starting TypeScript packages that import across each other?** → [`/setup-ts-modules`](../setup-ts-modules/SKILL.md) once, before agents start importing. Advanced skill, off the main flow.
 
-**Whole project still needs research across domains?** → one [`/craft-research`](../../model-invoked/craft-research/SKILL.md) per domain in parallel, then `/plan-grill-docs` to decide.
+**Whole project still needs research across domains?** → one primary-source read per domain in parallel via `/whips` investigation, then `/plan-grill-docs` to decide.
 
 **No frontend design and no hassle wanted?** → `/whips` per ticket with "no design, keep one simple variant".
 
-**Big decisions changed and meta docs went stale?** → [`/learn-retro`](../learn-retro/SKILL.md) contradiction pass, proposed first and written only on approval.
+**Big decisions changed and meta docs went stale?** → [`/learn-reflect`](../learn-reflect/SKILL.md) contradiction pass, proposed first and written only on approval.
 
-**Sessions lost, forgot what was done?** → reconstruct from ground truth (git log, tracker, docs as-is), then `/learn-retro` to resync.
+**Sessions lost, forgot what was done?** → reconstruct from ground truth (git log, tracker, docs as-is), then `/learn-reflect` to resync.
 
 **Starting fresh but recent work spans several chats?** → [`/learn-recall`](../learn-recall/SKILL.md): mines repo history plus session traces into a capsule brief.
 
@@ -144,13 +148,13 @@ For the full catalog of skills, see the skill sections in [README.md](../../../R
 
 **Screenshots requested, can they be automated?** → yes: `agent-browser` drives the flow and captures screenshots, video, and timeline pages; [`/ship-pr`](../../model-invoked/ship-pr/SKILL.md) attaches them to the PR.
 
-**Deploy to hosting with no SSH, scripts ready, env left to fill?** → [`craft-wizard`](../../model-invoked/craft-wizard/SKILL.md) walks you through the human gate.
+**Deploy to hosting with no SSH, scripts ready, env left to fill?** → hand the exact commands to the human; no skill walks human-only steps.
 
 **Lost or behind?** → [`/learn-catchup`](../learn-catchup/SKILL.md) for news since your last message, [`/learn-catchup-video`](../learn-catchup-video/SKILL.md) to watch it, [`/learn-restate`](../learn-restate/SKILL.md) for one confusing message.
 
-**Session over, make the environment better?** → [`/learn-retro`](../learn-retro/SKILL.md) fixes the repo, [`/learn-reflect`](../learn-reflect/SKILL.md) writes learnings back into skills.
+**Session over, make the environment better?** → [`/learn-reflect`](../learn-reflect/SKILL.md) writes learnings back into skills and proposes repo fixes.
 
-**Spare moment, shallow modules keep hurting?** → [`/craft-deepen`](../craft-deepen/SKILL.md) scans and proposes one deep module; interview settles the seam; `/whips` refactor extracts it.
+**Spare moment, shallow modules keep hurting?** → `/whips` upkeep playbook surveys the seam; `/whips` refactor extracts it.
 
 **Slow path with a number to defend?** → [`perf-issue`](../whips/playbooks/perf-issue.md) baselines, [`hillclimb`](../whips/playbooks/hillclimb.md) iterates; a number without limiter, run count, and spread is not evidence (see [`verify-bench`](../../model-invoked/verify-bench/SKILL.md)).
 

@@ -6,9 +6,9 @@ description: Stress-test one component against worst-case content and states on 
 
 Render one component on a fresh page under every scenario that can actually reach it. The page is the deliverable: a visual report the user scrolls through, every state side by side, with the breaks marked. A component built against one happy path looks finished right up until real content arrives.
 
-It observes, it does not judge. A finding here is something that visibly broke, stated plainly. Reviewing code against a standard is `review-code`; exploring design alternatives is `craft-proto`.
+It observes, it does not judge. A finding here is something that visibly broke, stated plainly. Reviewing code against a standard is `review-code`; exploring design alternatives is a throwaway sketch per `prototype.md`.
 
-Isolation here is deliberate, the opposite of `craft-proto` (which demands the real page). The question is whether the component defends itself when the content is worst-case.
+Isolation here is deliberate, the opposite of a prototype spike (which demands the real page). The question is whether the component defends itself when the content is worst-case.
 
 One run is build, look once, report: minutes, not a session. Nothing in it justifies instrumentation, browser debugging, or a second pass.
 
@@ -36,6 +36,6 @@ Feed scenarios as props and fixture data. The harness never imports production s
 
 ## 4. Look once and report
 
-Flip through every instance. Mark what visibly broke, each with its scenario label. Foundation breaks (the a11y floor and the content floor from the `craft-proto` craft bar, plus the applicable file from the checklist bank) are fixed directly. Everything else is stated plainly for the user to decide: non-foundation findings need confirmation before any change.
+Flip through every instance. Mark what visibly broke, each with its scenario label. Foundation breaks (the a11y floor and the content floor from the prototype craft bar, plus the applicable file from the checklist bank) are fixed directly. Everything else is stated plainly for the user to decide: non-foundation findings need confirmation before any change.
 
 Delete the harness page when done unless the user asks to keep it.
