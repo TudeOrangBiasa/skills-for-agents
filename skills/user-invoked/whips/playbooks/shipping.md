@@ -1,6 +1,6 @@
 # Playbook: shipping
 
-How a verified PR lands. pstack behavior: verify on the real surface, then merge directly. No auto-merge arming, no waiting on a queue: only a read-back MERGED counts as landed.
+How a verified PR lands. pstack behavior: verify on the real surface, then merge directly. Arming auto-merge is allowed where `repo-settings` permits it, but arming is never landing: only a read-back MERGED counts as landed.
 
 1. Read `docs/agents/repo-mode.md` first. Solo: merge after the local verifier passes (trust pre-push; never wait on `gh pr checks`). Team: required checks decide like pstack; PRs wait on `gh pr checks`. Team plus `Landing: auto-merge` in `docs/agents/unattended.md` runs the forge gate before any arm or merge: `../scripts/repo-settings check --mode team --landing auto-merge` (Section K of `/setup-repo` records the outcome). A nonzero exit or a `refused` line is blocking: label `needs-human`, post `<!-- needs-human reason=no-required-checks -->`, and stop; never arm, never merge, never apply settings yourself.
 2. Land only the contiguous verified run rooted at the bottom: walk up from the lowest unmerged PR and stop at the first one without PASS or PASS+NOTES. A verified PR above an unverified one waits; one whose branch neither holds nor needs the code below can move onto the trunk and land on its own with a fresh verdict.

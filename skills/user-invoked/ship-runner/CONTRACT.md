@@ -95,7 +95,11 @@ After every assign write, the runner re-reads the issue before launching the age
 - One machine per bot account is the supported shape. Two machines running `run` together serialize only through the claim re-read: the loser backs off with `claim_lost`, so at most one agent works an issue per tick. The lock is local (`flock`); the re-read is the cross-machine net, not a queue.
 - A PR counts as linked only when its body says `Closes`, `Fixes`, or `Resolves #N`.
 - The open PR list is fetched once per repo per run and filtered locally, so filtering N candidates costs one API call. One refresh follows each processed issue to see its new PR. Each claim adds a re-read (assignees plus claim markers) before the agent launches.
-- Needs `bash`, `git`, `jq`, `flock`, `timeout`, and the tracker CLI, authenticated.
+- Needs `bash`, `git`, `jq`, `flock`, `timeout`, and the tracker CLI, authenticated. macOS lacks `flock` and GNU `timeout` by default: `brew install util-linux coreutils` provides both (as `flock` and `gtimeout`; wrap or alias `gtimeout` to `timeout` on PATH). Linux behavior is unchanged.
+
+## Non-systemd wake
+
+Where systemd user units are unavailable, wake with `launchd` or cron. A `launchd` agent runs `runner.sh run` on an interval (`StartInterval`), and cron takes a `*/15 * * * *` line calling `runner.sh run` with the same environment file systemd would load. Either satisfies the scheduler contract in `setup-repo` Section G; the runner itself reads no scheduler.
 
 ## Triage
 
