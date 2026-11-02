@@ -30,5 +30,6 @@ bash skills/user-invoked/whips/scripts/verdict-check-test || fail "verdict-check
 pass "verdict-check"
 bash skills/user-invoked/whips/scripts/repo-settings-test || fail "repo-settings-test"
 pass "repo-settings"
-
+node skills/user-invoked/whips/scripts/check-plan-test.mjs || fail "check-plan-test.mjs"
+pass "check-plan"
 echo "test-all: all suites passed."
