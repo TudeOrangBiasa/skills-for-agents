@@ -81,7 +81,7 @@ Match near-duplicate titles by normalized fingerprint, not raw string. Normalize
 
 3. **Verify the claim.** Before any interview, check that the claim holds up. For a bug, reproduce it from the reporter's steps. For a PR, confirm the diff does what it claims: check it out, run the relevant tests or commands. Report what happened: confirmed (with code path), failed, or insufficient detail (a strong `needs-info` signal). A confirmed verification makes a much stronger agent brief.
 
-4. **Interview (if needed).** If the request needs fleshing out, call the Skill tool twice, for "plan-interview" and "craft-domain", and shape it with a round of questions at a time, sharpening domain terms and updating `GLOSSARY.md`/ADRs inline as decisions land.
+4. **Interview (if needed).** If the request needs fleshing out, call the Skill tool with "plan-interview", and shape it with a round of questions at a time, sharpening domain terms and updating `GLOSSARY.md`/ADRs inline as decisions land.
 
 5. **Apply the outcome:**
    - `ready-for-agent`: post an agent brief comment ([AGENT-BRIEF.md](AGENT-BRIEF.md)). A ticket collapsed from a cleared plan-map carries its Destination and Decisions-so-far as settled context: quote them into the brief, never re-interview them.

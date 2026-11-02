@@ -4,7 +4,7 @@ name: craft-architect
 ---
 # Architect
 
-Settle types, signatures, and module shape before code crosses a function boundary, then stay in the loop while implementation fills in. Jumping to code locks in the wrong shape. Runs on `craft-vocab` vocabulary; formalizes its design-it-twice pattern.
+Settle types, signatures, and module shape before code crosses a function boundary, then stay in the loop while implementation fills in. Jumping to code locks in the wrong shape. Runs the design-it-twice pattern on the depth vocabulary: module, interface, seam, adapter, leverage, locality.
 
 Open a todo with one entry per phase before starting.
 

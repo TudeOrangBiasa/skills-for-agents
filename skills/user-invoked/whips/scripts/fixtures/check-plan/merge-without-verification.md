@@ -109,4 +109,4 @@ Each live lane runs in its own worktree at the PR head on the local machine. Dri
 
 ## Appendix A. Prototype evidence
 
-No open questions needed a craft-proto run.
+No open questions needed a prototype run.

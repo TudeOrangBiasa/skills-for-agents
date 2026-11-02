@@ -2,13 +2,13 @@
 
 One pipeline from foggy idea to merged PR. Matt skills grill the idea; `/whips` executes it. No stage builds ahead of its handoff; each stage hands written artifacts to the next so the builder never guesses.
 
-Philosophy: sharpening is a conversation, shipping is a run. Grill skills (`plan-grill`, `plan-grill-docs`, `plan-interview`, `plan-sharpen`, `craft-deepen`, `plan-map`, `plan-spec`, `plan-tickets`) fight fog: they interview, map, and slice until the work is sayable. Then `/whips` runs it: one entry matches a playbook, drives skills plus subagents, and lands a reviewed ready PR. Execute is `/whips` only; the Matt execute path is deprecated (see #96). Whips itself is pstack pure (see [CREDITS.md](../CREDITS.md)).
+Philosophy: sharpening is a conversation, shipping is a run. Grill skills (`plan-grill`, `plan-grill-docs`, `plan-interview`, `plan-sharpen`, `plan-map`, `plan-spec`, `plan-tickets`) fight fog: they interview, map, and slice until the work is sayable. Then `/whips` runs it: one entry matches a playbook, drives skills plus subagents, and lands a reviewed ready PR. Execute is `/whips` only; the Matt execute path is deprecated (see #96). Whips itself is pstack pure (see [CREDITS.md](../CREDITS.md)).
 
 ## Stages: when to move
 
 | Stage | You type | Start when | Move on when |
 | --- | --- | --- | --- |
-| 1. Grill | `/plan-grill-docs` (or `/plan-grill` stateless), `/plan-sharpen` on a brief, `/craft-deepen` on a seam, `/craft-proto` when running code can answer | Idea has fog: branches undecided, terms loose | Map (components, data flow, expensive decisions) agreed; guardrails listed (must happen, must never happen, key failures) |
+| 1. Grill | `/plan-grill-docs` (or `/plan-grill` stateless), `/plan-sharpen` on a brief, prototype when running code can answer | Idea has fog: branches undecided, terms loose | Map (components, data flow, expensive decisions) agreed; guardrails listed (must happen, must never happen, key failures) |
 | 2. Map (foggy efforts only) | whips `plan-map-handoff.md` inline, or `/plan-map` by hand, then collapse and tickets per the handoff | Way not visible in one session | Map cleared: destination visible, decisions recorded |
 | 3. Spec | collapse inline, or `/plan-spec` by hand | Decisions agreed | Spec published on the tracker: problem, solution, stories, decisions, testing, out of scope |
 | 4. Tickets | ticket inline, or `/plan-tickets` by hand | Spec exists | Tracer-bullet tickets with blocking edges published, each one type plus `Kompleksitas` plus `ready-for-agent` plus a risk label |
@@ -33,9 +33,9 @@ Paths honor [docs-layout](../../setup-repo/docs-layout.md). Tracker means the tr
 | Map | whips inline, or `/plan-map` by hand | collapse (whips inline, or `/plan-spec` by hand), humans | Tracker issue labeled `plan-map:map` | Destination, Notes, Decisions-so-far index, Not-yet-specified, Out-of-scope |
 | Spec | whips inline, or `/plan-spec` by hand | tickets (whips inline, or `/plan-tickets` by hand), whips, ship-triage | Tracker issue (or `.scratch/<feature>/spec.md` local) | Problem, solution, user stories, implementation decisions, testing decisions, out of scope |
 | Ticket list | whips inline, or `/plan-tickets` by hand | whips, ship-runner | Tracker issues with blocking edges (or `.scratch/<feature-slug>/issues/NN-slug.md` files) | One type, `Kompleksitas` (Big-O, gh calls, LLM calls), what to build, blocked-by, acceptance checkboxes, `ready-for-agent` plus a risk label |
-| ADR | `plan-grill-docs`, `craft-domain` | `plan-spec`, `craft-deepen`, `learn-retro` | `docs/adr/NNNN-slug.md` | Decision, context, options, consequences |
-| Glossary terms | `plan-grill-docs`, `craft-domain`, `craft-deepen` | Many skills | `GLOSSARY.md` | Term, definition, usage |
-| Research findings | `/craft-research` | Humans, `/plan-grill-docs` | `docs/research/<slug>.md` | Question, sources, cited findings |
+| ADR | `plan-grill-docs` | `plan-spec`, `learn-reflect` | `docs/adr/NNNN-slug.md` | Decision, context, options, consequences |
+| Glossary terms | `plan-grill-docs` | Many skills | `GLOSSARY.md` | Term, definition, usage |
+| Research findings | `/whips` investigation | Humans, `/plan-grill-docs` | `docs/research/<slug>.md` | Question, sources, cited findings |
 | Decision trail | `craft-trail` | `orchestrate`, morning audit | `.scratch/whips/<run>/decisions.tsv` | Timestamped decisions plus evidence |
 | Acceptance proof | whips playbooks | `review-code`, ready-check, merger | PR body per `ship-pr` skill plus `opening-a-pr.md` | Summary visual, before/after evidence, merge danger, risk label |
 

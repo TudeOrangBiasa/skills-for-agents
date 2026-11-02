@@ -2,12 +2,12 @@
 
 A huge, foggy effort that no single session can hold. Whips drives the whole wayfinder pipeline inline (map, collapse, tickets, build) with model-invoked primitives, reusing the map's Destination and Decisions-so-far verbatim instead of re-asking them. The only stops are product HITL (a decision ticket whose decision itself needs a human) and human-only steps. There is no process gate whose only job is telling the user to re-type a slash command.
 
-This playbook covers the foggy-effort branch of the full pipeline. Full stage order plus learn-handoff contract: `playbooks/stage-pipeline.md`.
+This playbook covers the foggy-effort branch of the full pipeline. Full stage order plus handoff contract: `playbooks/stage-pipeline.md`.
 When the tickets need one lintable cross-phase plan before building, write it with `playbooks/multi-phase-plan.md`.
 
 ## Invocation rule
 
-`/plan-map`, `/plan-spec`, and `/plan-tickets` are user-invoked: no skill can fire them, `/whips` included. Whips does not need to. It charts, collapses, and tickets by doing the same work directly: interview with the Skill tool (`plan-interview` plus `craft-domain`), research and prototype tickets via subagents (`craft-research`, `craft-proto`), and tracker writes per the tracker doc (`docs/agents/issue-tracker.md`). The user-invoked skills stay the human-typed entry points for the same pipeline; this playbook is how whips walks it without asking the user to paste three slash commands.
+`/plan-map`, `/plan-spec`, and `/plan-tickets` are user-invoked: no skill can fire them, `/whips` included. Whips does not need to. It charts, collapses, and tickets by doing the same work directly: interview with the Skill tool (`plan-interview`), research and prototype tickets via subagents, and tracker writes per the tracker doc (`docs/agents/issue-tracker.md`). The user-invoked skills stay the human-typed entry points for the same pipeline; this playbook is how whips walks it without asking the user to paste three slash commands.
 
 ## Steps
 
