@@ -216,7 +216,7 @@ def compute_regions(wd, meta, paints):
     def tol(p): return min(7, max(3.5, 0.12 * p.std())) ** 2
 
     def learn_cursor(pairs):
-        """Cursor = something small that moves on its own: in a frame where only a small
+        """Pointer = something small that moves on its own: in a frame where only a small
         region changed, a small blob whose pixels reappear in the previous frame at a
         nearby offset. Its tight crop (from both frames) becomes a sprite."""
         sprites = []
