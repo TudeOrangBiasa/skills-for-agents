@@ -29,15 +29,17 @@ REVIEW_CODE="$REPO/skills/model-invoked/review-code/SKILL.md"
 ADVERSARY="$REPO/skills/model-invoked/review-adversary/SKILL.md"
 TRAIL="$REPO/skills/model-invoked/craft-trail/SKILL.md"
 
-# 1. Whips verify section: discovery, command, fallback, NOT VERIFIED.
+# 1. Whips verify section: discovery, command, drive-through fallback, NOT VERIFIED.
 grep -q 'skills/verify-\*/SKILL.md' "$WHIPS" || fail "whips verify section names no verify-skill discovery"
 grep -q 'docs/agents/verifier.md' "$WHIPS" || fail "whips verify section names no verifier.md command"
-grep -q '/verify-new' "$WHIPS" || fail "whips verify section names no verify-new fallback"
+grep -q 'drive it through' "$WHIPS" || fail "whips verify section names no drive-through fallback"
+if grep -q 'tell the user to run `/verify-new` and wait' "$WHIPS"; then fail "whips verify section gates on a human /verify-new run"; fi
 grep -q 'NOT VERIFIED' "$WHIPS" || fail "whips verify section names no NOT VERIFIED rule"
 pass "whips verify section requires proof"
 
-# 2. Opening-a-pr: verify skill in gates, Verification line in body.
+# 2. Opening-a-pr: verify skill in gates, drive-through fallback, Verification line in body.
 grep -q 'skills/verify-\*/SKILL.md' "$OPENING" || fail "opening-a-pr step 3 names no verify skill"
+grep -q 'drive it through directly in this run' "$OPENING" || fail "opening-a-pr step 3 gates on a human /verify-new run"
 grep -q 'Verification:' "$OPENING" || fail "opening-a-pr step 6 names no Verification line"
 grep -q 'NOT VERIFIED' "$OPENING" || fail "opening-a-pr body names no NOT VERIFIED rule"
 pass "opening-a-pr gates on verifier evidence"
