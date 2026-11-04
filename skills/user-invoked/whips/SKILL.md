@@ -64,10 +64,8 @@ Each row fires whenever its condition holds, on top of the playbook steps. Call 
 | Code crosses a function boundary | "craft-architect" (ground, sketch twice, agree, implement, scrap) |
 | A defect, a failing test, a slow path | binary-search the cause per `playbooks/bug.md`, then fix |
 | A behavior to build or pin | "verify-tdd" |
-| Domain terms change or a hard-to-reverse decision lands | record the term plus the decision in `GLOSSARY.md` and `docs/adr/` inline |
-| A question running code can answer | `playbooks/prototype.md`, instead of asking the user |
-| Outside docs or API facts | "craft-how" over the subsystem plus primary sources, findings in `docs/research/` |
-| Contested design, or before any PR | "review-adversary", "review-code"; a second opinion is the same prompt in a fresh context with the adversarial brief when the harness offers no second model |
+| A contested design the user asks to pressure-test | "review-adversary" on explicit ask only; findings need a run |
+| Contested code, a second look at a diff | run the repo verify skill or checkers; never a read-only second opinion as a gate |
 | A merge or rebase conflict | "ship-merge-fix" |
 | Before review, comments and the code they protect | "review-nocomment" |
 | A perf number you measured | "verify-bench" before reporting or acting on it |
@@ -119,9 +117,9 @@ Bulk goes to subagents, summaries stay in this thread. An independent reviewer i
 Pick each subagent's model by role from `docs/agents/models.md` when the repo has it (roles `code`, `hard-code`, `judgment`, `review`). A missing file or role means the subagent runs on your own model. Never name a model or provider yourself.
 Match effort to the job, never the model family. Start from the role's model, shift effort one step up for the hardest work and down for routine work; verification runs on the `review` role at standard speed, never shifted down. Fast mode is for urgent runs only: a red trunk or CI, or a human blocked waiting on the result. When the harness rejects a shifted slug, fall back to the role's plain model and say so; never try another slug.
 
-## 7. Verify, gate, open the PR ready
+## 7. Verify with proof, gate, open the PR ready
 
-Verify on the matching surface. Verdicts are VERIFIED, NOT VERIFIED, or INCONCLUSIVE, and inconclusive is not a pass. Verifier output is an input, not a verdict: solo repos read the local verifier, team repos read CI. Evidence-free work returns to a fresh fix agent, never to the same worker by resume chain. Strategic track: nominate at most one environment improvement this task suggested as a `/learn-reflect` candidate with its evidence. Never fix it mid-run; the list goes to reflect.
+Run the repo verification skill matching the changed surface (`skills/verify-*/SKILL.md`) or the command in `docs/agents/verifier.md` before reporting done. No skill plus a runnable surface (UI, CLI, API, mobile) means tell the user to run `/verify-new` and wait, unless docs-only or opted out in `docs/agents/unattended.md`. The report and PR body name the verifier command plus its output or evidence. No proof means NOT VERIFIED, and NOT VERIFIED work never auto-merges. Verdicts are VERIFIED, NOT VERIFIED, or INCONCLUSIVE, and inconclusive is not a pass. Solo repos read the local verifier, team repos read CI. Evidence-free work returns to a fresh fix agent, never the same worker by resume chain. Strategic track: nominate at most one environment improvement as a `/learn-reflect` candidate with evidence. Never fix it mid-run.
 
 Open the closing PR per `playbooks/opening-a-pr.md`: always ready, one risk label plus a `## Risk` paragraph per [RISK.md](RISK.md), `Closes #N` when an issue exists, body shaped with the `ship-pr` skill (summary visual, before/after evidence, merge danger). Landing follows the risk tier per [RISK.md](RISK.md): low-risk PRs land immediately in the same run on an independent PASS (no human touch, never self-reported); qualifying medium PRs may be merged by the agent; high-risk PRs wait for an independent verdict plus a human merge. Human review time is for high-risk only. Visible changes add the ATTACHMENTS.md pair: before/after table, native 1x, matched viewport and crop, video when motion matters, never inside `<details>`. On a PR, agents never add themselves as collaborator, assignee, or reviewer. Claiming an issue by assignment, per the Claim step in `docs/agents/issue-tracker.md`, is allowed. Tools are not people, so they only author the body and request review from humans.
 

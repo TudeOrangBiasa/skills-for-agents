@@ -22,6 +22,8 @@ for t in test-claim-durable.sh test-claim-race.sh test-detect-ask.sh test-fix-ci
 done
 bash skills/user-invoked/whips/scripts/test-no-verify-ban.sh || fail "test-no-verify-ban.sh"
 pass "no-verify-ban"
+bash skills/user-invoked/whips/scripts/test-verify-proof.sh || fail "test-verify-proof.sh"
+pass "verify-proof"
 bash skills/user-invoked/whips/scripts/test-plan-map-handoff.sh || fail "test-plan-map-handoff.sh"
 pass "plan-map-handoff"
 bash skills/user-invoked/whips/scripts/test-worktree-prune.sh || fail "test-worktree-prune.sh"

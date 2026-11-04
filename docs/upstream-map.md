@@ -70,7 +70,7 @@ Each row below names the mismatch against the policy above and records its resol
 | `setup-hooks` | mattpocock/skills | Resolved: behavior pointer is verifier loop ownership (keep credit). Hooks gate commits in the shipping loop (fast pre-commit, slow gates at pre-push plus verifier). |
 | `ship-triage` | mattpocock/skills | Resolved: behavior pointer is pstack-side triage (keep credit note). Triage feeds the runner queue via the runner state cursor and fingerprint dedupe. |
 | `ship-merge-fix` | mattpocock/skills | Resolved: behavior pointer is pstack landing behavior (keep credit). Conflict resolution lands PRs without inventing new behavior. |
-| `review-code` | mattpocock/skills | Resolved: behavior pointer is the whips review flow (keep credit). Two-axis review (Standards, Spec) runs inside the shipping loop. |
+| `review-code` | mattpocock/skills | Resolved: behavior pointer is on-ask-only review, never a ship gate (changed by #237). Two-axis review (Standards, Spec) stays available on explicit ask; Spec findings claiming wrong behavior need a run or are dropped. |
 | `verify-tdd` (parts) | mattpocock/skills + pstack | Resolved: credit kept, pstack hardening owns the red-green loop pointer (exit clause, undefined check, constant-pin rejection, no weakening assertions). |
 
 ### Matt-sourced craft and learn skills outside the planning five (resolved by #202)
