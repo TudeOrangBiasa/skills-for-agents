@@ -1,5 +1,11 @@
 # skills-for-agents
 
+## 0.8.1
+
+### Patch Changes
+
+- [`1801611`](https://github.com/TudeOrangBiasa/skills-for-agents/commit/1801611607e72fbd846f9355c4653645c88b1361) Thanks [@TudeOrangBiasa](https://github.com/TudeOrangBiasa)! - Fix maintain-formal-verification frontmatter: quote the description so the skills.sh installer parses it instead of skipping the skill.
+
 ## 0.8.0
 
 ### Minor Changes
