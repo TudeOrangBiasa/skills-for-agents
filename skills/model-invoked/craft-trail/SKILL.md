@@ -38,8 +38,6 @@ Read this run's transcript from the harness transcript store, never another work
 
 ## Attention section
 
-Before handing back, spawn a reviewer on a different model family from the one that did the work; self-review is not a substitute. The reviewer reads the trail and the run's transcript, then scans for what is suboptimal or risky rather than redoing the work: weak or absent evidence, skipped or unproven verification, hindsight risks, gaps a casual skim misses. The reviewer runs on the repo model map when one exists, else your own model; with a single model, use a fresh context with an adversarial brief. Match effort and speed to the job.
-
-Every reply for a trailed run ends with one: lead with `reviewed by <model>` on its own line, then flags pointing at rows. "No flags" is valid; the model line alone is not.
+Before handing back, check every row's evidence pointer resolves and shows what the row claims. Flag only missing or weak verification evidence: rows that name no command, no output, and no captured artifact. Point at the row and name the missing proof. "No flags" is valid; subjective taste or style is out of scope here.
 
 Read a trail top to bottom following evidence pointers (`column -s$'\t' -t` renders it in a terminal; hosted git renders committed TSV as a table).

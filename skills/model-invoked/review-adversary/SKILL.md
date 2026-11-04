@@ -1,5 +1,5 @@
 ---
-description: Adversarial multi-model review with rubric and bucketed verdict. Adversaries try to break a change or design, and only findings proven by a run survive. Use for contested designs, challenge this, tear this apart, or review before any PR.
+description: Adversarial pressure on an explicit user ask only, with rubric and bucketed verdict. Adversaries try to break a design, and only findings proven by a run survive. Use for contested designs when the user says challenge this or tear this apart; never a default gate before a PR.
 name: review-adversary
 ---
 # Interrogate
@@ -16,7 +16,7 @@ State the intent in your own words in one paragraph from the user message, commi
 
 ## 3. Spawn reviewers
 
-One reviewer per available model, all in one round with the same brief (intent, diff, rubric below): the same prompt against different models, agreement is the signal. Models follow the repo model map; with a single model, run two passes (find, then challenge the findings). Give each adversary its own worktree and copy the scope uncommitted changes into each, so repros stay isolated. If the user typed a contested design here, this is the skill `whips` calls before shipping.
+One reviewer per available model, all in one round with the same brief (intent, diff, rubric below): the same prompt against different models, agreement is the signal. Models follow the repo model map; with a single model, run two passes (find, then challenge the findings). Give each adversary its own worktree and copy the scope uncommitted changes into each, so repros stay isolated. This skill runs only on explicit user ask; no playbook calls it as a default gate before shipping.
 
 Brief every adversary to break the change: prove each finding with a run against the real code, such as a failing test, a repro script, or command output showing the wrong behavior. For a design or plan, run a prototype or probe the current tree. Each finding reports a title, the exact command, the output it printed, and the output the intent requires. Leave out anything not run: style, naming, structure, and risks needing a future change to matter. No findings is a valid result.
 

@@ -37,7 +37,7 @@ Paths honor [docs-layout](../../setup-repo/docs-layout.md). Tracker means the tr
 | Glossary terms | `plan-grill-docs` | Many skills | `GLOSSARY.md` | Term, definition, usage |
 | Research findings | `/whips` investigation | Humans, `/plan-grill-docs` | `docs/research/<slug>.md` | Question, sources, cited findings |
 | Decision trail | `craft-trail` | `orchestrate`, morning audit | `.scratch/whips/<run>/decisions.tsv` | Timestamped decisions plus evidence |
-| Acceptance proof | whips playbooks | `review-code`, ready-check, merger | PR body per `ship-pr` skill plus `opening-a-pr.md` | Summary visual, before/after evidence, merge danger, risk label |
+| Acceptance proof | whips playbooks | ready-check surface run plus repo verify skill, tests, deterministic checkers | PR body per `ship-pr` skill plus `opening-a-pr.md` | Summary visual, before/after evidence, merge danger, risk label |
 
 Acceptance criteria live inside the spec and each ticket as testable checkboxes; whips verifies them on the matching surface and reports VERIFIED, NOT VERIFIED, or INCONCLUSIVE.
 

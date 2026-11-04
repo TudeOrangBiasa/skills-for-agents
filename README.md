@@ -11,7 +11,7 @@ Idea path (grill, spec, tickets) comes from [Matt Pocock skills](https://github.
 
 - 59 skills (28 user-invoked, 31 model-invoked, including the principles index with 24 principle files) plus 30 `/whips` playbooks: one entry routes any task, the rest fire on triggers.
 - Start with `/guide` (router) or [COOKBOOK.md](./skills/user-invoked/guide/COOKBOOK.md) (recipes with diagrams); build with `/whips`; configure a repo once with `/setup-repo`.
-- Landing is mode-aware: solo repos merge after the local verifier passes, team repos after required checks pass. Risk tiers scale verification (low verifier, medium fresh-context run, high verify-blast plus adversarial review). Humans decide at triage and on irreversible actions outside the repo.
+- Landing is mode-aware: solo repos merge after the local verifier passes, team repos after required checks pass. Risk tiers scale verification (low verifier, medium fresh-context run, high verify-blast plus an empirical rerun). Humans decide at triage and on irreversible actions outside the repo.
 - Proof is mandatory (screenshots, video, timeline pages), prose passes `review-unslop`, changes ship with changesets.
 - Big picture: [FACTORY.md](./skills/user-invoked/guide/FACTORY.md) maps how the skills work as a layered factory.
 
@@ -53,7 +53,7 @@ Three phases, one rule per phase: Map before Guardrails, Guardrails before Walk.
 
 - **H (Have a Map):** `/plan-grill-docs`, `/plan-map`, `/plan-spec`. Know the components, the data flow, and the expensive decisions first. Prototype inside `/whips` when running code can answer.
 - **I (Install Guardrails):** `/verify-tdd` behavior tests plus negative cases. What must happen and what must never happen, implementation left free.
-- **T (Take a Walk):** `/plan-tickets` splits the work small, `/whips` runs Plan then Coding then Review per ticket, `/review-code` checks behavior before style.
+- **T (Take a Walk):** `/plan-tickets` splits the work small, `/whips` runs Plan then Coding then proof per ticket; verifier evidence decides done, never a read-only review.
 
 UI tickets run a sub-flow inside Walk: diverge (prototype variants), guard (a11y plus content floors), stress (`/craft-break` page), review with evidence, promote one and delete the rest. Start with `/whips` and it drives this flow for you; use `/guide` when you want to pick the skill by hand.
 
@@ -100,9 +100,9 @@ Reusable discipline the agent reaches for on its own. Full list in [skills/model
 - **[verify-bench](./skills/model-invoked/verify-bench/SKILL.md)**: Vet a perf measurement before reporting or acting on it.
 - **[verify-blast](./skills/model-invoked/verify-blast/SKILL.md)**: Find what a change could break outside itself and prove the one safety fact.
 - **[craft-break](./skills/model-invoked/craft-break/SKILL.md)**: Stress-test one component against worst-case content and states on a throwaway page, then report what visibly broke.
-- **[review-code](./skills/model-invoked/review-code/SKILL.md)**: Two-axis review of the diff since a fixed point: Standards and Spec.
+- **[review-code](./skills/model-invoked/review-code/SKILL.md)**: On-ask review along Standards plus Spec; never a ship gate.
 - **[craft-how](./skills/model-invoked/craft-how/SKILL.md)**: Explain how a subsystem works with complexity triage and fixed output sections.
-- **[review-adversary](./skills/model-invoked/review-adversary/SKILL.md)**: Adversarial multi-model review with rubric and bucketed verdict.
+- **[review-adversary](./skills/model-invoked/review-adversary/SKILL.md)**: Adversarial pressure on explicit user ask only; run-proven findings only, never a default pre-PR gate.
 - **[plan-interview](./skills/model-invoked/plan-interview/SKILL.md)**: Interview the user relentlessly about a plan, decision, or idea. The reusable plan-interview primitive behind `plan-grill`, `plan-grill-docs`, `ship-triage`, and `plan-map`.
 - **[ship-merge-fix](./skills/model-invoked/ship-merge-fix/SKILL.md)**: Resolve an in-progress git merge or rebase conflict hunk by hunk, by intent.
 - **[review-nocomment](./skills/model-invoked/review-nocomment/SKILL.md)**: Kill needless comments plus the dead code they protect, fix root causes, encode constraints.

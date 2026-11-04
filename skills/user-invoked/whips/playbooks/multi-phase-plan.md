@@ -21,7 +21,7 @@ You own the plan, never the code. The plan is a checklist an owner runs box by b
 - The merge box follows `playbooks/shipping.md` and `playbooks/ready-check.md`. The agent merges when the risk tier allows. No operator-only landing.
 - The review gate is optional per PR and means `needs-human` per `playbooks/opening-a-pr.md`. No default operator review.
 - The audit tick is a scheduled wake. Use cron, an interval loop, or a ship-runner tick. No harness-specific loop command.
-- Prose passes `review-nocomment` plus `review-unslop` plus `review-code`. No `/deslop`.
+- Prose passes `review-nocomment` plus `review-unslop` (style and prose only, never a correctness gate). No `/deslop`.
 - The control skill is the `/verify-new` output. No `control-ui` or `control-cli`.
 
 ````markdown
@@ -66,7 +66,7 @@ Tests alone are not sufficient verification. A PR is verified only when its unit
 - [ ] Resolve the forge and labels once per `playbooks/opening-a-pr.md`. Record any fallback.
 - [ ] Open the PR ready, never draft, per `playbooks/opening-a-pr.md`. A stack child targets its parent branch.
 - [ ] Run the repo's lint and typecheck plus the verifier once before the PR-facing push. Push with hooks on, never with `--no-verify`.
-- [ ] Run `review-unslop` on every prose surface, `review-nocomment` before review, and `review-code` before shipping.
+- [ ] Run `review-unslop` on every prose surface, `review-nocomment` before review, then run the repo verify skill or deterministic checkers and record command plus output before shipping. A read-only review never gates shipping.
 - [ ] Triage every review and bot comment per `references/bot-triage.md`.
 - [ ] Rebase onto current trunk before the code-ready report and babysit. Keep that merge base in fix rounds. Rebase again only at merge prep, on a `git merge-tree` conflict with trunk, on a CI failure that comes from a change on trunk, or when a known concurrent change to the same files lands.
 

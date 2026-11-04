@@ -7,9 +7,9 @@ Skills the agent can fire on its own when the task fits, or the human can type b
 - **[verify-bench](./verify-bench/SKILL.md)**: Vet a perf measurement (limiter, tuning, limits, errors, repeatability, relevance) before reporting or acting.
 - **[verify-blast](./verify-blast/SKILL.md)**: Find what a change could break outside itself and prove the one safety fact by running code.
 - **[craft-break](./craft-break/SKILL.md)**: Stress-test one component against worst-case content and states on a throwaway page.
-- **[review-code](./review-code/SKILL.md)**: Review the changes since a fixed point along two axes: Standards and Spec.
+- **[review-code](./review-code/SKILL.md)**: On-ask review along Standards plus Spec; never a ship gate.
 - **[craft-how](./craft-how/SKILL.md)**: Explain how a subsystem works with complexity triage and fixed output sections.
-- **[review-adversary](./review-adversary/SKILL.md)**: Adversarial multi-model review with rubric and bucketed verdict.
+- **[review-adversary](./review-adversary/SKILL.md)**: Adversarial pressure on explicit user ask only; run-proven findings only, never a default pre-PR gate.
 - **[plan-interview](./plan-interview/SKILL.md)**: Interview the user relentlessly about a plan, decision, or idea. The reusable plan-interview primitive behind `plan-grill`, `plan-grill-docs`, `ship-triage`, and `plan-map`.
 - **[ship-pr](./ship-pr/SKILL.md)**: The mandatory PR body shape: summary visual, before/after evidence with UI tables, merge danger. Captures visuals with `agent-browser`; attachment method packed in the skill.
 - **[principles](./principles/SKILL.md)**: Index of 24 engineering principles behind `/whips` triggers; read the file that fits before the first design decision.

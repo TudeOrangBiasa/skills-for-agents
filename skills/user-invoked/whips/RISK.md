@@ -39,9 +39,8 @@ Everything else. Typical low-risk work: copy and docs, tests only, internal refa
 
 ## Verification per tier
 
-- **Low:** the repo verifier passes (solo: local verifier; team: required checks). That is the verifier.
 - **Medium:** low, plus an agent that did not write the code runs the affected surface (endpoint, page, tests) in a fresh context and checks `git patch-id` when a rebase landed.
-- **High:** medium, plus the `verify-blast` skill proves what can break outside the diff by running code, plus one adversarial reviewer in a fresh context (same model, no author reasoning, brief opens with "find how this PR breaks", lens correctness, security, or blast radius per #67). Data and secrets rules add a dry-run or rollback proof. Arming waits until this lane passes; FAIL means `needs-human`.
+- **High:** medium, plus the `verify-blast` skill proves what can break outside the diff by running code, plus a fresh-context verifier rerun on the surface with a second lens (correctness, security, or blast radius per #67) that also runs code and returns evidence. A read-only skim never satisfies this lane. Data and secrets rules add a dry-run or rollback proof. Arming waits until this lane passes; FAIL means `needs-human`.
 
 Cases: an isolated 500-line spike of new files with no runtime caller is medium or low, never high on size alone. A workflow change is high, verified against the gate it changes.
 
