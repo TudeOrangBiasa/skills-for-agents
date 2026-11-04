@@ -1,5 +1,27 @@
 # skills-for-agents
 
+## 0.8.0
+
+### Minor Changes
+
+- [#234](https://github.com/TudeOrangBiasa/skills-for-agents/pull/234) [`bf4543b`](https://github.com/TudeOrangBiasa/skills-for-agents/commit/bf4543b48fea4092424ae631cea9be8c63ea1dce) Thanks [@TudeOrangBiasa](https://github.com/TudeOrangBiasa)! - Matt-derived skills trim to planning and wayfinding only: plan-map, plan-spec, plan-tickets, plan-grill, plan-grill-docs, and plan-interview stay, with setup-repo, setup-hooks, ship-triage, ship-merge-fix, review-code, and verify-tdd keeping credit-only rows. Eleven skill dirs go away with their callers rewritten to the merged owners (bug playbook, investigation, prototype playbook, craft-architect, learn-reflect, learn-catchup). learn-diff-gate leaves the default install lists, and the guide marks the formal-verification pair, craft-agent-docs, setup-ts-modules, and learn-diff-gate as advanced off the main flow.
+
+- [#232](https://github.com/TudeOrangBiasa/skills-for-agents/pull/232) [`cd4c6dc`](https://github.com/TudeOrangBiasa/skills-for-agents/commit/cd4c6dc0232241140200d973aa1c1a2ca3f4573f) Thanks [@TudeOrangBiasa](https://github.com/TudeOrangBiasa)! - Setup-repo gains a solo fast-path: answer solo once and it applies mode solo, tiered low-risk auto-land, the local verifier offer, and skips team settings, timers, and the models interview unless asked. The models template gains a cheap, default, deep effort ladder with escalation rules. Shipping playbook states arming is allowed but never counts as landed. Ship-runner contract documents macOS brew deps for flock and timeout plus launchd and cron wake paths.
+
+- [#231](https://github.com/TudeOrangBiasa/skills-for-agents/pull/231) [`e71ee87`](https://github.com/TudeOrangBiasa/skills-for-agents/commit/e71ee8730a968a225b46339402416d6ca232c5f3) Thanks [@TudeOrangBiasa](https://github.com/TudeOrangBiasa)! - Whips always-on restate now names the smallest change that meets the goal, and the feature and bug playbooks cut an MVP slice first with a stop-after-VERIFIED rule. New autonomous-run playbook covers predicate-driven overnight runs (cron, interval loop, or ship-runner tick; per-iteration trail; never relax the predicate), and the guide cookbook gains the overnight trust contract recipe. Solo and thin-fog runs drive through plan-spec and plan-tickets inline instead of waiting on separate skill fires.
+
+- [#238](https://github.com/TudeOrangBiasa/skills-for-agents/pull/238) [`5a3d27d`](https://github.com/TudeOrangBiasa/skills-for-agents/commit/5a3d27d59327ce3c1bdd0dc0fffdf47fd9420d1c) Thanks [@TudeOrangBiasa](https://github.com/TudeOrangBiasa)! - Whips tasks are proof-gated: run the repo verification skill or verifier command and record its output before reporting done, with no-proof work marked NOT VERIFIED and never auto-merging. Abstract read-only review is off the ship path: review-code and review-adversary are explicit-ask only, run-proven findings only, and the high tier verifies empirically with verify-blast plus a code-running rerun. Setup-repo records a later verifier as pending so the next whips run waits on verify-new.
+
+- [#233](https://github.com/TudeOrangBiasa/skills-for-agents/pull/233) [`d9323fa`](https://github.com/TudeOrangBiasa/skills-for-agents/commit/d9323fad68e7bd6c0ec29e7f86a64ec463505d2d) Thanks [@TudeOrangBiasa](https://github.com/TudeOrangBiasa)! - PR bodies now brief in six short sections: Why, What changed, Scope, Tradeoffs, Blast Radius, Verification. The opening-a-pr playbook carries the shape and the ship-pr skill matches it, with template placeholders removed from the default body recipe. Upstream map records the 2026-10-27 pstack resync with a diff note naming what this wave ported and what stays local.
+
+### Patch Changes
+
+- [#230](https://github.com/TudeOrangBiasa/skills-for-agents/pull/230) [`1801d87`](https://github.com/TudeOrangBiasa/skills-for-agents/commit/1801d87d37afe8cf086cfd19d09084a0d2c0f62d) Thanks [@TudeOrangBiasa](https://github.com/TudeOrangBiasa)! - Harness gate now catches Cursor product forms (`Cursor`, `cursor-agent`, `cursor-cli`, `.cursor/`, `.cursorrules`, `cursor-rules`) in shipped skills. The multi-phase-plan audit-tick line is reworded harness-neutral, and the two legit contrast notes are reworded or scoped. check-docs also gains a fail-closed phrase gate: added prose lines outside code fences fail on a small allowlisted set of overused AI phrases.
+
+- [#235](https://github.com/TudeOrangBiasa/skills-for-agents/pull/235) [`9550f71`](https://github.com/TudeOrangBiasa/skills-for-agents/commit/9550f71ed2a76e4c08147de7c561f64b516852b9) Thanks [@TudeOrangBiasa](https://github.com/TudeOrangBiasa)! - One command proves the pack: `npm test` runs the new scripts/test-all.sh aggregator across check-docs, the alias table, and every skill stub suite. Install and invocation docs now lead with generic SKILL.md loader wording and keep named harnesses as examples only.
+
+- [#239](https://github.com/TudeOrangBiasa/skills-for-agents/pull/239) [`3fde5f4`](https://github.com/TudeOrangBiasa/skills-for-agents/commit/3fde5f4a55d44bf78280fe59fc333e0bbbb18b56) Thanks [@TudeOrangBiasa](https://github.com/TudeOrangBiasa)! - Whips no-skill verify path drives through directly in the run (launch, drive, capture evidence) instead of waiting on the human typing `/verify-new`; the new stub asserts the drive-through wording.
+
 ## 0.7.0
 
 ### Minor Changes
