@@ -1,5 +1,5 @@
 ---
-description: Bring a project's formal verification back in line with the code after the code changes: find commits that touched verified code, update the model or properties, rerun, and say whether each failure is drift or a bug. Use after merges and refactors that touched verified code without rechecking it.
+description: "Bring a project's formal verification back in line with the code after the code changes: find commits that touched verified code, update the model or properties, rerun, and say whether each failure is drift or a bug. Use after merges and refactors that touched verified code without rechecking it."
 disable-model-invocation: true
 name: maintain-formal-verification
 ---
