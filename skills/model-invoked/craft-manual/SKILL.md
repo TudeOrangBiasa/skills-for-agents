@@ -66,7 +66,7 @@ Screenshots prove the clicks. Four content blocks prove the product behind them.
 3. Route appendix (`routes`): one row per route (address, name, user), generated from the app route table.
 4. Demo disclosure (`demo`): one block stating what is sample data, what is offline, and what cannot be done in demo mode.
 
-QA: a Selesai row with no proof fails the build. An unknown status label fails the build. A rule with no enforcement site fails the build. A chapter step referencing a route missing from the table fails the build. A manifest with `demo: true` and no disclosure block fails the build. A feature or rule repeated across chapters declares `"reuse": true` like shots do.
+QA: a Selesai row with no proof fails the build. An unknown status label fails the build. A rule with no enforcement site fails the build. A chapter step referencing a route missing from the table fails the build. A manifest with `demo: true` and no disclosure block fails the build. A feature repeated across chapters declares `"reuse": true` like shots do.
 
 ## Review
 
