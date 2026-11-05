@@ -8,7 +8,6 @@ description: Cut AI tells from prose before it ships. Use when writing or editin
 Edit text so it reads like a person wrote it for this project. Keep the meaning and the intended tone. Write clean as you draft; a cleanup pass after drafting misses most of these.
 
 ## Process
-
 1. Scan the text for the patterns below.
 2. Rewrite each hit. When a sentence only carries a pattern, delete the sentence.
 
@@ -34,7 +33,7 @@ Rule numbers are stable ids that other skills may cite. A removed rule leaves a 
 
 ### Shape
 
-11. **"Not just X, but Y."** State the point directly.
+11. **"Not just X, but Y."** State the point directly. Same ban covers the Indonesian twin "tidak/bukan hanya X, tapi/melainkan (juga) Y" and the "X bukan Y, melainkan Z" restatement.
 12. **Forced threes.** Use the natural count of items.
 13. **Synonym cycling.** Pick one name for a thing and repeat it.
 14. **Em dashes.** None. Rewrite with a comma, colon, or period, or a conjunction, whichever the sentence wants. Parentheses are not a dash substitute: if the thought needs separation, end the sentence or use a comma.

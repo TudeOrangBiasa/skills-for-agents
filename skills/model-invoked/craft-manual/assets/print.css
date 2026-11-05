@@ -4,6 +4,8 @@ figcaption { break-before: avoid; }
 .chapter { break-before: page; }
 .cover, .toc { break-after: page; }
 img { max-width: 100%; }
+table { font-size: 11pt; }
+tr { break-inside: avoid; }
 
 /* Print frames keep the crop but cap tall figures to one page: without this,
 /* a full-length desktop shot would fragment no matter what. Screen keeps
