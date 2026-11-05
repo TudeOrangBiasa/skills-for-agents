@@ -22,6 +22,7 @@ Skills that fire only when the human types their name. They orchestrate; they ne
 - **[plan-spec](./plan-spec/SKILL.md)**: Turn the current conversation into a spec and publish it to the project issue tracker: no interview, just synthesis of what you've already discussed.
 - **[plan-tickets](./plan-tickets/SKILL.md)**: Break a plan, spec, or the current conversation into a set of tracer-bullet tickets, each declaring its blocking edges.
 - **[ship-triage](./ship-triage/SKILL.md)**: Move issues and external PRs through a state machine of triage roles, categorise, verify, interview if needed, and write agent-ready briefs.
-- **[learn-restate](./learn-restate/SKILL.md)**: Lost in what the agent just said or built: get it re-pitched visually.
+- **[learn-restate](./learn-restate/SKILL.md)**: Fire this the moment an agent message doesn't land. The agent re-pitches it visually, in plain English, using your `GLOSSARY.md` vocabulary.
+- **[report-issue](./report-issue/SKILL.md)**: File a bug, feature, or deprecation ticket from a quick notice, with repro and acceptance.
 - **[plan-map](./plan-map/SKILL.md)**: Plan a huge chunk of work (more than one agent session can hold) as a shared map of decision tickets on the issue tracker, and resolve them one at a time until the way to the destination is clear.
 - **[whips](./whips/SKILL.md)**: Route any non-trivial task through one entry: match a playbook, drive HIT skills plus subagents, open a reviewed ready PR with evidence. Also picks up `ready-for-agent` issues and sorts review comments.

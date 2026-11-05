@@ -87,6 +87,7 @@ Skills for daily work, fired by hand. Full list in [skills/user-invoked/](skills
 - **[plan-tickets](./skills/user-invoked/plan-tickets/SKILL.md)**: Break any plan, spec, or conversation into a set of tracer-bullet tickets, each declaring its blocking edges.
 - **[ship-triage](./skills/user-invoked/ship-triage/SKILL.md)**: Move issues through a state machine of triage roles.
 - **[learn-restate](./skills/user-invoked/learn-restate/SKILL.md)**: Fire this the moment an agent message doesn't land. The agent re-pitches it visually, in plain English, using your `GLOSSARY.md` vocabulary.
+- **[report-issue](./skills/user-invoked/report-issue/SKILL.md)**: File a bug, feature, or deprecation ticket from a quick notice, with repro and acceptance.
 - **[plan-map](./skills/user-invoked/plan-map/SKILL.md)**: Plan a huge chunk of work, more than one agent session can hold, as a shared map of decision tickets on the issue tracker, and resolve them one at a time until the way is clear.
 - **[whips](./skills/user-invoked/whips/SKILL.md)**: Route any non-trivial task through one entry: match a playbook, drive HIT skills plus subagents, open a reviewed ready PR with ship-pr-shaped evidence. Also picks up `ready-for-agent` issues and sorts review comments.
 - **[plan-worklog](./skills/user-invoked/plan-worklog/SKILL.md)**: Interview yourself into implementable workflow specs over multiple sessions, using the current directory as a stateful workspace.
