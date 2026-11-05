@@ -1,10 +1,10 @@
 ---
-description: "Generate a user manual from a running web app: content-cropped screenshots, selector annotations, HTML plus PDF build with QA gates. Use for user manual, guide book, panduan pengguna, end-user docs with screenshots, PDF guide."
+description: "Generate a user manual from a running web app: content-cropped screenshots, selector annotations, HTML plus PDF build with QA gates, plus optional status-labeled feature tables, business rules, route appendix, demo disclosure. Use for user manual, guide book, panduan pengguna, project doc, end-user docs with screenshots, PDF guide."
 name: craft-manual
 ---
 # User manual
 
-Generate a user manual (guide book, panduan pengguna) from a running web app: deterministic screenshots cropped to content, selector-based annotations, and an HTML plus PDF build that fails on blank screenshots, orphan captions, or stale captures. Use when asked for a user manual, guide book, end-user documentation with screenshots, or a PDF guide.
+Generate a user manual (guide book, panduan pengguna) from a running web app: deterministic screenshots cropped to content, selector-based annotations, and an HTML plus PDF build that fails on blank screenshots, orphan captions, or stale captures. Optional content blocks prove the product behind the clicks: status-labeled feature tables, business rules with enforcement sites, a route appendix, and a demo disclosure. Use when asked for a user manual, guide book, project doc, end-user documentation with screenshots, or a PDF guide.
 
 One command regenerates everything: `scripts/manual build`. The build fails (nonzero exit plus the shot id, page, and percentage) instead of shipping a manual with long blank areas.
 
@@ -56,6 +56,17 @@ HTML frames follow the cropped image (phone frame for mobile, desktop frame for 
 ## Freshness
 
 The manifest records the app commit SHA and the UI source paths at capture. `manual check` fails when any commit touches those paths after the SHA and names the affected shots. Wire it into CI.
+
+## Content blocks (optional, from the Linkbook case)
+
+Screenshots prove the clicks. Four content blocks prove the product behind them. Declare any of them in the manifest. Each block is optional and each carries one QA rule.
+
+1. Feature table (`features`): one row per feature. Each row states the claim, the proof, and the status. Status labels are closed: Selesai, Prototipe, Belum ada UI, Di luar MVP. Each Selesai row names its proof (commit SHA, route, endpoint, or test file).
+2. Business rules (`rules`): one row per rule. Each row states the rule, how it works, and where enforcement lives (server, client, manual ops). Server enforced beats client claimed. Say which one.
+3. Route appendix (`routes`): one row per route (address, name, user), generated from the app route table.
+4. Demo disclosure (`demo`): one block stating what is sample data, what is offline, and what cannot be done in demo mode.
+
+QA: a Selesai row with no proof fails the build. An unknown status label fails the build. A rule with no enforcement site fails the build. A chapter step referencing a route missing from the table fails the build. A manifest with `demo: true` and no disclosure block fails the build. A feature repeated across chapters declares `"reuse": true` like shots do.
 
 ## Review
 

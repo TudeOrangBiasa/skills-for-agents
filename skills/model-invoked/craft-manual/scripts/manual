@@ -230,6 +230,28 @@ function trimImage(img, marginDev, tol) {
 
 // ---------- manifest ----------
 
+// Pure content validation, no file IO. Selftest calls this directly.
+function validateContent(m) {
+  const ids = new Set((m.shots || []).map((s) => s.id));
+  for (const c of m.chapters || []) for (const st of c.steps || []) {
+    if (st.shot && !ids.has(st.shot)) throw new Error(`step references unknown shot ${st.shot}`);
+    if (st.route && m.routes && !m.routes.some((r) => r.address === st.route)) throw new Error(`step references route missing from appendix: ${st.route}`);
+  }
+  const STATUSES = new Set(["Selesai", "Prototipe", "Belum ada UI", "Di luar MVP"]);
+  const seenFeat = new Set(), dupFeat = new Set();
+  for (const f of m.features || []) {
+    if (!STATUSES.has(f.status)) throw new Error(`unknown status label: ${f.status}`);
+    if (f.status === "Selesai" && !f.proof) throw new Error(`Selesai feature needs proof: ${f.title || f.claim}`);
+    if (f.title) { if (seenFeat.has(f.title)) dupFeat.add(f.title); seenFeat.add(f.title); }
+  }
+  const undeclaredFeat = (m.features || []).filter((f) => f.title && dupFeat.has(f.title) && !f.reuse);
+  if (undeclaredFeat.length) throw new Error(`features reused without "reuse": true: ${[...new Set(undeclaredFeat.map((f) => f.title))].join(", ")}`);
+  for (const r of m.rules || []) {
+    if (!r.enforced) throw new Error(`rule needs an enforcement site (server, client, manual ops): ${r.title || r.rule}`);
+  }
+  if (m.demo && !m.demoNote) throw new Error("manifest sets demo: true but has no demoNote disclosure block");
+}
+
 function loadManifest(p) {
   const m = JSON.parse(fs.readFileSync(p, "utf8"));
   if (!m.app || !m.app.baseUrl || !Array.isArray(m.shots) || !Array.isArray(m.chapters)) {
@@ -245,9 +267,7 @@ function loadManifest(p) {
       if (!a.selector || a.n == null) throw new Error(`annotation needs n and selector in shot ${s.id}`);
     }
   }
-  for (const c of m.chapters) for (const st of c.steps || []) {
-    if (st.shot && !ids.has(st.shot)) throw new Error(`step references unknown shot ${st.shot}`);
-  }
+  validateContent(m);
   m.uiPaths = m.uiPaths || ["frontend/src/**"];
   m.locale = (m.app && m.app.locale) || "id";
   return m;
@@ -386,13 +406,49 @@ async function captureOnPage(page, shot, baseUrl, rawDir, nav) {
 }
 
 
+function renderContentBlocks(manifest) {
+  let toc = "", body = "";
+  if (manifest.features && manifest.features.length) {
+    toc += `<li><a href="#features">${esc("Daftar fitur")}</a></li>\n`;
+    body += `<section class="chapter"><h2 id="features">Daftar fitur</h2>\n<table><thead><tr><th>No</th><th>Fitur</th><th>Status</th><th>Bukti</th></tr></thead><tbody>\n`;
+    manifest.features.forEach((f, i) => {
+      body += `<tr><td>${i + 1}</td><td>${esc(f.title || f.claim || "")}</td><td>${esc(f.status)}</td><td>${esc(f.proof || "")}</td></tr>\n`;
+    });
+    body += `</tbody></table>\n</section>\n`;
+  }
+  if (manifest.rules && manifest.rules.length) {
+    toc += `<li><a href="#rules">${esc("Aturan bisnis")}</a></li>\n`;
+    body += `<section class="chapter"><h2 id="rules">Aturan bisnis</h2>\n<table><thead><tr><th>No</th><th>Aturan</th><th>Cara kerja</th><th>Diatur di</th></tr></thead><tbody>\n`;
+    manifest.rules.forEach((r, i) => {
+      body += `<tr><td>${i + 1}</td><td>${esc(r.title || r.rule || "")}</td><td>${esc(r.how || "")}</td><td>${esc(r.enforced || "")}</td></tr>\n`;
+    });
+    body += `</tbody></table>\n</section>\n`;
+  }
+  if (manifest.routes && manifest.routes.length) {
+    toc += `<li><a href="#routes">${esc("Daftar halaman")}</a></li>\n`;
+    body += `<section class="chapter"><h2 id="routes">Daftar halaman</h2>\n<table><thead><tr><th>No</th><th>Alamat</th><th>Nama</th><th>Pengguna</th></tr></thead><tbody>\n`;
+    manifest.routes.forEach((r, i) => {
+      body += `<tr><td>${i + 1}</td><td>${esc(r.address)}</td><td>${esc(r.name || "")}</td><td>${esc(r.user || "")}</td></tr>\n`;
+    });
+    body += `</tbody></table>\n</section>\n`;
+  }
+  if (manifest.demoNote) {
+    toc += `<li><a href="#demo">${esc("Catatan demo")}</a></li>\n`;
+    body += `<section class="chapter"><h2 id="demo">Catatan demo</h2>\n<p>${esc(manifest.demoNote)}</p>\n</section>\n`;
+  }
+  return { toc, body };
+}
+
 function buildHtml(manifest, shotsDir, outHtml) {
   const t = STR[manifest.locale] || STR.id;
   const tpl = fs.readFileSync(path.join(__dirname, "..", "assets", "template.html"), "utf8");
   let toc = "", body = "";
   const used = new Map();
+  const preface = renderContentBlocks(manifest);
+  toc += preface.toc;
+  body += preface.body;
   manifest.chapters.forEach((c, ci) => {
-    toc += `<li><a href=\"#ch${ci}\">${esc(c.title)}</a></li>\n`;
+    toc += `<li><a href="#ch${ci}">${esc(c.title)}</a></li>\n`;
     body += `<section class=\"chapter\"><h2 id=\"ch${ci}\">${esc(c.title)}</h2>\n`;
     (c.steps || []).forEach((st) => {
       body += `<div class=\"step\"><h3>${t.step} ${st.n}: ${esc(st.title)}</h3><p>${esc(st.body || "")}</p>\n`;
@@ -785,6 +841,30 @@ function cmdSelftest() {
   // 8. Determinism: same image encodes to identical bytes twice.
   const e1 = encodePng(a), e2 = encodePng(a);
   eq("encode deterministic", e1.equals(e2), true);
+  // 9. Content blocks: Selesai without proof fails, unknown status fails,
+  // rule without enforcement fails, demo without disclosure fails.
+  const good = { shots: [], chapters: [],
+    features: [{ title: "F", status: "Selesai", proof: "abc123" }],
+    rules: [{ title: "R", how: "W", enforced: "server" }],
+    routes: [{ address: "/", name: "H", user: "all" }], demo: true, demoNote: "Sample data." };
+  const badProof = JSON.parse(JSON.stringify(good)); badProof.features = [{ title: "F", status: "Selesai" }];
+  const badStatus = JSON.parse(JSON.stringify(good)); badStatus.features = [{ title: "F", status: "Aneh" }];
+  const badRule = JSON.parse(JSON.stringify(good)); badRule.rules = [{ title: "R" }];
+  const badDemo = JSON.parse(JSON.stringify(good)); delete badDemo.demoNote;
+  const badDup = JSON.parse(JSON.stringify(good));
+  badDup.features = [{ title: "F", status: "Prototipe", reuse: true }, { title: "F", status: "Prototipe" }];
+  const checkThrows = (m, frag) => { try { validateContent(m); return "no-throw"; } catch (e) { return e.message.includes(frag) ? "ok" : `wrong: ${e.message}`; } };
+  eq("selesai no proof fails", checkThrows(badProof, "needs proof"), "ok");
+  eq("unknown status fails", checkThrows(badStatus, "unknown status"), "ok");
+  eq("rule no site fails", checkThrows(badRule, "enforcement site"), "ok");
+  eq("demo no note fails", checkThrows(badDemo, "no demoNote"), "ok");
+  eq("dup undeclared fails", checkThrows(badDup, "reuse"), "ok");
+  eq("valid content passes", (() => { try { validateContent(good); return "ok"; } catch (e) { return e.message; } })(), "ok");
+  const rendered = renderContentBlocks(good);
+  eq("renders features", rendered.body.includes("Daftar fitur") && rendered.body.includes("abc123"), true);
+  eq("renders rules", rendered.body.includes("Aturan bisnis") && rendered.body.includes("server"), true);
+  eq("renders routes", rendered.body.includes("Daftar halaman"), true);
+  eq("renders demo", rendered.body.includes("Catatan demo"), true);
   if (fails.length) { console.error("SELFTEST FAILED:\n- " + fails.join("\n- ")); process.exitCode = 1; }
   else console.log("selftest: all passed");
 }

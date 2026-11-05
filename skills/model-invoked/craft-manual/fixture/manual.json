@@ -11,6 +11,17 @@
       "annotations": [{ "n": 1, "selector": "[data-manual=receipt]", "label": "Nomor struk" }]
     }
   ],
+  "features": [
+    { "title": "Booking dibuat", "status": "Selesai", "proof": "shot c10-done, route /done" }
+  ],
+  "rules": [
+    { "title": "Nomor struk tampil setelah booking", "how": "Halaman done membaca nomor dari server.", "enforced": "server" }
+  ],
+  "routes": [
+    { "address": "/done", "name": "Booking dibuat", "user": "Pelanggan" }
+  ],
+  "demo": true,
+  "demoNote": "Data contoh DMO-001, tanpa server.",
   "chapters": [
     {
       "title": "Pelanggan",
