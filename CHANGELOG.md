@@ -1,5 +1,11 @@
 # skills-for-agents
 
+## 0.10.0
+
+### Minor Changes
+
+- [#243](https://github.com/TudeOrangBiasa/skills-for-agents/pull/243) [`393d284`](https://github.com/TudeOrangBiasa/skills-for-agents/commit/393d284617b0aee17b44fba322420b585d86eb17) Thanks [@TudeOrangBiasa](https://github.com/TudeOrangBiasa)! - New user-invoked skill report-issue: file one bug, feature, or deprecation ticket per notice using the repo issue templates, with interview before filing so every ticket carries repro or what-to-build plus Kompleksitas and acceptance. Router and READMEs updated.
+
 ## 0.9.0
 
 ### Minor Changes
