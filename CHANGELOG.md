@@ -1,5 +1,13 @@
 # skills-for-agents
 
+## 0.9.0
+
+### Minor Changes
+
+- [#240](https://github.com/TudeOrangBiasa/skills-for-agents/pull/240) [`363137a`](https://github.com/TudeOrangBiasa/skills-for-agents/commit/363137a592463e42c222cde5cb05b8e6f1dd369b) Thanks [@TudeOrangBiasa](https://github.com/TudeOrangBiasa)! - Style defaults: em dash ban already enforced by check-docs stays global, review-unslop rule 11 now covers the Indonesian tidak-hanya-X-tapi-Y twin, review-prose pins numbered or lettered lists with no bullets plus no arrow construction and a direct honest tone in ID and EN.
+
+- [#240](https://github.com/TudeOrangBiasa/skills-for-agents/pull/240) [`363137a`](https://github.com/TudeOrangBiasa/skills-for-agents/commit/363137a592463e42c222cde5cb05b8e6f1dd369b) Thanks [@TudeOrangBiasa](https://github.com/TudeOrangBiasa)! - craft-manual content blocks: optional feature table with closed status labels and proof rule, business rules with enforcement site, route appendix cross-checked against chapter steps, demo disclosure required when demo true. Validated in loadManifest, rendered in buildHtml, covered by selftest.
+
 ## 0.8.1
 
 ### Patch Changes
