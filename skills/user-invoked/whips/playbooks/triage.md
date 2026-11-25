@@ -23,7 +23,7 @@ Turns one raw issue (`needs-triage` or unlabeled) into an agent-ready brief. One
 
 ## Intake
 
-1. Pick one issue per run: the one the user named, else the oldest open `ready-for-agent` issue with no assignee and no open blocker. Nothing ready means report that and stop.
+1. Pick one issue per run: the one the user named, else the oldest open `ready-for-agent` issue with no assignee and no open blocker. Nothing ready means report that and stop. Claim it before any work: assign it to yourself, then re-read the issue to confirm no other runner holds it; back off when another runner beat the claim. Two agents on one issue is rework.
 2. Read the issue, its comments, and the latest agent brief (the Ripen shape above: summary, current and desired behavior, key interfaces, acceptance criteria, out of scope). The brief is the contract; the body and discussion are context. Restate the goal and the problem in your own words before routing, so misunderstandings surface now instead of mid-build.
 3. Confirm it still holds against the current code: the behavior is not already built, the named interfaces still exist or have a clear successor, and a bug still reproduces. Already built means you comment where it lives and ask the human to close it. Never close it yourself.
 4. A brief that is missing, has no testable acceptance criteria, has no type, has no `## Kompleksitas` line, or no longer matches the code is insufficient. Post triage notes (what is established, what is still needed, each question specific, pointing at the missing section), move the label from `ready-for-agent` to `needs-info`, and stop. Never implement from a guess.
