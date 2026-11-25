@@ -84,7 +84,7 @@ Each row fires whenever its condition holds, on top of the playbook steps. Call 
 | A UI change about to ship | "craft-break" |
 | Reading or editing `.ts`/`.tsx` | "craft-ts" |
 
-Every prose surface (reply, PR body, commit message, tracker comment, code comment) passes the review-unslop gate: call the Skill tool with "review-unslop". Write comments clean from the start: keep only the *why* invisible from the code, never narrate phases in verify scripts. This holds for delegate diffs too; point at "review-nocomment". (No `deslop` here.)
+Every prose surface passes the review-unslop gate: call the Skill tool with "review-unslop". Write comments clean from the start: keep only the *why* invisible from the code. This holds for delegate diffs too; point at "review-nocomment". (No `deslop` here.)
 
 A skill that breaks mid-run gets fixed in this PR, never silently worked around, never blocking the unit on it.
 
@@ -128,4 +128,4 @@ Open the closing PR per `playbooks/opening-a-pr.md`: always ready, one risk labe
 
 ## 8. Reply
 
-What was built, what was chosen and why, the playbook plus skipped steps, open decisions. Name each principle that changed a decision and the choice it changed, citing only files read this session. Add a short "Why this way" in plain words for the key decisions, written for a developer still building experience: what the alternative was and why it lost. Frame impact for the consumer of the change and for its maintainer. Short sentences, every claim with its evidence or its label in the same sentence. Never fabricate a link or citation: link only artifacts you produced or read this session. Never hand over a check you could have run.
+What was built, what was chosen and why, the playbook plus skipped steps, open decisions. Name each principle that changed a decision and the choice it changed, citing only files read this session. Add a short "Why this way" in plain words for the key decisions, written for a developer still building experience: what the alternative was and why it lost. Frame impact for the consumer of the change and for its maintainer. Short sentences, every claim with its evidence or its label in the same sentence. Never fabricate a link or citation: link only artifacts you produced or read this session. Never hand over a check you could have run. End every reply with a `Gates:` line naming each gate run and its result (unslop, nocomment, verifier); a gate not named did not run, so run it before replying.
