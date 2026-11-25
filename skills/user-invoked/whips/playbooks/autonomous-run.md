@@ -10,7 +10,7 @@ One falsifiable sentence plus how to check it (command, page, metric with a thre
 
 ## 2. Pick the wake
 
-One of three, harness-neutral: a cron line, an interval loop, or a ship-runner tick. Never name a product harness loop command. Point at `craft-trail` for the per-iteration record.
+One of three, harness-neutral: a cron line, an interval loop, or a scheduled agent tick. Never name a product harness loop command. Point at `craft-trail` for the per-iteration record.
 
 ## 3. Run the loop
 

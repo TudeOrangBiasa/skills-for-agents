@@ -12,7 +12,7 @@ You own the plan, never the code. The plan is a checklist an owner runs box by b
 
 **Verification.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked (the `principles` skill file `prove-it-works`). That sentence is the verification rule. Every verification block opens with it. The live block is mandatory. Ten lanes at the PR head drive the real surface through its control skill, per the `craft-swarm` skill, each in its own worktree on the local machine. Each lane is one box with a concrete scenario, the screenshot it saves, and its pass predicate. One lane is the Regression lane against trunk. It runs the same load-bearing scenario on trunk and head. If trunk does not have the feature, the lane records that fact and gates the behavior the diff adds plus the end state the user waits for instead of inventing a trunk result. The perf gate is dual-sided. Trunk and head must both produce the named metric. If trunk lacks the feature, also isolate the work the diff adds and set an absolute budget for that work plus the end-to-end state the user waits for. Do not claim a ratio between unlike scenarios. The perf block names the metric, the interleaved probe, the trunk baseline measured first, and the rule with the number that fails. The review gate is optional per PR. A gated PR stops at merge-ready with `needs-human` and waits for the operator. An ungated PR writes `**Review gate.** None. <PR id> is not review-gated.` and keeps no boxes under it.
 
-**Control skill.** The lanes drive through the project's verification skill, generated once by `/verify-new`. A PR that touches two surfaces gets lanes on both. A surface with no verification skill is a risk in Appendix C, its live block still names how each lane drives it, and the first gated step tells the user to run `/verify-new` and waits.
+**Control skill.** The lanes drive through the project's verification skill. A PR that touches two surfaces gets lanes on both. A surface with no verification skill is a risk in Appendix C; its live block still names how each lane drives it.
 
 ## Deviations from pstack
 
@@ -20,9 +20,9 @@ You own the plan, never the code. The plan is a checklist an owner runs box by b
 - Verification is the repo verifier plus self-proof. Solo repos read the local verifier and team repos read required checks, per `playbooks/shipping.md`. No independent swarm verdict.
 - The merge box follows `playbooks/shipping.md` and `playbooks/ready-check.md`. The agent merges when the risk tier allows. No operator-only landing.
 - The review gate is optional per PR and means `needs-human` per `playbooks/opening-a-pr.md`. No default operator review.
-- The audit tick is a scheduled wake. Use cron, an interval loop, or a ship-runner tick. No harness-specific loop command.
+- The audit tick is a scheduled wake. Use cron, an interval loop, or a scheduled agent tick. No harness-specific loop command.
 - Prose passes `review-nocomment` plus `review-unslop` (style and prose only, never a correctness gate). No `/deslop`.
-- The control skill is the `/verify-new` output. No `control-ui` or `control-cli`.
+- The control skill is the repo verifier. No `control-ui` or `control-cli`.
 
 ````markdown
 # <Program> plan
@@ -48,7 +48,7 @@ Tests alone are not sufficient verification. A PR is verified only when its unit
   - [ ] `git show origin/main:skills/user-invoked/whips/playbooks/opening-a-pr.md`
   - [ ] `git show origin/main:skills/user-invoked/whips/playbooks/shipping.md`
   - [ ] `git show origin/main:skills/<each other leaf skill the program uses>`
-- [ ] On the operator's go, arm the audit wake on a schedule and never leave the cadence to memory. Use cron, an interval loop, or a ship-runner tick with the `ship-runner` skill.
+- [ ] On the operator's go, arm the audit wake on a schedule and never leave the cadence to memory. Use cron, an interval loop, or a scheduled agent tick.
 - [ ] Use this tick prompt, verbatim. "Re-read the execution playbook from trunk. Audit the operation against it and fix drift in this tick. Probe every active lane and judge progress by side effects only. Stand down a stuck lane and dispatch its replacement now. Then post a short status message to the operator in chat only when the audit found a tracked change that no earlier status message reported, such as a PR opened, a code-ready head, a round launched or closed, a verdict, a merge, a stuck agent and the action taken, a blocker added or cleared, or a decision only the operator can make. Name every such change and nothing else. Do not repeat a table, the merged list, or an unchanged blocker. If the audit found none, end the turn with no reply text. Either way, log this tick's row in your decision trail. The row names the items reported, or none."
 - [ ] On the operator's hold or stand-down, send every owner a zero-writes order at once.
 

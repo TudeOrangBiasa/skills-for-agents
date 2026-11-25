@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>[NAMA SISTEM] - User Manual and Reference Book</title>
+<style>
+  :root {
+    --ink: #1E293B;
+    --paper: #FFFFFF;
+    --card: #F8FAFC;
+    --line: #E2E8F0;
+    --accent: #0F172A;
+    --red: #DC2626;
+    --frame: #CBD5E1;
+    --green-bg: #DCFCE7; --green-tx: #166534;
+    --yellow-bg: #FEF9C3; --yellow-tx: #854D0E;
+    --blue-bg: #DBEAFE; --blue-tx: #1E40AF;
+    --grey-bg: #F1F5F9; --grey-tx: #475569;
+    --doc-version: "[VERSI DOKUMEN]";
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--paper); color: var(--ink); }
+  body { font-family: Inter, system-ui, -apple-system, sans-serif; font-size: 10pt; line-height: 1.5; }
+  code, pre, .mono { font-family: "JetBrains Mono", monospace; font-size: 9pt; }
+  pre { background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; overflow-x: auto; }
+
+  @page {
+    size: A4;
+    margin: 18mm 15mm 18mm 15mm;
+    @top { content: element(pagehead); }
+    @bottom { content: element(pagefoot); }
+  }
+  @page cover { @top { content: none; } @bottom { content: none; } }
+  .pagehead { position: running(pagehead); font-size: 8pt; color: #64748B; border-bottom: 1px solid var(--line); padding-bottom: 4px; width: 100%; }
+  .pagehead .ch { float: right; }
+  .pagefoot { position: running(pagefoot); font-size: 8pt; color: #64748B; border-top: 1px solid var(--line); padding-top: 4px; width: 100%; }
+  .pagefoot .ver { float: left; }
+  .pagefoot .pg { float: right; }
+  .pagefoot .pg::after { content: counter(page); }
+
+  .cover-page { page: cover; page-break-after: always; padding-top: 40mm; }
+  .cover-page h1 { font-size: 28pt; line-height: 1.2; color: var(--accent); margin: 0 0 6mm 0; }
+  .cover-page .sub { font-size: 13pt; color: #475569; margin: 0 0 8mm 0; }
+  .cover-rule { border: none; border-top: 3px solid var(--accent); margin: 0 0 8mm 0; }
+
+  h2 { font-size: 16pt; color: var(--accent); border-bottom: 2px solid var(--accent); padding-bottom: 2mm; margin-top: 10mm; }
+  h3 { font-size: 12pt; color: var(--accent); margin-top: 6mm; }
+  h4 { font-size: 10pt; color: var(--accent); margin-top: 4mm; }
+
+  table.meta, table.data-table { width: 100%; border-collapse: collapse; margin: 3mm 0; }
+  table.meta td, table.data-table th, table.data-table td { border: 1px solid var(--line); padding: 2mm 3mm; text-align: left; vertical-align: top; }
+  table.meta td:first-child { background: var(--card); font-weight: bold; width: 35%; }
+  table.data-table thead { display: table-header-group; }
+  table.data-table th { background: var(--accent); color: #FFFFFF; }
+  table.data-table tr { break-inside: avoid; }
+
+  .status-badge { display: inline-block; border-radius: 999px; padding: 1mm 3mm; font-size: 8pt; font-weight: bold; white-space: nowrap; }
+  .status-done { background: var(--green-bg); color: var(--green-tx); }
+  .status-proto { background: var(--yellow-bg); color: var(--yellow-tx); }
+  .status-backend { background: var(--blue-bg); color: var(--blue-tx); }
+  .status-out { background: var(--grey-bg); color: var(--grey-tx); }
+
+  .device-showcase { break-inside: avoid; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 4mm; margin: 4mm 0; }
+  .device-showcase .row-desktop { margin-bottom: 4mm; }
+  .device-showcase .row-pair { display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 4mm; }
+  .screenshot-frame { border: 1px solid var(--frame); border-radius: 8px; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08); background: #FFFFFF; overflow: hidden; break-inside: avoid; }
+  .screenshot-frame img { display: block; width: 100%; }
+  .screenshot-frame figcaption { font-size: 8pt; color: #475569; padding: 2mm 3mm; border-top: 1px solid var(--line); }
+
+  ol.steps { padding-left: 7mm; }
+  ol.steps > li { margin-bottom: 2mm; }
+  ol.steps ol { list-style-type: lower-alpha; }
+
+  .annotation-list { list-style: none; padding-left: 0; counter-reset: ann; }
+  .annotation-list li { counter-increment: ann; margin-bottom: 2mm; padding-left: 9mm; position: relative; }
+  .annotation-list li::before { content: counter(ann); position: absolute; left: 0; top: 0.5mm; width: 18px; height: 18px; border-radius: 50%; background: var(--red); color: #FFFFFF; font-size: 8pt; font-weight: bold; text-align: center; line-height: 18px; }
+
+  .callout-tip, .callout-note { background: var(--card); border-radius: 0 6px 6px 0; padding: 3mm 4mm; margin: 4mm 0; break-inside: avoid; }
+  .callout-tip { border-left: 4px solid #16A34A; }
+  .callout-note { border-left: 4px solid var(--accent); }
+  .callout-tip .head, .callout-note .head { font-weight: bold; margin-bottom: 1mm; }
+
+  .toc ol { padding-left: 7mm; }
+  .toc li { margin-bottom: 1mm; }
+</style>
+</head>
+<body>
+
+<div class="pagehead"><span>[NAMA SISTEM] User Manual</span><span class="ch">[JUDUL BAB BERJALAN]</span></div>
+<div class="pagefoot"><span class="ver">[VERSI DOKUMEN]</span><span class="pg">Hal </span></div>
+
+<div class="cover-page">
+  <h1>[NAMA SISTEM]</h1>
+  <p class="sub">[Subjudul deskriptif: apa yang dilakukan sistem dan untuk siapa]</p>
+  <hr class="cover-rule">
+  <table class="meta">
+    <tr><td>Versi Build</td><td>[VERSI BUILD APP]</td></tr>
+    <tr><td>Tanggal</td><td>[TANGGAL]</td></tr>
+    <tr><td>Penyusun</td><td>[PENYUSUN]</td></tr>
+    <tr><td>Repositori dan Commit</td><td><span class="mono">[REPO]@[SHA]</span></td></tr>
+    <tr><td>Daftar Viewport</td><td>Mobile 390x844, Tablet 768x1024, Desktop 1440x900</td></tr>
+  </table>
+</div>
+
+<div class="toc">
+  <h2>Daftar Isi</h2>
+  <ol>
+    <li>Ringkasan dan Role</li>
+    <li>Inventaris Fitur</li>
+    <li>End-to-End User Journey dan Error Handling</li>
+    <li>Man Pages per Halaman</li>
+    <li>Aturan Bisnis dan State Machine</li>
+    <li>Status Kesiapan dan Next Steps</li>
+    <li>Lampiran A: Peta Rute</li>
+    <li>Lampiran B: Panduan Demo dan Akun Uji</li>
+  </ol>
+</div>
+
+<h2>1. Ringkasan dan Role</h2>
+<p>[Satu paragraf: masalah yang diselesaikan sistem dan siapa yang memakainya.]</p>
+<h3>Peran pengguna</h3>
+<ol class="steps">
+  <li>[Peran 1]: [tugas utama peran ini].</li>
+  <li>[Peran 2]: [tugas utama peran ini].</li>
+</ol>
+
+<h2>2. Inventaris Fitur</h2>
+<table class="data-table">
+  <thead><tr><th>Fitur</th><th>Klaim</th><th>Bukti</th><th>Status</th></tr></thead>
+  <tbody>
+    <tr><td>[Nama fitur]</td><td>[Apa yang dijanjikan ke user]</td><td>[shot, route, atau endpoint]</td><td><span class="status-badge status-done">Selesai</span></td></tr>
+    <tr><td>[Nama fitur]</td><td>[Apa yang dijanjikan ke user]</td><td>[shot, route, atau endpoint]</td><td><span class="status-badge status-proto">Prototipe</span></td></tr>
+    <tr><td>[Nama fitur]</td><td>[Apa yang dijanjikan ke user]</td><td>[shot, route, atau endpoint]</td><td><span class="status-badge status-backend">Backend Only</span></td></tr>
+    <tr><td>[Nama fitur]</td><td>[Apa yang dijanjikan ke user]</td><td>[shot, route, atau endpoint]</td><td><span class="status-badge status-out">Out of Scope</span></td></tr>
+  </tbody>
+</table>
+
+<h2>3. End-to-End User Journey dan Error Handling</h2>
+<h3>Journey 1: [nama journey]</h3>
+<ol class="steps">
+  <li>[Langkah 1 yang user lakukan].</li>
+  <li>[Langkah 2 yang user lakukan].</li>
+  <li>[Hasil akhir yang user lihat].</li>
+</ol>
+<h4>Edge case journey ini</h4>
+<ol class="steps">
+  <li>Normal: [hasil yang diharapkan].</li>
+  <li>Kosong: [hasil yang diharapkan].</li>
+  <li>Pending: [hasil yang diharapkan].</li>
+  <li>Ditolak: [hasil yang diharapkan].</li>
+  <li>Kedaluwarsa: [hasil yang diharapkan].</li>
+  <li>Akses ditolak atau 403: [hasil yang diharapkan].</li>
+</ol>
+
+<h2>4. Man Pages per Halaman</h2>
+<h3>4.1 [Judul halaman] (<span class="mono">[ROUTE]</span>)</h3>
+<div class="device-showcase">
+  <div class="row-desktop">
+    <figure class="screenshot-frame">
+      <img src="[SHOT-DESKTOP]" alt="[deskripsi shot desktop]">
+      <figcaption>Desktop 1440x900: [apa yang terlihat].</figcaption>
+    </figure>
+  </div>
+  <div class="row-pair">
+    <figure class="screenshot-frame">
+      <img src="[SHOT-TABLET]" alt="[deskripsi shot tablet]">
+      <figcaption>Tablet 768x1024: [apa yang terlihat].</figcaption>
+    </figure>
+    <figure class="screenshot-frame">
+      <img src="[SHOT-MOBILE]" alt="[deskripsi shot mobile]">
+      <figcaption>Mobile 390x844: [apa yang terlihat].</figcaption>
+    </figure>
+  </div>
+</div>
+<ol class="annotation-list">
+  <li>[Keterangan untuk badge 1, mengutip teks yang terlihat].</li>
+  <li>[Keterangan untuk badge 2, mengutip teks yang terlihat].</li>
+</ol>
+<div class="callout-tip"><div class="head">Tips</div>[Satu tips yang bisa langsung dijalankan user].</div>
+<div class="callout-note"><div class="head">Catatan Sistem</div>[Perilaku backend di balik halaman ini dan di mana enforcement-nya].</div>
+
+<h2>5. Aturan Bisnis dan State Machine</h2>
+<table class="data-table">
+  <thead><tr><th>Aturan</th><th>Cara kerja</th><th>Enforcement</th></tr></thead>
+  <tbody>
+    <tr><td>[Nama aturan]</td><td>[Bagaimana aturan berjalan]</td><td>[server, client, manual, atau ops]</td></tr>
+  </tbody>
+</table>
+
+<h2>6. Status Kesiapan dan Next Steps</h2>
+<ol class="steps">
+  <li>[Item siap dan buktinya].</li>
+  <li>[Item berikutnya dan alasannya].</li>
+</ol>
+
+<h2>Lampiran A: Peta Rute</h2>
+<table class="data-table">
+  <thead><tr><th>Alamat</th><th>Nama</th><th>User</th></tr></thead>
+  <tbody>
+    <tr><td><span class="mono">[ROUTE]</span></td><td>[Nama halaman]</td><td>[Peran user]</td></tr>
+  </tbody>
+</table>
+
+<h2>Lampiran B: Panduan Demo dan Akun Uji</h2>
+<ol class="steps">
+  <li>Akun uji: [kredensial atau cara mendapatkannya].</li>
+  <li>Data contoh: [apa yang sudah di-seed].</li>
+  <li>Yang tidak bisa dilakukan di mode demo: [daftarnya].</li>
+</ol>
+
+</body>
+</html>

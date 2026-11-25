@@ -6,12 +6,12 @@
 #      verifier.md command, the verify-new fallback, and the NOT VERIFIED rule.
 #   2. opening-a-pr.md step 3 runs the verify skill and step 6 requires the
 #      Verification line (NOT VERIFIED without it).
-#   3. No playbook gates code-ready/shipping/merge on review-code,
-#      review-adversary, or a read-only second opinion.
+# 3. No playbook gates code-ready/shipping/merge on review,
+#    or a read-only second opinion.
 #   4. RISK.md high tier and landing-policy.md require an empirical rerun,
 #      never a read-only skim.
-#   5. review-code is on-ask with run-proven Spec findings; review-adversary is
-#      explicit-ask only; craft-trail Attention flags missing proof only.
+# 5. review playbook is on-ask with run-proven findings; adversary mode is
+#    explicit-ask only; craft-trail Attention flags missing proof only.
 #   6. setup-repo Section I records later as pending verifier.
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
@@ -25,8 +25,7 @@ RISK="$REPO/skills/user-invoked/whips/RISK.md"
 LANDING="$REPO/skills/user-invoked/setup-repo/landing-policy.md"
 SETUP="$REPO/skills/user-invoked/setup-repo/SKILL.md"
 SETUP_VERIFIER="$REPO/skills/user-invoked/setup-repo/verifier.md"
-REVIEW_CODE="$REPO/skills/model-invoked/review-code/SKILL.md"
-ADVERSARY="$REPO/skills/model-invoked/review-adversary/SKILL.md"
+REVIEW="$REPO/skills/user-invoked/whips/playbooks/review.md"
 TRAIL="$REPO/skills/model-invoked/craft-trail/SKILL.md"
 
 # 1. Whips verify section: discovery, command, drive-through fallback, NOT VERIFIED.
@@ -61,8 +60,8 @@ if grep -Eq 'review-code.*before shipping|before any PR' "$REPO/skills/user-invo
 fi
 grep -q 'never a read-only second opinion as a gate' "$WHIPS" \
   || fail "whips triggers still present abstract review as a gate"
-grep -q 'never gates code-ready, shipping, or merge' "$REVIEW_CODE" \
-  || fail "review-code still reads as a ship gate"
+grep -q 'never gates code-ready, shipping, or merge' "$REVIEW" \
+  || fail "review playbook still reads as a ship gate"
 pass "no playbook gates on abstract review"
 
 # 4. High tier stays empirical.
@@ -70,15 +69,16 @@ grep -q 'read-only skim never satisfies' "$RISK" || fail "RISK high tier allows 
 grep -q 'never a read-only skim' "$LANDING" || fail "landing-policy high lane allows a read-only skim"
 pass "high tier is empirical"
 
-# 5. Review skills demoted, trail evidence-bound.
-grep -q 'explicit user ask' "$ADVERSARY" || fail "review-adversary not demoted to explicit ask"
-grep -Ei -q 'never a default (gate|pre-PR gate)' "$ADVERSARY" || fail "review-adversary still a default pre-PR gate"
+# 5. Review demoted, trail evidence-bound.
+grep -q 'explicit user ask' "$REVIEW" || fail "review playbook not demoted to explicit ask"
+grep -Ei -q 'never a default (gate|pre-PR gate)' "$REVIEW" || fail "review playbook still a default pre-PR gate"
+grep -q 'never gates code-ready, shipping, or merge' "$REVIEW" || fail "review playbook still reads as a ship gate"
 grep -q 'missing or weak verification evidence' "$TRAIL" || fail "craft-trail Attention not evidence-bound"
-pass "review skills demoted, trail evidence-bound"
+pass "review demoted, trail evidence-bound"
 
 # 6. Setup later means pending verifier.
-grep -q 'pending: run /verify-new' "$SETUP" || fail "setup-repo Section I records no pending verifier"
-grep -q 'pending: run /verify-new' "$SETUP_VERIFIER" || fail "verifier template names no pending state"
+grep -q 'pending: wire a verifier' "$SETUP" || fail "setup-repo Section I records no pending verifier"
+grep -q 'pending: wire a verifier' "$SETUP_VERIFIER" || fail "verifier template names no pending state"
 pass "setup-repo later is a pending verifier"
 
 echo "verify-proof stub: all 6 scenarios green"

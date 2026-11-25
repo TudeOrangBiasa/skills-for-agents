@@ -18,6 +18,7 @@ Read the task and match exactly one row. First match wins.
 | Pick up the next agent-ready issue | `playbooks/triage.md` intake |
 | Review or bot comments on an open agent PR | `playbooks/triage.md` review mode |
 | Label the waiting issue queue on a loop | `playbooks/issue-triage-loop.md` |
+| Ripen raw issues into agent-ready briefs | `playbooks/triage.md` ripen |
 | Check on a PR or stack, get it green, anything outstanding | `playbooks/babysit.md` |
 | Is this ready, what do I merge first, give me a merge plan | `playbooks/ready-check.md` |
 | Land a verified PR: merge, read back, retarget the stack | `playbooks/shipping.md` |
@@ -64,19 +65,18 @@ Each row fires whenever its condition holds, on top of the playbook steps. Call 
 | Code crosses a function boundary | "craft-architect" (ground, sketch twice, agree, implement, scrap) |
 | A defect, a failing test, a slow path | binary-search the cause per `playbooks/bug.md`, then fix |
 | A behavior to build or pin | "verify-tdd" |
-| A contested design to pressure-test | "review-adversary" on explicit ask only; findings need a run |
+| A contested design to pressure-test | `playbooks/review.md` adversary, explicit ask only |
 | Contested code, a second look at a diff | run the repo verify skill or checkers; never a read-only second opinion as a gate |
 | A merge or rebase conflict | "ship-merge-fix" |
 | Before review, comments and the code they protect | "review-nocomment" |
-| A perf number you measured | "verify-bench" before reporting or acting on it |
+| A perf number you measured | bench checklist in `playbooks/perf-issue.md` |
 | A small diff you don't trust | "verify-blast" for what breaks outside it |
 | A step only a human can do (secrets, dashboards) | stop and hand the step to the human with the exact commands |
-| A rationale or regression question | "craft-why" |
-| Parallel fan-out | "craft-swarm" |
-| A design or code bakeoff | "craft-arena" |
+| A rationale or regression question | `playbooks/investigation.md` why-trace |
+| Parallel fan-out or design bakeoff | `playbooks/fan-out.md` swarm or bakeoff |
 | A long or unattended run | "craft-trail" |
 | Docs, RFC, README, PR body, commit message | "review-prose" |
-| A UI, IDE, or CLI about to ship | verify on its surface (`verify-new` output) |
+| A UI, IDE, or CLI about to ship | verify on its surface (repo verifier or formal check) |
 | A PR body | "ship-pr" |
 | A UI change about to ship | "craft-break" |
 | Reading or editing `.ts`/`.tsx` | "craft-ts" |
@@ -85,12 +85,12 @@ Every prose surface (reply, PR body, commit message, tracker comment, code comme
 
 A skill that breaks mid-run gets fixed in this PR, never silently worked around, never blocking the unit on it.
 
-A step that names a user-invoked skill (`/plan-map`, `/plan-spec`, `/plan-tickets`, `/plan-grill-docs`) is a human gate: tell the user to run it and wait at that step, except the plan-map path, which runs map, collapse, and tickets inline per `playbooks/plan-map-handoff.md`. Solo or thin fog also drives through `/plan-spec` and `/plan-tickets` inline (interview, spec sketch, tickets) when the user says ship now or solo, the fog settles in one interview round, and context stays fresh; human-only and above-risk-authority steps still pause. No skill can fire a user-invoked one, `/whips` included; on these paths whips does the same work directly instead of re-invoking.
+Ticket work runs fully inline and never stops on a slash command: interview, spec sketch, and tickets happen in the run. Thin fog drives through tickets inline when a single interview round settles it and context stays fresh; human-only and above-risk-authority steps still pause. The remaining human gates are `/setup-repo` (when its files are missing) and product HITL (a decision whose answer itself needs a human). No skill can fire a user-invoked one, `/whips` included.
 [PRINCIPLES.md](PRINCIPLES.md) indexes the principles behind these triggers. Read the file for each principle you use before deciding.
 
 ## 4. Enforce the HIT gates, in order
 
-Map before Guardrails, Guardrails before Walk. When the map is vague, return to the Map: run `playbooks/prototype.md` when running code can answer the question, else tell the user to run `/plan-grill-docs`, or walk `playbooks/plan-map-handoff.md` inline when the fog is multi-session. Drive through instead of gating when the fog is thin (one interview round settles it, single-session scope, context still fresh): run the interview, the spec sketch, and the tickets inline, then proceed. Never drive through a human-only step or above risk authority. When guardrails are missing, call the Skill tool with "verify-tdd" and write behavior plus negative cases first.
+Map before Guardrails, Guardrails before Walk. When the map is vague, return to the Map: run `playbooks/prototype.md` when running code can answer the question, else call the Skill tool with "plan-interview", or walk `playbooks/plan-map-handoff.md` inline when the fog is multi-session. Drive through instead of gating when the fog is thin (one interview round settles it, single-session scope, context still fresh): run the interview, the spec sketch, and the tickets inline, then proceed. Never drive through a human-only step or above risk authority. When guardrails are missing, call the Skill tool with "verify-tdd" and write behavior plus negative cases first.
 
 ## 5. Autonomy
 
@@ -107,7 +107,7 @@ Always pause for the human, and keep building everything else meanwhile:
 
 A fork that running code can settle is no pause: settle it per `playbooks/prototype.md` and report the result.
 
-Under a full-autonomy grant (an unattended run, "don't stop", a ship-runner queue, a scheduled tick), covered decisions are decided, executed, and reported without asking. A decision only the operator can answer gets the default applied and reported in full, with the plain words the operator could have used instead. The pause list still needs a human.
+Under a full-autonomy grant (an unattended run, "don't stop", an unattended queue, a scheduled tick), covered decisions are decided, executed, and reported without asking. A decision only the operator can answer gets the default applied and reported in full, with the plain words the operator could have used instead. The pause list still needs a human.
 
 No is an acceptable answer. Reply with your real judgment: decline, push back, and disagree when the evidence points that way. Agreement is not the default; candor beats sycophancy.
 
@@ -119,7 +119,7 @@ Match effort to the job, never the model family. Start from the role's model, sh
 
 ## 7. Verify with proof, gate, open the PR ready
 
-Run the repo verification skill matching the changed surface (`skills/verify-*/SKILL.md`) or the command in `docs/agents/verifier.md` before reporting done. No skill plus a runnable surface (UI, CLI, API, mobile) means drive it through directly: run the launch, drive, and capture steps in this run, never wait on the human typing `/verify-new`, unless docs-only or opted out in `docs/agents/unattended.md`. The report and PR body name the verifier command plus its output or evidence. No proof means NOT VERIFIED, and NOT VERIFIED work never auto-merges. Verdicts are VERIFIED, NOT VERIFIED, or INCONCLUSIVE, and inconclusive is not a pass. Solo repos read the local verifier, team repos read CI. Evidence-free work returns to a fresh fix agent, never the same worker. Strategic track: nominate at most one environment fix as a `/learn-reflect` candidate. Never fix it mid-run.
+Run the repo verifier matching the changed surface (a project-local `skills/verify-*/SKILL.md` or the command in `docs/agents/verifier.md`) before reporting done. No skill plus a runnable surface (UI, CLI, API, mobile) means drive it through directly: run the launch, drive, and capture steps in this run, never wait on the human, unless docs-only or opted out in `docs/agents/unattended.md`. The report and PR body name the verifier command plus its output or evidence. No proof means NOT VERIFIED, and NOT VERIFIED work never auto-merges. Verdicts are VERIFIED, NOT VERIFIED, or INCONCLUSIVE, and inconclusive is not a pass. Solo repos read the local verifier, team repos read CI. Evidence-free work returns to a fresh fix agent, never the same worker. Strategic track: nominate at most one environment fix as a `/learn-reflect` candidate. Never fix it mid-run.
 
 Open the closing PR per `playbooks/opening-a-pr.md`: always ready, one risk label plus a `## Risk` paragraph per [RISK.md](RISK.md), `Closes #N` when an issue exists, body shaped with the `ship-pr` skill (summary visual, before/after evidence, merge danger). Landing follows the risk tier per [RISK.md](RISK.md): low-risk PRs land immediately in the same run on an independent PASS (no human touch, never self-reported); qualifying medium PRs may be merged by the agent; high-risk PRs wait for an independent verdict plus a human merge. Human review time is for high-risk only. Visible changes add the ATTACHMENTS.md pair: before/after table, native 1x, matched viewport and crop, video when motion matters. On a PR, agents never add themselves as collaborator, assignee, or reviewer. Claiming an issue by assignment, per the Claim step in `docs/agents/issue-tracker.md`, is allowed. Tools are not people, so they only author the body and request review from humans.
 

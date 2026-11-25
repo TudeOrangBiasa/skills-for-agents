@@ -5,5 +5,5 @@ Codebase health on a spare moment, not feature work. Survey for deepening opport
 1. Survey: list deepening opportunities (shallow modules, leaky seams, logic spread across callers) with file pointers. This step only finds candidates; it changes nothing.
 2. Discuss through the one the user picks. An opportunity nobody will defend is dropped, not parked.
 3. Design the chosen one for depth: module, interface, seam, adapter, leverage, locality. A lot of behavior behind a small interface at a clean seam, or it is not deep.
-4. The design becomes an idea: when it earns a build, tell the user to take it into `/plan-grill-docs` with the survey plus the design attached as its map.
+4. The design becomes an idea: when it earns a build, tell the user to take it into `plan-interview` with the survey plus the design attached.
 5. Small, safe shapings found along the way land directly with tests plus review through `playbooks/opening-a-pr.md`, never smuggled inside an unrelated diff.
