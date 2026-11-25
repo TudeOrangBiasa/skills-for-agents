@@ -4,7 +4,7 @@
 
 ## Why this is out of scope
 
-Every issue-tracker backend hard-codes a CLI shape into the skills (commands, flags, output parsing). Each new backend is permanent maintenance surface, because it has to keep working as the tool's CLI evolves, and it has to keep being tested against `/plan-spec`, `/plan-tickets`, `/ship-triage`, and friends. That cost is only worth paying for trackers a meaningful fraction of users actually have.
+Every issue-tracker backend hard-codes a CLI shape into the skills (commands, flags, output parsing). Each new backend is permanent maintenance surface, because it has to keep working as the tool's CLI evolves, and it has to keep being tested against the plan, tickets, and triage flows, and friends. That cost is only worth paying for trackers a meaningful fraction of users actually have.
 
 "Mainstream" is a judgment call, not a numeric bar:
 

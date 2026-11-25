@@ -31,7 +31,7 @@ from pathlib import Path
 import numpy as np
 
 SKILL_DIR = Path(__file__).resolve().parent.parent
-TEMPLATE = SKILL_DIR / "assets" / "template.html"
+TEMPLATE = SKILL_DIR / "timeline-assets" / "template.html"
 
 
 # ---------------------------------------------------------------- video helpers

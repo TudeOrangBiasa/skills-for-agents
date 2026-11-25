@@ -53,4 +53,4 @@ Estimate in verification steps (files touched, tests run, gh calls). One honest 
 
 ## Where it fits
 
-Role: standalone reach-for-it-anytime reporter feeding the triage queue (`report-issue` files, `ship-triage` ripens, `whips` builds). Neighbours: `ship-triage` because it consumes what this files, linked repo-relatively at [ship-triage](../ship-triage/SKILL.md); `plan-tickets` because multi-ticket breakdowns belong there, linked at [plan-tickets](../plan-tickets/SKILL.md). The map: [guide](../guide/SKILL.md).
+Role: standalone reach-for-it-anytime reporter feeding the triage queue (`report-issue` files, `/whips` triage ripens, `whips` builds). Neighbours: whips triage because it consumes what this files, described in [triage](../whips/playbooks/triage.md). The map: [guide](../guide/SKILL.md).

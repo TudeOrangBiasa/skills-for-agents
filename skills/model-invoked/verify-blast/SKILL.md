@@ -6,7 +6,7 @@ name: verify-blast
 
 Find what a change breaks somewhere else, before it ships. Use for "blast radius of X", "what could this break", or reviewing a small diff you don't trust yet.
 
-Companion to `craft-how` (what it does) and `craft-why` (why shaped so). Listing the callers is not the job (grep does that in a second); the job is the breakage grep won't show. The two-sentence version lives in `bug.md` step 3; this skill is the full method.
+Companion to the investigation how-trace (what it does) and why-trace (why shaped so). Listing the callers is not the job (grep does that in a second); the job is the breakage grep won't show. The two-sentence version lives in `bug.md` step 3; this skill is the full method.
 
 ## Don't trust your own writeup
 

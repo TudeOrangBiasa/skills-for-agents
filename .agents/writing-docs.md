@@ -22,7 +22,7 @@ Four sections make a skill worth reading: `What it does`, `When to reach for it`
 
 ## What it does
 
-One or two plain-language paragraphs. Lead with the skill's one-sentence job, then state the **defining constraint**: the single fact that makes this skill behave differently from the obvious default (for `plan-spec`: it does not interview the user again, it synthesises what is already known). Write it as a plain declarative sentence, never a labelled aside like "The defining constraint:" or "The key thing:"; the formula reads as filler. This line is the most valuable in the skill; never omit it.
+One or two plain-language paragraphs. Lead with the skill's one-sentence job, then state the **defining constraint**: the single fact that makes this skill behave differently from the obvious default (for `plan-interview`: it maps the design tree, it never acts on it). Write it as a plain declarative sentence, never a labelled aside like "The defining constraint:" or "The key thing:"; the formula reads as filler. This line is the most valuable in the skill; never omit it.
 
 ## When to reach for it
 
@@ -33,7 +33,7 @@ How and when you reach for the skill, in two beats that are both effectively alw
 
 ## Prerequisites
 
-Optional: include only when the skill needs something in place to be functional; omit the heading entirely otherwise. Covers: a **workspace it writes into** (a stateful skill like `plan-grill-docs` writes `GLOSSARY.md` and ADRs, so say what it writes and where), **prior setup** (`ship-triage`/`plan-spec`/`plan-tickets` need `setup-repo` to have configured an issue tracker), or **repo-specific tooling**. A stateless skill that runs anywhere has no prerequisites, so drop the section.
+Optional: include only when the skill needs something in place to be functional; omit the heading entirely otherwise. Covers: a **workspace it writes into** (a stateful skill like `learn-recall` writes a capsule brief it hands back, so say what it writes and where), **prior setup** (`/whips` triage needs `setup-repo` to have configured an issue tracker), or **repo-specific tooling**. A stateless skill that runs anywhere has no prerequisites, so drop the section entirely.
 
 ## <free-form middle>
 
@@ -62,7 +62,7 @@ A few bullets naming what the reader sees when the skill is doing its job. The b
 
 Always present. Situate the skill in the system in a sentence or two:
 
-- **Role.** Name it: a **chain step** (`plan-grill-docs → plan-spec → plan-tickets → implement → review-code`), a **run-once setup** (`setup-repo`), **periodic maintenance** ("every few days"), or a **reach-for-it-anytime standalone** (`ship-merge-fix`). A standalone's map is one honest sentence, which is far better than omitting the section.
+- **Role.** Name it: a **chain step** (interview, then whips tickets, then implement, then a review playbook pass), a **run-once setup** (`setup-repo`), **periodic maintenance** ("every few days"), or a **reach-for-it-anytime standalone** (`ship-merge-fix`). A standalone's map is one honest sentence, which is far better than omitting the section.
 - **Neighbours.** The one or two siblings that matter, each with a because-clause, linked repo-relatively.
 - **The map.** Point to `guide`, the router over the whole set, so this skill stays a node and never has to redraw the graph.
 

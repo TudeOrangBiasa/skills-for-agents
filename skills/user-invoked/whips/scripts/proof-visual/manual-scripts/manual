@@ -441,7 +441,7 @@ function renderContentBlocks(manifest) {
 
 function buildHtml(manifest, shotsDir, outHtml) {
   const t = STR[manifest.locale] || STR.id;
-  const tpl = fs.readFileSync(path.join(__dirname, "..", "assets", "template.html"), "utf8");
+  const tpl = fs.readFileSync(path.join(__dirname, "..", "manual-assets", "template.html"), "utf8");
   let toc = "", body = "";
   const used = new Map();
   const preface = renderContentBlocks(manifest);
@@ -627,7 +627,7 @@ async function cmdBuild(opts) {
     return;
   }
   const htmlPath = path.join(outDir, "manual.html");
-  fs.copyFileSync(path.join(__dirname, "..", "assets", "print.css"), path.join(outDir, "print.css"));
+  fs.copyFileSync(path.join(__dirname, "..", "manual-assets", "print.css"), path.join(outDir, "print.css"));
   const { dupes, undeclared } = buildHtml(manifest, shotsDir, htmlPath);
   if (undeclared.length) { console.error(`QA FAILED: shots reused without "reuse": true: ${undeclared.join(", ")}`); process.exitCode = 1; return; }
   if (dupes.length) console.log(`note: declared reuse: ${dupes.join(", ")}`);

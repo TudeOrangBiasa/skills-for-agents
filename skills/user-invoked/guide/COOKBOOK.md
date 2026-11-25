@@ -127,7 +127,7 @@ For the full catalog of skills, see the skill sections in [README.md](../../../R
 
 **Automating loops in your own life?** → not covered by this pack; repo work goes straight to `/whips`.
 
-**Handed a project with no map?** → orient before building: [`craft-how`](../../model-invoked/craft-how/SKILL.md) walkthrough first, then [`/setup-repo`](../setup-repo/SKILL.md) when its output is missing.
+**Handed a project with no map?** → orient before building: [investigation how-trace](../whips/playbooks/investigation.md) walkthrough first, then [`/setup-repo`](../setup-repo/SKILL.md) when its output is missing.
 
 **Setting up a repo for a mixed team?** → [`/setup-repo`](../setup-repo/SKILL.md) first: one tracker, one label vocabulary, frontier discipline.
 
@@ -159,7 +159,7 @@ For the full catalog of skills, see the skill sections in [README.md](../../../R
 
 **Deploy to hosting with no SSH, scripts ready, env left to fill?** → hand the exact commands to the human; no skill walks human-only steps.
 
-**Lost or behind?** → [`/learn-catchup`](../learn-catchup/SKILL.md) for news since your last message, [`/learn-catchup-video`](../learn-catchup-video/SKILL.md) to watch it, [`/learn-restate`](../learn-restate/SKILL.md) for one confusing message.
+**Lost or behind?** → [`/learn-catchup`](../learn-catchup/SKILL.md) for news since your last message, [`/learn-restate`](../learn-restate/SKILL.md) for one confusing message.
 
 **Session over, make the environment better?** → [`/learn-reflect`](../learn-reflect/SKILL.md) writes learnings back into skills and proposes repo fixes.
 

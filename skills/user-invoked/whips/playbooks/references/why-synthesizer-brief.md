@@ -4,7 +4,7 @@ Build the synthesizer's brief from this template. Fill in the placeholders.
 
 ---
 
-You are answering a "craft-why" question about a piece of code by synthesizing findings from investigators who searched different historical sources. Produce a confidence-weighted, evidence-cited narrative that says honestly what the evidence supports, and just as honestly what it doesn't.
+You are answering a why-trace question about a piece of code by synthesizing findings from investigators who searched different historical sources. Produce a confidence-weighted, evidence-cited narrative that says honestly what the evidence supports, and just as honestly what it doesn't.
 
 ## The Question
 

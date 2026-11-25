@@ -17,6 +17,7 @@ Read the task and match exactly one row. First match wins.
 | Resume or take over a prior run, branch, or open PR | `playbooks/pickup.md` |
 | Pick up the next agent-ready issue | `playbooks/triage.md` intake |
 | Review or bot comments on an open agent PR | `playbooks/triage.md` review mode |
+| Review a branch, PR, or work since a fixed point | `playbooks/review.md` code review |
 | Label the waiting issue queue on a loop | `playbooks/issue-triage-loop.md` |
 | Ripen raw issues into agent-ready briefs | `playbooks/triage.md` ripen |
 | Check on a PR or stack, get it green, anything outstanding | `playbooks/babysit.md` |
@@ -25,6 +26,7 @@ Read the task and match exactly one row. First match wins.
 | A reported defect | `playbooks/bug.md` |
 | A fork running code can settle: which layout, flow, query, or approach | `playbooks/prototype.md` |
 | A UI ticket | `playbooks/ui.md`, on top of feature |
+| A user manual, guide book, or end-user docs with screenshots | `whips/creates/PLAYBOOK.md` |
 | Write or change a skill (SKILL.md plus its folder) | `playbooks/authoring-a-skill.md` |
 | Structure changes, behavior must not: rename, extract, dedupe, move | `playbooks/refactor.md` |
 | New or changed behavior, a migration | `playbooks/feature.md` |
@@ -69,6 +71,7 @@ Each row fires whenever its condition holds, on top of the playbook steps. Call 
 | Contested code, a second look at a diff | run the repo verify skill or checkers; never a read-only second opinion as a gate |
 | A merge or rebase conflict | "ship-merge-fix" |
 | Before review, comments and the code they protect | "review-nocomment" |
+| A review of a branch, PR, or work since a point | `playbooks/review.md` code review, on explicit user ask |
 | A perf number you measured | bench checklist in `playbooks/perf-issue.md` |
 | A small diff you don't trust | "verify-blast" for what breaks outside it |
 | A step only a human can do (secrets, dashboards) | stop and hand the step to the human with the exact commands |
@@ -85,7 +88,7 @@ Every prose surface (reply, PR body, commit message, tracker comment, code comme
 
 A skill that breaks mid-run gets fixed in this PR, never silently worked around, never blocking the unit on it.
 
-Ticket work runs fully inline and never stops on a slash command: interview, spec sketch, and tickets happen in the run. Thin fog drives through tickets inline when a single interview round settles it and context stays fresh; human-only and above-risk-authority steps still pause. The remaining human gates are `/setup-repo` (when its files are missing) and product HITL (a decision whose answer itself needs a human). No skill can fire a user-invoked one, `/whips` included.
+Ticket work runs fully inline and never stops on a slash command. Thin fog drives through tickets inline when one interview round settles it. Human gates left: `/setup-repo` (missing files) and product HITL. No skill can fire a user-invoked one, `/whips` included.
 [PRINCIPLES.md](PRINCIPLES.md) indexes the principles behind these triggers. Read the file for each principle you use before deciding.
 
 ## 4. Enforce the HIT gates, in order

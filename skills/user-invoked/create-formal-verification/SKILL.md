@@ -8,7 +8,7 @@ name: create-formal-verification
 
 A test checks the cases someone thought to write. Formal verification checks every case in a stated scope: every order of steps in a model, every input up to a bound, or every input. This skill finds the part of the repo where that matters most, verifies one property of it, and leaves a project-local skill so the next agent can check a change against that property. Write that skill for an agent who reads it cold, mid-change, and has never seen your work. The user must be able to trust the result and act on it without learning the verification language.
 
-This is not `/verify-new`: that one drives the app like a user and proves behavior end to end. This one proves a property of code where tests rarely reach the breaking case.
+This is not a drive-the-app check: that kind drives the app like a user and proves behavior end to end. This one proves a property of code where tests rarely reach the breaking case.
 
 ## 1. Choose the target from the code
 

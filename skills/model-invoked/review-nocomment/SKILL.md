@@ -4,7 +4,7 @@ name: review-nocomment
 ---
 # No comments
 
-Hunt needless comments and the dead code and workarounds they protect, fix the root cause in scope, and encode real constraints as structure. Comments that survive must prove they are about something unchangeable. Companion to `review-adversary` (adversarial review of the change) and rule 24 (no phase-narrating comments): this one goes further, treating every comment as guilty until proven load-bearing.
+Hunt needless comments and the dead code and workarounds they protect, fix the root cause in scope, and encode real constraints as structure. Comments that survive must prove they are about something unchangeable. Companion to the `playbooks/review.md` adversary (adversarial review of the change) and rule 24 (no phase-narrating comments): this one goes further, treating every comment as guilty until proven load-bearing.
 
 ## Scope
 
