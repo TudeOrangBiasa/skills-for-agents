@@ -1,5 +1,0 @@
-interface:
-  display_name: "Worklog"
-  short_description: "Spec the workflows you want to build"
-policy:
-  allow_implicit_invocation: false
