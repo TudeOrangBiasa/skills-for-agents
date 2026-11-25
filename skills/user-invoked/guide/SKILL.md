@@ -11,16 +11,16 @@ You don't remember every skill, so ask. Default load is this file only: open [CO
 ## Start here
 
 - Idea to build: the main-flow recipe in [COOKBOOK.md](COOKBOOK.md).
-- Backlog piling up: `/ship-triage`, then `/ship-runner`.
+- Backlog piling up: `/whips` intake.
 - Hard bug: the whips `bug` playbook, then `/whips` refactor for the seam.
-- Huge foggy effort: `/plan-map`, then `/plan-spec`.
+- Foggy idea: `plan-interview`, or `/whips` drive-through.
 - Long runs: [PHASE-BOUNDARIES.md](PHASE-BOUNDARIES.md) (continue/clear/note/subagent/compact).
-- Setup first: `/setup-repo`, plus `/verify-new` for scripted proof.
+- Setup first: `/setup-repo`.
 
 ## On-ramps
-- **`/ship-triage`** ripens issues (`/report-issue` files them); **`/ship-runner`** works it on schedule.
+- **`/report-issue`** files a ticket; **`/whips`** ripens it and builds it.
 - **`/whips`** takes the hard bugs with a tight feedback loop first, via its `bug` playbook.
-- **`/plan-map`** charts decision tickets for efforts too big for one session; it hands off to `/plan-spec`, never builds.
+- **`plan-interview`** sharpens foggy work into decisions and slices them into tracer bullets.
 
 - Every skill, one-line blurb each: skill sections in [README.md](../../../README.md).
 - Upstream split: pstack owns automation and shipping, Matt owns planning ([upstream-map.md](../../../docs/upstream-map.md)).

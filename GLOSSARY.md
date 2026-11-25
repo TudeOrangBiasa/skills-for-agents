@@ -5,7 +5,7 @@ A collection of agent skills (slash commands and behaviors) for universal agents
 ## Language
 
 **Issue tracker**:
-The tool that hosts a repo's issues: GitHub Issues, Linear, a local `.scratch/` markdown convention, or similar. Skills like `plan-tickets`, `plan-spec`, and `ship-triage` read from and write to it.
+The tool that hosts a repo's issues: GitHub Issues, Linear, a local `.scratch/` markdown convention, or similar. Skills like `/whips` read from and write to it.
 _Avoid_: backlog manager, backlog backend, issue host
 
 **Issue**:

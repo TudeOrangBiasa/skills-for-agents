@@ -26,12 +26,12 @@ Step 4 is usually one small script that imports the same library the app ships a
 
 ## Steps
 
-1. Read the change: diff, added/changed/deleted symbols, what behaves differently now, including what the diff does not spell out. Use `craft-why` step 1 to pull the code anchor (git blame and log, PR bodies and discussion).
+1. Read the change: diff, added/changed/deleted symbols, what behaves differently now, including what the diff does not spell out. Pull the code anchor per the investigation why-trace (git blame and log, PR bodies and discussion).
 2. Find the one fact it is safe because of. Most risky-looking changes are safe through a single fact ("this call only drops already-dead entries and does nothing else"). If it holds, most risky cases clear at once. Spend time here, not on long maybe-lists.
 3. Look where grep stops: read the called library's source, check its pinned version and local patches; work out timing (queues, teardown, framework differences); follow what symbol search misses (API payload shapes, DB columns, wire formats, another language reading the same bytes, feature flags, code three hops downstream).
-4. Be honest per risk: a real chance and a real cost. Keep confirmed risks; list checked-and-cleared separately. Same rules as `craft-why`: cite a real file:line, an empty search is still an answer, never invent a caller or API.
+4. Be honest per risk: a real chance and a real cost. Keep confirmed risks; list checked-and-cleared separately. Same why-trace rules: cite a real file:line, an empty search is still an answer, never invent a caller or API.
 5. Prove the one fact: write a script or test that runs the real code, run it, and paste what happened. Mark unproven what you could not prove.
-6. Big or wide changes go through `craft-arena`: ask more than one model the same question and merge the answers when the harness offers model diversity, else lens diversity in fresh contexts. Different models catch different real bugs.
+6. Big or wide changes go through a fan-out bakeoff (`playbooks/fan-out.md`): ask more than one model the same question and merge the answers when the harness offers model diversity, else lens diversity in fresh contexts. Different models catch different real bugs.
 
 ## What to hand back
 

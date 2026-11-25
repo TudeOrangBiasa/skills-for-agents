@@ -14,7 +14,7 @@ Takes a rough notice ("X looks broken", "we should add Y", "Z is dead weight") a
 
 ## When to reach for it
 
-You invoke this by typing `/report-issue`, and the agent will not reach for it on its own. Reach for this when you spot a defect, a missing behavior, or dead weight in this repo and want it tracked with repro plus acceptance. For working an existing backlog instead, use `ship-triage`.
+You invoke this by typing `/report-issue`, and the agent will not reach for it on its own. Reach for this when you spot a defect, a missing behavior, or dead weight in this repo and want it tracked with repro plus acceptance. For working an existing backlog instead, use `/whips` triage.
 
 ## Pick the template first
 
@@ -36,8 +36,8 @@ Target the skills-for-agents tracker explicitly: every `gh` call passes `--repo 
 
 ## Common questions
 
-**Does this replace ship-triage?**
-No. This files the ticket; `ship-triage` ripens it to agent-ready. Filed tickets land in `needs-triage` by default.
+**Does this replace triage?**
+No. This files the ticket; `/whips` triage ripens it to agent-ready. Filed tickets land in `needs-triage` by default.
 
 **What if the notice is already tracked?**
 Search open issues first by concept, not wording. If found, point at it and file nothing.

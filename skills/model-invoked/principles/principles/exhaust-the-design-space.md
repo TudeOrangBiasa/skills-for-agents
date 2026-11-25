@@ -18,7 +18,7 @@ In practice:
 
 ## Where it lives in this repo
 
-Embedded, not a numbered rule: the PRINCIPLES.md header names it as design-it-twice. The carrier is the `craft-architect` design-it-twice method: parallel subagents design radically different interfaces, then compare on depth, locality, and seam placement. It fires through the `whips` trigger "Code crosses a function boundary", through `playbooks/prototype.md` for forks running code can settle, and through the `craft-arena` skill for bakeoffs.
+Embedded, not a numbered rule: the PRINCIPLES.md header names it as design-it-twice. The carrier is the `craft-architect` design-it-twice method: parallel subagents design radically different interfaces, then compare on depth, locality, and seam placement. It fires through the `whips` trigger "Code crosses a function boundary", through `playbooks/prototype.md` for forks running code can settle, and through the `playbooks/fan-out.md` bakeoff for bakeoffs.
 
 ## Example in this repo
 

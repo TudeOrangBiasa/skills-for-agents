@@ -16,7 +16,7 @@ Infer the repo from `git remote -v`; `glab` does this automatically when run ins
 
 ## Merge requests as a triage surface
 
-**MRs as a request surface: no.** _(Set to `yes` if this repo treats external merge requests as feature requests; `/ship-triage` reads this flag.)_
+**MRs as a request surface: no.** _(Set to `yes` if this repo treats external merge requests as feature requests; `whips` triage reads this flag.)_
 
 When set to `yes`, MRs run through the same labels and states as issues, using the `glab mr` equivalents:
 
@@ -36,7 +36,7 @@ Run `glab issue view <number> --comments`.
 
 ## Wayfinding operations
 
-Used by `/plan-map`. The **map** is a single issue with **child** issues as tickets.
+Used by the whips map handoff. The **map** is a single issue with **child** issues as tickets.
 
 - **Map**: a single issue labelled `plan-map:map`, holding the Notes / Decisions-so-far / Fog body. `glab issue create --label plan-map:map`. (On GitLab tiers with native epics, an epic may hold the map instead; a labelled issue works everywhere.)
 - **Child ticket**: an issue carrying `Part of #<map>` at the top of its description and labels `plan-map:<type>` (`research`/`prototype`/`plan-interview`/`task`). Once claimed, the ticket is assigned to the driving dev.

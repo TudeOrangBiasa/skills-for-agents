@@ -17,7 +17,7 @@ This is a prompt-driven skill, not a deterministic script. Explore, present what
 
 ## Solo fast-path
 
-When the user wants solo (answers solo at Section H first, or says ship now or solo), skip the interview and apply these defaults: `mode: solo`, tiered auto-land for low-risk per `docs/agents/unattended.md`, local verifier offer via the Skill tool with "verify-new" (Section I), skip team repo-settings (Section K), skip unattended timers unless asked (Section G), models section optional and skip-friendly (Section F). Walk Sections A through E with defaults and one-word confirms only. Team or custom setups still walk every section.
+When the user wants solo (answers solo at Section H first, or says ship now or solo), skip the interview and apply these defaults: `mode: solo`, tiered auto-land for low-risk per `docs/agents/unattended.md`, local verifier offer (Section I), skip team repo-settings (Section K), skip unattended timers unless asked (Section G), models section optional and skip-friendly (Section F). Walk Sections A through E with defaults and one-word confirms only. Team or custom setups still walk every section.
 
 ### 1. Explore
 
@@ -29,7 +29,7 @@ Look at the current repo to understand its starting state. Read whatever exists;
 - `docs/adr/` and any `src/*/docs/adr/` directories
 - `docs/agents/`: does this skill's prior output already exist?
 - `.scratch/`: a sign that a local-markdown issue tracker convention is already in use
-- Is the `ship-triage` skill installed? (a `ship-triage` skill folder alongside this one, or `ship-triage` in your available skills.) This decides whether Section B runs at all.
+- `docs/agents/triage-labels.md`: whether a prior setup already wrote the triage vocabulary (Section B rewrites it idempotently).
 - Monorepo signals: a `pnpm-workspace.yaml`, a `workspaces` field in `package.json`, or a populated `packages/*` with its own `src/`. These are present only in a genuinely large multi-package repo; their absence means single-context, which is almost every repo.
 - Unattended wake options: what this harness offers for runs without the user watching (a loop or wait command, a watch on CI or refs, an outside scheduler). This decides Section G.
 - Repo settings for team landing: `allow_auto_merge`, `delete_branch_on_merge`, branch protection, required checks (Section K; team only, solo skips as N/A).
@@ -38,11 +38,11 @@ Look at the current repo to understand its starting state. Read whatever exists;
 
 Summarise what's present and what's missing. Then take the sections in order. One section, one answer, then the next.
 
-Lead each section with the recommended answer so the user can accept it in a word. Give a one-line explainer only when the choice genuinely branches; skip the section entirely when exploration already settled it (Section B when `ship-triage` isn't installed, Section C when there's no monorepo).
+Lead each section with the recommended answer so the user can accept it in a word. Give a one-line explainer only when the choice genuinely branches; skip the section entirely when exploration already settled it (Section C when there's no monorepo).
 
 **Section A: Issue tracker.**
 
-> Explainer: The "issue tracker" is where issues live for this repo. Skills like `plan-tickets`, `ship-triage`, and `plan-spec` read from and write to it. They need to know whether to call `gh issue create`, write a markdown file under `.scratch/`, or follow some other workflow you describe. Pick the place you actually track work for this repo.
+> Explainer: The "issue tracker" is where issues live for this repo. Skills like `/whips` read from and write to it. They need to know whether to call `gh issue create`, write a markdown file under `.scratch/`, or follow some other workflow you describe. Pick the place you actually track work for this repo.
 
 Default posture: these skills were designed for GitHub. If a `git remote` points at GitHub, propose that. If a `git remote` points at GitLab (`gitlab.com` or a self-hosted host), propose GitLab. Otherwise (or if the user prefers), offer:
 
@@ -51,15 +51,15 @@ Default posture: these skills were designed for GitHub. If a `git remote` points
 - **Local markdown**: issues live as files under `.scratch/<feature>/` in this repo (good for solo projects or repos without a remote)
 - **Other** (Jira, Linear, etc.): ask the user to describe the workflow in one paragraph; the skill will record it as freeform prose
 
-Record the choice in `docs/agents/issue-tracker.md`. The GitHub and GitLab templates carry a "PRs as a request surface" flag, defaulted **off**. Leave it off and don't raise it: a user who wants external PRs in the ship-triage queue can flip the flag in the file later.
+Record the choice in `docs/agents/issue-tracker.md`. The GitHub and GitLab templates carry a "PRs as a request surface" flag, defaulted **off**. Leave it off and don't raise it: a user who wants external PRs in the triage queue can flip the flag in the file later.
 
-**Section B: Triage label vocabulary.** Skip this section entirely if the `ship-triage` skill isn't installed (exploration told you), since an uninstalled skill needs no labels.
+**Section B: Triage label vocabulary.** This section always runs: `/whips` triage ripens issues against this vocabulary.
 
-If it is installed, ask exactly one question:
+Ask exactly one question:
 
 > Do you want to keep the default triage labels? (recommended: **yes**)
 
-The defaults are the five canonical roles, each label string equal to its name: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. Plus three risk rows for agent PRs: `risk-low`, `risk-medium`, `risk-high` (mapped to `risk:low`, `risk:medium`, `risk:high` unless the tracker names them otherwise). On **yes**, write them as-is and create `feature-request` and `deprecation` labels idempotently with the label-create command from `docs/agents/issue-tracker.md` (`gh label create --force` on GitHub) alongside the vocab so issue templates resolve. Only if the user says no, usually because their tracker already uses other names (e.g. `bug:triage` for `needs-triage`), collect the overrides so `ship-triage` applies existing labels instead of creating duplicates.
+The defaults are the five canonical roles, each label string equal to its name: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. Plus three risk rows for agent PRs: `risk-low`, `risk-medium`, `risk-high` (mapped to `risk:low`, `risk:medium`, `risk:high` unless the tracker names them otherwise). On **yes**, write them as-is and create `feature-request` and `deprecation` labels idempotently with the label-create command from `docs/agents/issue-tracker.md` (`gh label create --force` on GitHub) alongside the vocab so issue templates resolve. Only if the user says no, usually because their tracker already uses other names (e.g. `bug:triage` for `needs-triage`), collect the overrides so whips triage applies existing labels instead of creating duplicates.
 
 **Section C: Domain docs.** Default to **single-context** (one `GLOSSARY.md` + `docs/adr/` at the repo root). This fits almost every repo; write it without asking.
 
@@ -80,21 +80,21 @@ Offer **multi-context** (a root `GLOSSARY-MAP.md` pointing to per-context `GLOSS
 > Which of these detected ids should roles use, or should every role inherit?
 2. **Budget.** Solo fast-path default is `small`; team picks per workload. Offer four familiar levels plus `n/a`: `unlimited` (max), `large` (xhigh), `medium` (high), `small` (medium). Write the pick as a `# budget:` line in `docs/agents/models.md`. A harness that names no effort levels gets `n/a`, and every role runs at its plain model.
 > Which budget fits the hardest work in this repo: unlimited, large, medium, small, or n/a?
-3. **Map.** One model for every role is fine; effort carries the difference. Put the confirmed id (or `inherit`) on each row in [models.md](./models.md): `code`, `hard-code`, `judgment`, `review`, `craft-how-explorer`, `craft-how-explainer`, `craft-why-investigator`, `craft-why-synthesizer`, `craft-swarm-worker`, `craft-arena-runner`, `craft-architect-runner`, `review-adversary-reviewer`, `learn-reflect-reviewer`, `learn-reflect-synthesizer`. `hard-code` sits one step above `code`; `craft-swarm-worker` follows `review`.
+3. **Map.** One model for every role is fine; effort carries the difference. Put the confirmed id (or `inherit`) on each row in [models.md](./models.md): `code`, `hard-code`, `judgment`, `review`, `craft-architect-runner`, `learn-reflect-reviewer`, `learn-reflect-synthesizer`. `hard-code` sits one step above `code`.
 > Same model everywhere, or a different id for any role?
 4. **Validate.** Check every id against what detection found (`inherit` always passes), and check `review` is never effort-shifted below `code` per whips SKILL.md section 6 (shift effort one step up for the hardest work, never down for review). Fix mismatches with the user before writing.
 5. **Write.** Rewrite `docs/agents/models.md` from [models.md](./models.md) in full on every run: no duplicated rows, retired roles deleted. Location is per repo (`docs/agents/models.md`); use the personal fallback only when the user explicitly asks for one config across repos, and record why.
-6. **Confirm.** Show the written file and ask for corrections before moving on. Do not raise `/verify-new` here; the scaffold layout step owns that offer.
+6. **Confirm.** Show the written file and ask for corrections before moving on. Do not raise the verifier here; the scaffold layout step owns that offer.
 
 **Section G: Unattended runs (opt-in).** The skill never installs a harness by default; this section runs only when the user asks for unattended wake; otherwise write `Wake: none` in `docs/agents/unattended.md` and move on.
 
-When asked, work in this order. Detect first: list the opaque probe binaries the user named (`RUNNER_AGENT_PROBES`, shown by `runner.sh detect`), then read `<cmd> --help` for the non-interactive flag, the session timeout, the structured output mode, and the approval flags. Copy only flags the help text documents; never guess them. When no probe answers, ask the user to type the full non-interactive command (it sees `$RUNNER_MODEL`, `$RUNNER_PROMPT`, `$RUNNER_PROMPT_FILE`) instead of installing or requiring any named harness.
+When asked, work in this order. Detect first: list the opaque probe binaries the user named (`RUNNER_AGENT_PROBES`), then read `<cmd> --help` for the non-interactive flag, the session timeout, the structured output mode, and the approval flags. Copy only flags the help text documents; never guess them. When no probe answers, ask the user to type the full non-interactive command (it sees `$RUNNER_MODEL`, `$RUNNER_PROMPT`, `$RUNNER_PROMPT_FILE`) instead of installing or requiring any named harness.
 
-Configure the runner with `runner.sh setup --agent-cmd ... --model ... --repos ...` (model choice comes from Section F). Setup writes the shared record to `docs/agents/harness.md` from [harness.md](./harness.md) and keeps the host config as a thin override. Preview timers with `install-timers --dry-run`: it prints the four units rendered from the `systemd/` templates plus every command, and writes nothing. The templates use `Type=oneshot`, `EnvironmentFile`, an explicit `Environment=PATH=`, `TimeoutStartSec` from `RUNNER_TIMEOUT_MIN`, and timers use `Persistent=true`, `OnBootSec`, `OnUnitActiveSec`, `RandomizedDelaySec`.
+Configure the wake with the harness non-interactive command (model choice comes from Section F). Setup writes the shared record to `docs/agents/harness.md` from [harness.md](./harness.md) and keeps the host config as a thin override. For systemd, author user units with `Type=oneshot`, `EnvironmentFile`, an explicit `Environment=PATH=`, and a `TimeoutStartSec` from the run budget, plus timers with `Persistent=true`, `OnBootSec`, `OnUnitActiveSec`, `RandomizedDelaySec`; preview with `systemd-analyze --user verify` before enabling.
 
-Verify before enabling: `systemd-analyze --user verify` on each unit, one manual `systemctl --user start` probe, then read `journalctl --user -u ...`. Enable only after the user says yes (`--yes`); print `loginctl enable-linger $USER` as a step the user runs themselves when timers must survive logout. Re-runs are idempotent: an installed unit is a no-op. The kill switch is `runner.sh pause` (until `runner.sh resume`) plus `install-timers uninstall`, which removes only units carrying its managed marker. Without systemd, print the one-line `cron-line` fallback instead. macOS needs brew `util-linux` plus `coreutils` for `flock` and `timeout`, and wakes via `launchd` or cron per the ship-runner CONTRACT non-systemd section.
+Verify before enabling: `systemd-analyze --user verify` on each unit, one manual `systemctl --user start` probe, then read `journalctl --user -u ...`. Enable only after the user says yes (`--yes`); print `loginctl enable-linger $USER` as a step the user runs themselves when timers must survive logout. Re-runs are idempotent: an installed unit is a no-op. The kill switch is a stop file the tick checks first plus disabling the timer. Without systemd, print the one-line cron fallback instead. macOS needs brew `util-linux` plus `coreutils` for `flock` and `timeout`, and wakes via `launchd` or cron.
 
-Record the wake choice, run log convention (`.scratch/whips/<run>/log.md`, one row per iteration), and budget habit (predicate first, stated iteration, hour, or PR cap) in `docs/agents/unattended.md`. Point at `/ship-runner` for issue-queue runs; the skill reads this file.
+Record the wake choice, run log convention (`.scratch/whips/<run>/log.md`, one row per iteration), and budget habit (predicate first, stated iteration, hour, or PR cap) in `docs/agents/unattended.md`. Point at `/whips` (autonomous-run playbook) for unattended issue-queue runs; whips reads this file.
 
 **Section H: Repo mode (solo or team).** Ask one question:
 
@@ -102,11 +102,11 @@ Record the wake choice, run log convention (`.scratch/whips/<run>/log.md`, one r
 
 Write the answer to `docs/agents/repo-mode.md` from [repo-mode.md](./repo-mode.md): `mode: solo|team`. Behavior differs: solo merges after the local verifier passes without waiting on GitHub checks; team waits on CI like pstack. Playbooks read this file; a missing file means stop and tell the user to run `/setup-repo`.
 
-**Section I: Verifier (solo) / CI (team).** First ask once (only when no `skills/verify-*` exists yet): run `/verify-new` now or later; never auto-generate without an answer. On later, still write `docs/agents/verifier.md` from [verifier.md](./verifier.md) with the command line set to `pending: run /verify-new`, so the next `whips` run sees the gap and waits per its verify rule. Solo: generate or wire the per-project verifier via the Skill tool with "verify-new", write its command to `docs/agents/verifier.md` from [verifier.md](./verifier.md) (PASS = exit 0), install a pre-push hook that runs that command and refuses the push on nonzero exit, and copy the hook into every new worktree at creation time with `skills/user-invoked/whips/scripts/ensure-worktree-hooks --worktree <path>` (it exits nonzero while the hook is still absent; worktree setup is incomplete without it). Team: skip this section and point at CI running the same command plus a PR-title check. Never force Actions onto this repo. Agents never run `git push --no-verify`: opening-a-pr and shipping run `skills/user-invoked/whips/scripts/no-verify-guard` before every push, which refuses `--no-verify` argv and any push from a hookless worktree.
+**Section I: Verifier (solo) / CI (team).** First ask once (only when no `skills/verify-*` exists yet): wire the repo test command as the verifier now or later; never auto-wire without an answer. On later, still write `docs/agents/verifier.md` from [verifier.md](./verifier.md) with the command line set to `pending: wire a verifier`, so the next `whips` run sees the gap and waits per its verify rule. Solo: wire the per-project verifier command to `docs/agents/verifier.md` from [verifier.md](./verifier.md) (PASS = exit 0), install a pre-push hook that runs that command and refuses the push on nonzero exit, and copy the hook into every new worktree at creation time with `skills/user-invoked/whips/scripts/ensure-worktree-hooks --worktree <path>` (it exits nonzero while the hook is still absent; worktree setup is incomplete without it). Team: skip this section and point at CI running the same command plus a PR-title check. Never force Actions onto this repo. Agents never run `git push --no-verify`: opening-a-pr and shipping run `skills/user-invoked/whips/scripts/no-verify-guard` before every push, which refuses `--no-verify` argv and any push from a hookless worktree.
 
 **Section J: Docs layout.** After Sections A through I, scaffold the canonical docs layout, idempotently. Dirs (create with `.gitkeep` where empty): `docs/adr/`, `docs/research/`, `docs/agents/`, `.scratch/whips/`, `.audit/`. `.gitignore` append (skip lines already present; re-run adds nothing): `.scratch/`, `.audit/`, `decisions.tsv`, `**/decisions.tsv`; never ignore `docs/` or `skills/verify-*/`. Write `docs/agents/docs-layout.md` from [docs-layout.md](./docs-layout.md) and add a `### Docs layout` line to the `## Agent skills` block pointing at it. Content stays lazy: ADR bodies, `GLOSSARY.md`, `skills/verify-*/`, `workflows/*.md` are not scaffolded, only their parent dirs with `.gitkeep`.
 
-Then ask two more, one at a time. Autonomy tier for this repo (the whips mode): strict HIT with every landing human-approved, or tiered auto-land with low-risk PASS PRs merging untouched (recommended: tiered, human time reserved for high-risk). Record it in `docs/agents/unattended.md`; it overrides the default where the repo chooses strictness. Scheduled maintenance: which jobs run on a schedule and how they wake (cron line, systemd timer, or the harness non-interactive/headless mode invoking a skill). Default proposal: a stale-docs sweep via `/learn-reflect` plus `/verify-upkeep` upkeep daily via scheduled automation, proposals filed, never auto-applied. Record each job's command, cadence, and output sink in the same file.
+Then ask two more, one at a time. Autonomy tier for this repo (the whips mode): strict HIT with every landing human-approved, or tiered auto-land with low-risk PASS PRs merging untouched (recommended: tiered, human time reserved for high-risk). Record it in `docs/agents/unattended.md`; it overrides the default where the repo chooses strictness. Scheduled maintenance: which jobs run on a schedule and how they wake (cron line, systemd timer, or the harness non-interactive/headless mode invoking a skill). Default proposal: a stale-docs sweep via `/learn-reflect` plus `/maintain-formal-verification` upkeep for property checks daily via scheduled automation, proposals filed, never auto-applied. Record each job's command, cadence, and output sink in the same file.
 
 **Section K: Repo settings (team only, solo skips).** Skip entirely when Section H answered **solo**: say "Repo settings are N/A in solo mode, the local verifier decides landing" and move on. For **team** repos, ask one question:
 
@@ -119,7 +119,7 @@ Run `skills/user-invoked/whips/scripts/repo-settings check --landing <auto-merge
 Show the user a draft of:
 
 - The `## Agent skills` block to add to the repo's `AGENTS.md`
-- The contents of `docs/agents/issue-tracker.md`, `docs/agents/domain.md`, `docs/agents/triage-labels.md` (the last only when `ship-triage` is installed), `docs/agents/unattended.md`, `docs/agents/repo-mode.md`, and `docs/agents/verifier.md` (the last only for solo repos)
+- The contents of `docs/agents/issue-tracker.md`, `docs/agents/domain.md`, `docs/agents/triage-labels.md`, `docs/agents/unattended.md`, `docs/agents/repo-mode.md`, and `docs/agents/verifier.md` (the last only for solo repos)
 - The contents of `docs/agents/models.md`, only when Section F ran with **yes**
 - The `repo-settings check` output, only for team repos (Section K)
 
@@ -177,7 +177,7 @@ One door into where skills write and read. See `docs/agents/docs-layout.md`.
 [one-line summary of what was scaffolded: DESIGN.md, standards file name, commit format]. PR body needs no line: the `ship-pr` skill is the format.
 ```
 
-Include the `### Triage labels` sub-block, and write `docs/agents/triage-labels.md`, only when `ship-triage` is installed and Section B ran. When it isn't, both are omitted. Include the `### Models` sub-block, and write `docs/agents/models.md`, only when Section F ran with **yes**. Include the `### Verifier` sub-block, and write `docs/agents/verifier.md`, only for solo repos. Always include the `### Unattended runs`, `### Repo mode`, `### Docs layout`, and `### Landing` sub-blocks, and always write `docs/agents/unattended.md`, `docs/agents/repo-mode.md`, `docs/agents/docs-layout.md`, and `docs/agents/landing-policy.md`.
+Include the `### Triage labels` sub-block, and always write `docs/agents/triage-labels.md`. Include the `### Models` sub-block, and write `docs/agents/models.md`, only when Section F ran with **yes**. Include the `### Verifier` sub-block, and write `docs/agents/verifier.md`, only for solo repos. Always include the `### Unattended runs`, `### Repo mode`, `### Docs layout`, and `### Landing` sub-blocks, and always write `docs/agents/unattended.md`, `docs/agents/repo-mode.md`, `docs/agents/docs-layout.md`, and `docs/agents/landing-policy.md`.
 
 Then write the docs files using the seed templates in this skill folder as a starting point:
 
@@ -187,7 +187,7 @@ Then write the docs files using the seed templates in this skill folder as a sta
 - [landing-policy.md](./landing-policy.md): landing rules reading repo-mode plus verifier (always)
 - [issue-tracker-gitlab.md](./issue-tracker-gitlab.md): GitLab issue tracker
 - [issue-tracker-local.md](./issue-tracker-local.md): local-markdown issue tracker
-- [triage-labels.md](./triage-labels.md): label mapping (only if `ship-triage` is installed)
+- [triage-labels.md](./triage-labels.md): label mapping (Section B, always)
 - [domain.md](./domain.md): domain doc consumer rules + layout
 - [models.md](./models.md): model per subagent role (only if Section F ran with **yes**)
 - [unattended.md](./unattended.md): wake mechanism, run log convention, budget habit

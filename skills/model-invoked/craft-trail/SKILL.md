@@ -14,7 +14,7 @@ One TSV file, single-line cells, evidence as pointer never prose. Header:
 ts	phase	decision	why	evidence	result
 ```
 
-Columns: `ts` is an ISO8601 timestamp; `phase` the phase or workstream; `decision` what was chosen or done, one line; `craft-why` the reason in plain words, a driving principle stated plainly never as a jargon tag; `evidence` a pointer that proves it (commit SHA, PR number, `file:line`, artifact or screenshot path); `result` the outcome or predicate state (`tests green`, `reverted`, `pixel-diff 0`, `INCONCLUSIVE`, `open`).
+Columns: `ts` is an ISO8601 timestamp; `phase` the phase or workstream; `decision` what was chosen or done, one line; `why` the reason in plain words, a driving principle stated plainly never as a jargon tag; `evidence` a pointer that proves it (commit SHA, PR number, `file:line`, artifact or screenshot path); `result` the outcome or predicate state (`tests green`, `reverted`, `pixel-diff 0`, `INCONCLUSIVE`, `open`).
 
 Plain-spoken rows, so a reviewer reads the trail at a glance:
 

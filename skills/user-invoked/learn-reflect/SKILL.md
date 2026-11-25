@@ -1,12 +1,12 @@
 ---
 name: learn-reflect
-description: "Mine this session for durable learnings with three parallel reviewers, and route each accepted one to a concrete edit on an existing skill. Use when the user says reflect."
+description: "Mine this session for durable learnings with three parallel reviewers, and route each accepted one to a concrete skill edit or a docs update (taste, standards, glossary). Use when the user says reflect."
 disable-model-invocation: true
 ---
 
 # Reflect
 
-Mine the current conversation for durable learnings, then route them into skill edits.
+Mine the current conversation for durable learnings, then route them into skill edits and docs updates.
 
 Invoke when the user says "learn-reflect" or "/learn-reflect". Skip when the conversation is trivial, off-topic, or already covered by an existing skill the parent followed correctly. One-offs are not learnings.
 
@@ -44,7 +44,7 @@ Present the synthesizer's full Accepted / Rejected / Backlog output and wait for
 
 File each Backlog item to your team's devex or backlog tracker without waiting. Only the Accepted list waits for approval.
 
-Never edit a skill inside a vendored or cached copy. Before approval, show each edit's destination: this repo's `skills/<bucket>/<skill>/` path for repo skills, or the target repo's skill path for skills living elsewhere. After approval, edit that path directly.
+Never edit a skill inside a vendored or cached copy. Before approval, show each edit's destination: this repo's `skills/<bucket>/<skill>/` path for repo skills, the target repo's skill path for skills living elsewhere, or the docs path (`DESIGN.md`, standards file, `GLOSSARY.md`, `docs/adr/`) for taste and intent updates. After approval, edit that path directly.
 
 Follow each approved row's Routing exactly:
 
@@ -52,8 +52,9 @@ Follow each approved row's Routing exactly:
 - Substantive existing-skill edit (a new section, a new pattern table, more than ~10 lines): draft it through the whips `authoring-a-skill` playbook and its validate loop.
 - `tune description: <skill path>` (the skill exists but did not trigger when it should have): retune its description through the same playbook.
 - `new skill via create-skill: <kebab-name>`: hand creation to the same playbook. Do not invent the shape ad hoc.
+- `docs update: <docs path>` (a taste rule for `DESIGN.md` or the standards file, a term for `GLOSSARY.md`, a decision for `docs/adr/`): the parent edits the docs file directly after approval, under the same gate as skill edits. Docs prose carries taste and intent no lint rule can enforce; anything a check can enforce goes to Backlog.
 
-Each accepted learning becomes a small PR to its target skill (one skill per PR, small ordered commits) closed through the whips `opening-a-pr` playbook, or a listed diff when the user wants to land it by hand. If this repo ships a SKILL.md validator, run it on every touched skill before declaring done.
+Each accepted learning becomes a small PR to its target skill or docs file (one target per PR, small ordered commits) closed through the whips `opening-a-pr` playbook, or a listed diff when the user wants to land it by hand. If this repo ships a SKILL.md validator, run it on every touched skill before declaring done.
 
 ## 6. Summarize for the user
 

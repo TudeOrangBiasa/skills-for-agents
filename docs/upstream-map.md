@@ -3,7 +3,7 @@
 Local skill names use the stage-prefix scheme (`setup-`, `plan-`, `craft-`, `ship-`, `review-`, `learn-`, `verify-`). Upstream repos keep their own names. This table maps local to upstream so sync diffs stay mechanical: find the local skill, read its upstream row, diff against that source. Per-skill detail lives in each skill's `CREDITS.md`. Last resync against the pstack tip: 2026-10-27 (`ab1f702`), see [upstream-resync-2026-10-27.md](./upstream-resync-2026-10-27.md).
 ## Upstream policy: pstack owns automation, Matt owns planning
 
-Two upstreams, two jobs. **pstack (poteto)** owns automation and shipping: PRs, commits, the verifier, workflow loops, swarm, orchestration, and landing. That covers `whips`, `ship-runner`, `ship-pr` behavior, `craft-swarm`, the `verify-*` skills where pstack is the source, and the related playbooks. **Matt Pocock** owns ideas and planning only: `plan-grill`, `plan-grill-docs`, `plan-interview`, `plan-spec`, `plan-tickets`, and `plan-map` (the wayfinder for foggy work).
+Two upstreams, two jobs. **pstack (poteto)** owns automation and shipping: PRs, commits, the verifier, workflow loops, orchestration, and landing. That covers `whips`, `ship-pr` behavior, the `verify-*` skills where pstack is the source, and the related playbooks. **Matt Pocock** owns ideas and planning only: `plan-interview`.
 
 When a skill's behavior and its credited upstream disagree, keep the credit row as the historical record and point the behavior at the owning side. The Audit section below tracks each case with a proposed fix per row: keep credit, change behavior pointer, or replace upstream.
 
@@ -11,51 +11,28 @@ When a skill's behavior and its credited upstream disagree, keep the credit row 
 |---|---|---|
 | `craft-agent-docs` | `writing-great-skills` | mattpocock/skills |
 | `craft-architect` | `architect` | pstack |
-| `craft-arena` | `arena` | pstack |
 | `craft-break` | `break` | jakubkrehel/skills |
-| `craft-how` | `how` | pstack |
-| `craft-manual` | - (original: Linkbook case study) | - |
-| `craft-swarm` | `swarm` | pstack |
 | `craft-trail` | `show-me-your-work` | pstack |
 | `craft-ts` | `typescript-best-practices` | pstack |
-| `craft-ui-timeline` | `ui-recording-timeline` | rauchg/skills |
-| `craft-why` | `why` | pstack |
 | `create-formal-verification` | `create-formal-verification-skill` | pstack |
 | `guide` | - (original router; credit note: shaped by Matt `ask-matt`) | - |
 | `learn-catchup` | `ketchup` | pstack |
-| `learn-catchup-video` | `ketchup` (video shape) | pstack |
 | `learn-diff-gate` | - (original) | - |
 | `learn-recall` | `recall` | pstack |
 | `learn-reflect` | `reflect` | pstack |
 | `learn-restate` | `show-me` (visual catalog) | humanlayer/skills (Dex Horthy) |
 | `maintain-formal-verification` | `maintain-formal-verification-skill` | pstack |
-| `plan-grill` | `grill-me` | mattpocock/skills |
-| `plan-grill-docs` | `grill-with-docs` | mattpocock/skills |
 | `plan-interview` | `grilling` | mattpocock/skills |
-| `plan-map` | `wayfinder` | mattpocock/skills |
-| `plan-sharpen` | `sharpen` | pstack |
-| `plan-spec` | `to-spec` | mattpocock/skills |
-| `plan-tickets` | `to-tickets` | mattpocock/skills |
-| `plan-worklog` | - (original) | - |
 | `principles` | 24 `principle-*` leaves (folded into one index, #174) | pstack |
-| `review-adversary` | `interrogate` | pstack |
-| `review-code` | `code-review` | mattpocock/skills |
 | `review-nocomment` | `no-comments` | pstack |
 | `review-prose` | `technical-writing` | pstack |
 | `review-unslop` | `unslop` | pstack |
 | `setup-hooks` | `setup-pre-commit` | mattpocock/skills |
 | `setup-repo` | `setup-matt-pocock-skills` | mattpocock/skills |
-| `setup-ts-modules` | `setup-ts-deep-modules` | mattpocock/skills |
 | `ship-merge-fix` | `resolving-merge-conflicts` | mattpocock/skills |
 | `ship-pr` | `show-me` (shape) + `pr-screenshots` (attachments) | humanlayer (Dex Horthy) + github/awesome-copilot |
-| `ship-runner` | - (original) | - |
-| `ship-triage` | `triage` | mattpocock/skills |
-| `verify-bench` | `benchmark-checklist` | pstack |
 | `verify-blast` | `blast-radius` | pstack |
-| `verify-new` | `create-verification-skill` | pstack |
-| `verify-statechart` | `statechart` | pstack |
 | `verify-tdd` | `tdd` + pstack hardening | mattpocock/skills + pstack |
-| `verify-upkeep` | `maintain-verification-skill` | pstack |
 | `whips` | `poteto-mode` router + playbooks | pstack |
 
 ## Audit (2026-10-31): rows reviewed against the policy
@@ -83,7 +60,7 @@ Each row below names the mismatch against the policy above and records its resol
 
 ### Matt trim plus quarantine (closed by #221, #225, #226)
 
-Kept for the planning handoff: `plan-map`, `plan-spec`, `plan-tickets`, `plan-grill`, `plan-grill-docs`, `plan-interview` (credit rows above stay). `setup-repo`, `setup-hooks`, `ship-triage`, `ship-merge-fix`, `review-code`, `verify-tdd` keep credit-only rows; behavior already points at the pstack side. Deleted: `craft-diagnose` (folded into the whips `bug` playbook), `craft-research` (folded into investigation and plan-map research tickets), `craft-proto` (folded into the feature spike and `prototype.md`), `craft-deepen`, `craft-domain`, `craft-vocab`, `craft-correct`, `craft-wizard`, `learn-handoff`, `learn-retro`, `learn-teach`. Quarantined (shipped, off the main flow): `craft-agent-docs`, `setup-ts-modules`, `learn-diff-gate`, `create-formal-verification`, `maintain-formal-verification`. Alias rows for deleted skills drop with this change; the one-release stub promise in [aliases.md](./aliases.md) ends for the trim batch.
+Kept for the planning handoff: `plan-interview` (credit rows above stay). `setup-repo`, `setup-hooks`, `ship-merge-fix`, `review-code`, `verify-tdd` keep credit-only rows; behavior already points at the pstack side. Deleted: `craft-diagnose` (folded into the whips `bug` playbook), `craft-research` (folded into investigation and plan-map research tickets), `craft-proto` (folded into the feature spike and `prototype.md`), `craft-deepen`, `craft-domain`, `craft-vocab`, `craft-correct`, `craft-wizard`, `learn-handoff`, `learn-retro`, `learn-teach`. Quarantined (shipped, off the main flow): `craft-agent-docs`, `learn-diff-gate`, `create-formal-verification`, `maintain-formal-verification`. The whips-first trim drops `plan-map`, `plan-grill`, `plan-grill-docs`, `plan-spec`, `plan-sharpen`, `plan-worklog`, `ship-triage`, `ship-runner`, `verify-new`, `verify-upkeep`, `verify-statechart`, `learn-catchup-video`, `setup-ts-modules`, plus `plan-tickets`; their behavior runs inline in whips playbooks. Alias rows for deleted skills drop with this change; the one-release stub promise in [aliases.md](./aliases.md) ends for the trim batch.
 
 ### pstack-sourced planning-adjacent (decided by #203)
 

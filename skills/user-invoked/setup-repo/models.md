@@ -12,14 +12,7 @@ Budget labels stay the same on every harness: `unlimited` (max), `large` (xhigh)
 | `hard-code` | `<model id>` | one step up | standard | Cross-cutting design, concurrency, subtle algorithms |
 | `judgment` | `<model id>` | standard | standard | Planning, prose, PR bodies, risk calls |
 | `review` | `<model id>` | standard, never below `code` | standard | Second-opinion review; a different model when you have one, otherwise a fresh context with an adversarial brief, reviewers differing by lens never by model |
-| `craft-how-explorer` | `<model id>` | standard | standard | One angle of a `craft-how` exploration |
-| `craft-how-explainer` | `<model id>` | standard | standard | Synthesizes explorer findings into fixed sections |
-| `craft-why-investigator` | `<model id>` | standard | standard | One evidence source for a `craft-why` investigation |
-| `craft-why-synthesizer` | `<model id>` | standard | standard | Merges findings into confidence tiers |
-| `craft-swarm-worker` | `<model id>` | follows `review` | standard | One parallel worker in a `craft-swarm` fan-out |
-| `craft-arena-runner` | `<model id>` | standard | standard | One candidate in an `craft-arena` bakeoff |
 | `craft-architect-runner` | `<model id>` | standard | standard | One design sketch in `craft-architect` phase B |
-| `review-adversary-reviewer` | `<model id>` | standard, never below `code` | standard | One adversarial reviewer in an `review-adversary` panel |
 | `learn-reflect-reviewer` | `<model id>` | standard | standard | One lens reviewer in a `learn-reflect` fan-out |
 | `learn-reflect-synthesizer` | `<model id>` | standard | standard | Merges `learn-reflect` findings into Accepted, Rejected, Backlog |
 
@@ -43,9 +36,5 @@ Every role on the single confirmed id; effort carries the difference. `review` s
 | `hard-code` | `<your confirmed id>` | large | standard |
 | `judgment` | `<your confirmed id>` | medium | standard |
 | `review` | `<your confirmed id>` | medium, never below `code` | standard |
-| `craft-how-explorer`, `craft-how-explainer` | `inherit` | medium | standard |
-| `craft-why-investigator`, `craft-why-synthesizer` | `inherit` | medium | standard |
-| `craft-swarm-worker` | `inherit` | medium, follows `review` | standard |
-| `craft-arena-runner`, `craft-architect-runner` | `inherit` | medium | standard |
-| `review-adversary-reviewer` | `inherit` | medium, never below `code` | standard |
+| `craft-architect-runner` | `inherit` | medium | standard |
 | `learn-reflect-reviewer`, `learn-reflect-synthesizer` | `inherit` | medium | standard |

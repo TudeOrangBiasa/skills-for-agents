@@ -6,7 +6,7 @@ description: Stress-test one component against worst-case content and states on 
 
 Render one component on a fresh page under every scenario that can actually reach it. The page is the deliverable: a visual report the user scrolls through, every state side by side, with the breaks marked. A component built against one happy path looks finished right up until real content arrives.
 
-It observes, it does not judge. A finding here is something that visibly broke, stated plainly. Reviewing code against a standard is `review-code`; exploring design alternatives is a throwaway sketch per `prototype.md`.
+It observes, it does not judge. A finding here is something that visibly broke, stated plainly. Reviewing code against a standard is `playbooks/review.md` code review; exploring design alternatives is a throwaway sketch per `prototype.md`.
 
 Isolation here is deliberate, the opposite of a prototype spike (which demands the real page). The question is whether the component defends itself when the content is worst-case.
 

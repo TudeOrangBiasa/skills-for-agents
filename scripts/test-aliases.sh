@@ -5,7 +5,7 @@
 #   1. Every old name resolves: its new skill folder exists with SKILL.md
 #      whose frontmatter name equals the new folder name.
 #   2. Every old name is gone as a folder (no stale skill dir answers it).
-#   3. The table holds exactly 43 rows (54 minus the 11 names in the #221 trim batch).
+#   3. The table holds exactly 20 rows (54 minus the 11 names in the #221 trim batch minus 23 names in the whips-first trims).
 #
 # Usage: bash scripts/test-aliases.sh
 set -euo pipefail
@@ -33,5 +33,5 @@ while IFS='|' read -r _ old new _; do
   fi
 done < <(grep -E '^\| `' docs/aliases.md)
 
-[[ "$rows" == "43" ]] || fail "alias table holds $rows rows, want 43"
-pass "43 old names resolve to new skills with matching frontmatter, no stale folders"
+[[ "$rows" == "20" ]] || fail "alias table holds $rows rows, want 20"
+pass "20 old names resolve to new skills with matching frontmatter, no stale folders"
