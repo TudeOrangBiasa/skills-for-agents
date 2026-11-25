@@ -14,7 +14,7 @@ Takes a rough notice ("X looks broken", "we should add Y", "Z is dead weight") a
 
 ## When to reach for it
 
-You invoke this by typing `/report-issue`, and the agent will not reach for it on its own. Reach for this when you spot a defect, a missing behavior, or dead weight in this repo and want it tracked with repro plus acceptance. For working an existing backlog instead, use `ship-triage`.
+You invoke this by typing `/report-issue`, and the agent will not reach for it on its own. Reach for this when you spot a defect, a missing behavior, or dead weight in this repo and want it tracked with repro plus acceptance. For working an existing backlog instead, use `/whips` triage.
 
 ## Pick the template first
 
@@ -36,8 +36,8 @@ Target the skills-for-agents tracker explicitly: every `gh` call passes `--repo 
 
 ## Common questions
 
-**Does this replace ship-triage?**
-No. This files the ticket; `ship-triage` ripens it to agent-ready. Filed tickets land in `needs-triage` by default.
+**Does this replace triage?**
+No. This files the ticket; `/whips` triage ripens it to agent-ready. Filed tickets land in `needs-triage` by default.
 
 **What if the notice is already tracked?**
 Search open issues first by concept, not wording. If found, point at it and file nothing.
@@ -53,4 +53,4 @@ Estimate in verification steps (files touched, tests run, gh calls). One honest 
 
 ## Where it fits
 
-Role: standalone reach-for-it-anytime reporter feeding the triage queue (`report-issue` files, `ship-triage` ripens, `whips` builds). Neighbours: `ship-triage` because it consumes what this files, linked repo-relatively at [ship-triage](../ship-triage/SKILL.md); `plan-tickets` because multi-ticket breakdowns belong there, linked at [plan-tickets](../plan-tickets/SKILL.md). The map: [guide](../guide/SKILL.md).
+Role: standalone reach-for-it-anytime reporter feeding the triage queue (`report-issue` files, `/whips` triage ripens, `whips` builds). Neighbours: whips triage because it consumes what this files, described in [triage](../whips/playbooks/triage.md). The map: [guide](../guide/SKILL.md).

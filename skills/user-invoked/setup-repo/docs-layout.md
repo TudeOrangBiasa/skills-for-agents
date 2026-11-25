@@ -4,24 +4,22 @@ One door into where skills write and read. Scaffolded by `/setup-repo` Section J
 
 | Artifact | Created by | Read by | Canonical path | Lazy or scaffolded |
 | --- | --- | --- | --- | --- |
-| Issue tracker config | `/setup-repo` Section A | `plan-tickets`, `ship-triage`, whips playbooks | `docs/agents/issue-tracker.md` | scaffolded |
+| Issue tracker config | `/setup-repo` Section A | whips triage | `docs/agents/issue-tracker.md` | scaffolded |
 | Domain rules | `/setup-repo` Section C | skills needing glossary/ADR layout | `docs/agents/domain.md` | scaffolded |
-| Triage labels | `/setup-repo` Section B | `ship-triage`, whips playbooks | `docs/agents/triage-labels.md` | scaffolded when `ship-triage` installed |
+| Triage labels | `/setup-repo` Section B | whips triage | `docs/agents/triage-labels.md` | scaffolded |
 | Model map | `/setup-repo` Section F | whips subagent roles | `docs/agents/models.md` | scaffolded on yes |
-| Unattended config | `/setup-repo` Section G | `ship-runner`, unattended runs | `docs/agents/unattended.md` | scaffolded |
-| Harness config | `runner.sh setup` | `ship-runner` every run | `docs/agents/harness.md` | lazy (first setup writes it) |
+| Unattended config | `/setup-repo` Section G | unattended runs | `docs/agents/unattended.md` | scaffolded |
+| Harness config | `/setup-repo` Section G | unattended runs | `docs/agents/harness.md` | lazy (first setup writes it) |
 | Repo mode | `/setup-repo` Section H | playbooks needing solo vs team | `docs/agents/repo-mode.md` | scaffolded |
 | Verifier | `/setup-repo` Section I | pre-push hook, agent before PR | `docs/agents/verifier.md` | scaffolded for solo repos |
 | This map | `/setup-repo` Section J | humans and agents | `docs/agents/docs-layout.md` | scaffolded |
-| Glossary | `plan-grill-docs` | many skills | `GLOSSARY.md` (legacy `CONTEXT.md`) | lazy |
-| ADR | `plan-grill-docs` | `learn-reflect`, `plan-spec` | `docs/adr/NNNN-slug.md` | dir scaffolded, bodies lazy |
+| Glossary | `plan-interview` | many skills | `GLOSSARY.md` (legacy `CONTEXT.md`) | lazy |
+| ADR | `plan-interview` | `learn-reflect`, collapse | `docs/adr/NNNN-slug.md` | dir scaffolded, bodies lazy |
 | Research findings | `/whips` investigation | humans | `docs/research/<slug>.md` | dir scaffolded, files lazy |
-| Spec | `plan-spec` | whips, ship-triage | issue tracker (or `.scratch/<feature>/spec.md` local) | lazy |
+| Spec | whips collapse | whips | issue tracker (or `.scratch/<feature>/spec.md` local) | lazy |
 | Run log, pause note | whips playbooks | `pickup`, `learn-catchup` | `.scratch/whips/<run>/log.md`, `pause.md` | dir scaffolded, files lazy |
 | Decision trail | `craft-trail` | `orchestrate`, morning audit | `.scratch/whips/<run>/decisions.tsv`, or `.audit/<slug>.tsv` parallel | lazy |
 | Hillclimb log | `hillclimb` | `hillclimb` | `.scratch/whips/<run>/decisions.tsv` (hillclimb per-attempt schema) | lazy |
-| Feature map | `verify-new` | `verify-upkeep`, `craft-swarm` | `skills/verify-<app>/features/` | lazy |
-| Workflows | `plan-worklog` | `plan-worklog` | `workflows/*.md` | lazy |
 | Handoff | `/learn-catchup` | next session | `$TMPDIR` (outside the repo on purpose) | lazy |
 | Design tokens, standards | `/setup-repo` Section D | `learn-reflect`, `guide` | root `DESIGN.md`, standards file | scaffolded on yes |
 

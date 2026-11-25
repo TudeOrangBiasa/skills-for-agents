@@ -13,7 +13,6 @@ STAGES="$SKILL/playbooks/stage-pipeline.md"
 TRIAGE="$SKILL/playbooks/triage.md"
 OPENING="$SKILL/playbooks/opening-a-pr.md"
 PLAN_MAP="$HERE/../../plan-map/SKILL.md"
-PLAN_TICKETS="$HERE/../../plan-tickets/SKILL.md"
 SKILL_MD="$SKILL/SKILL.md"
 FIX="$HERE/fixtures/plan-map-handoff"
 pass() { printf 'stub ok: %s\n' "$1"; }
@@ -50,7 +49,7 @@ n_risk="$(grep -cE 'risk:(low|medium|high)' "$FIX/expected-tickets.md")"
 pass "fixture yields 3 ready-for-agent tickets with type plus Kompleksitas"
 
 # 4. No duplicate questioning: Destination and Decisions-so-far are reused.
-for f in "$HANDOFF" "$PLAN_TICKETS" "$TRIAGE"; do
+for f in "$HANDOFF" "$TRIAGE"; do
   grep -q 'Decisions-so-far' "$f" || fail "$f never reuses Decisions-so-far"
 done
 grep -qi 'never re-ask' "$HANDOFF" || fail "handoff never bans re-asking"
@@ -71,10 +70,9 @@ pass "router keeps multi-session fog on plan-map, thin fog drive-through"
 grep -q 'Invocation rule' "$HANDOFF" || fail "handoff lacks the Invocation rule"
 grep -q 'disable-model-invocation\|no skill can fire them' "$HANDOFF" \
   || fail "handoff never resolves disable-model-invocation"
-grep -q 'disable-model-invocation: true' "$PLAN_MAP" \
-  || fail "plan-map lost user-invokable frontmatter"
+[[ -d "$HERE/../../plan-map" ]] && fail "plan-map skill folder still present after whips-first trim"
 grep -q 'Invocation rule' "$STAGES" || fail "pipeline lacks the Invocation rule pointer"
-pass "invocation rule documented, plan-map stays user-invokable"
+pass "invocation rule documented, map runs inline only"
 
 # 7. Pickup: map-collapsed tickets route to build flows ending in ship-pr shape.
 grep -q 'opening-a-pr' "$TRIAGE" || fail "intake never reaches opening-a-pr"

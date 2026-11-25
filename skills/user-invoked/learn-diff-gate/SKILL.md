@@ -13,7 +13,7 @@ A merge gate for learning: you may merge an agent PR only after proving you unde
 
 1. **You explain first.** Without re-reading the code, explain the diff in your own words: what changed, why, and what could break. Never copy the PR body back.
 2. **The agent corrects.** It marks each claim right, wrong, or incomplete against the diff, with file:line pointers. Skimmed or vague claims count as wrong.
-3. **Three why questions.** The agent asks three "craft-why" questions about the change (a tradeoff, a failure mode, a rejected alternative). Short answers accepted; hand-waving is not.
+3. **Three why questions.** The agent asks three why-trace questions about the change (a tradeoff, a failure mode, a rejected alternative). Short answers accepted; hand-waving is not.
 4. **Verdict.** All correct means merge. Anything wrong means re-explaining that part, not merging around it. Two failed rounds means reopening the work (new questions for the authoring agent, or a `/learn-teach` handoff for the gap it exposed).
 
 ## Rules

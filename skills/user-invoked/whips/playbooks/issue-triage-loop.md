@@ -1,6 +1,6 @@
-# Playbook: issue ship-triage loop
+# Playbook: issue triage loop
 
-Run issue intake on a loop: every tick labels the oldest waiting issues in the target repo so `/ship-runner run` always has a fresh ready queue. This playbook is project-agnostic: the tick reads the repo's own `docs/agents/` vocab, and the rubric lives in `/ship-triage`, not here.
+Run issue intake on a loop: every tick labels the oldest waiting issues in the target repo so `/whips` intake always has a fresh ready queue. This playbook is project-agnostic: the tick reads the repo's own `docs/agents/` vocab, and the brief shape lives in `playbooks/triage.md` ripen, not here.
 
 Resolve the tracker and label strings from `docs/agents/issue-tracker.md` and `docs/agents/triage-labels.md` first. A missing file means you tell the user to run `/setup-repo` and stop.
 
@@ -12,9 +12,9 @@ Every comment posted to the tracker starts with this disclaimer:
 
 ## The loop
 
-1. Check the kill switch: a `stop` file in the runner state dir ends the tick with exit 0, untouched. See `playbooks/pause.md`.
+1. Check the kill switch: a `stop` file in the loop state dir ends the tick with exit 0, untouched. See `playbooks/pause.md`.
 2. List the intake buckets once, oldest first, capped at the tick cap (default 3): unlabeled issues, the needs-triage role, and the needs-info role with reporter activity. Skip issues already carrying the ready or human role; never re-label them.
-3. Triage each picked issue with `/ship-triage` (state machine, buckets, needs-info template). Write briefs in the `/ship-triage` AGENT-BRIEF shape: summary, current and desired behavior, key interfaces, acceptance criteria, out of scope. The rubric below holds only the loop's allowed moves.
+3. Ripen each picked issue per `playbooks/triage.md` ripen (state machine, buckets, needs-info template). Write briefs in the ripen shape: summary, current and desired behavior, key interfaces, acceptance criteria, out of scope. The rubric below holds only the loop's allowed moves.
 4. Report per tick: decisions taken, issues left for the next tick, and the call counts that prove the bound.
 
 ## Allowed moves per issue
@@ -36,4 +36,4 @@ One list call per repo per tick plus at most four calls per triaged issue (view,
 
 ## Wiring
 
-The runner owns the schedule: `runner.sh triage [--dry-run]` runs the loop with the bound above, and the setup-repo timer template adds a `ship-triage` job beside `run`. `--dry-run` prints each decision without mutating the tracker.
+The schedule owns the loop: a cron line, systemd timer, or the harness headless mode runs the loop with the bound above. A dry run prints each decision without mutating the tracker.

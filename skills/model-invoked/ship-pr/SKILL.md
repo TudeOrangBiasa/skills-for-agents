@@ -25,7 +25,7 @@ Use this template for writing the PR body:
   | Before | After |
   | --- | --- |
   | ![before](attach the before image) | ![after](attach the after image) |
-- When a recording shows the change better than stills, attach the video below the pair. When the recording needs explaining (load sequence, auth flow, what painted when), call the Skill tool with "craft-ui-timeline" first and link its timeline page alongside the video. Motion proof over a minute long, or with idle stretches, ships as a timeline page plus a trimmed cut, not raw video.
+- When a recording shows the change better than stills, attach the video below the pair. When the recording needs explaining (load sequence, auth flow, what painted when), run `playbooks/proof-visual.md` timeline first and link its timeline page alongside the video. Motion proof over a minute long, or with idle stretches, ships as a timeline page plus a trimmed cut, not raw video.
 - Evidence hotlinks only from `main` (or a permanent store). Branch URLs rot on branch deletion; a body containing one fails review.
 - Proof renders inline in the body (pair table, video, timeline link). A list of file paths is not proof.
 

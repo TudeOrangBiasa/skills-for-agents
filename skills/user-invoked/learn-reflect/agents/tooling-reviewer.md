@@ -18,7 +18,7 @@ Flag every moment the user manually supplied context the agent could have fetche
 
 Examples of the pattern:
 
-- User pastes a ticket title because the agent didn't query the ticket tracker. Routing: the relevant ship-triage skill should call the tracker first.
+- User pastes a ticket title because the agent didn't query the ticket tracker. Routing: `whips` triage should call the tracker first.
 - User describes a flaky test the agent could have queried via observability. Routing: the debugging skill should mention the observability lookup.
 - User links a chat thread the agent could have fetched via a chat tool. Routing: the relevant skill should mention the chat lookup.
 

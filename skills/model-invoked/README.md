@@ -3,28 +3,19 @@
 Skills the agent can fire on its own when the task fits, or the human can type by name. They hold reusable discipline and shared reference. Model-invoked skills may be invoked by other skills.
 
 - **[craft-architect](./craft-architect/SKILL.md)**: Settle types, signatures, and module shape before code: ground, sketch twice, agree, implement, scrap when wrong.
-- **[craft-arena](./craft-arena/SKILL.md)**: Parallel design bakeoff: N candidates on one brief, cross-judge, pick a base, graft the best parts.
-- **[verify-bench](./verify-bench/SKILL.md)**: Vet a perf measurement (limiter, tuning, limits, errors, repeatability, relevance) before reporting or acting.
 - **[verify-blast](./verify-blast/SKILL.md)**: Find what a change could break outside itself and prove the one safety fact by running code.
 - **[craft-break](./craft-break/SKILL.md)**: Stress-test one component against worst-case content and states on a throwaway page.
-- **[review-code](./review-code/SKILL.md)**: On-ask review along Standards plus Spec; never a ship gate.
-- **[craft-how](./craft-how/SKILL.md)**: Explain how a subsystem works with complexity triage and fixed output sections.
-- **[review-adversary](./review-adversary/SKILL.md)**: Adversarial pressure on explicit user ask only; run-proven findings only, never a default pre-PR gate.
-- **[plan-interview](./plan-interview/SKILL.md)**: Interview the user relentlessly about a plan, decision, or idea. The reusable plan-interview primitive behind `plan-grill`, `plan-grill-docs`, `ship-triage`, and `plan-map`.
+- **[plan-interview](./plan-interview/SKILL.md)**: Interview the user relentlessly about a plan, decision, or idea. The reusable primitive for sharpening foggy work and ripening tickets.
 - **[ship-pr](./ship-pr/SKILL.md)**: The mandatory PR body shape: summary visual, before/after evidence with UI tables, merge danger. Captures visuals with `agent-browser`; attachment method packed in the skill.
 - **[principles](./principles/SKILL.md)**: Index of 24 engineering principles behind `/whips` triggers; read the file that fits before the first design decision.
 - **[ship-merge-fix](./ship-merge-fix/SKILL.md)**: Use when you need to resolve an in-progress git merge/rebase conflict.
 - **[review-nocomment](./review-nocomment/SKILL.md)**: Kill needless comments plus the dead code they protect, fix root causes, encode constraints.
 - **[setup-hooks](./setup-hooks/SKILL.md)**: Set up fast hooks with the repo's own toolchain (oxlint/oxfmt, Biome, or Prettier), type checking, tests, and a token-size gate.
 - **[craft-trail](./craft-trail/SKILL.md)**: Keep a reviewable TSV decision trail for long or unattended work, with end audit and attention flags.
-- **[craft-swarm](./craft-swarm/SKILL.md)**: Parallel worker fan-out for coverage, races, and gauntlets with one report.
 - **[verify-tdd](./verify-tdd/SKILL.md)**: Test-driven development with a red-green-refactor loop.
 - **[review-prose](./review-prose/SKILL.md)**: Write docs, RFCs, readmes, and commit messages to a layered standard.
 - **[craft-ts](./craft-ts/SKILL.md)**: TypeScript type discipline for agents editing `.ts`/`.tsx`.
-- **[craft-ui-timeline](./craft-ui-timeline/SKILL.md)**: Turn a UI screen recording into an interactive paint timeline page for motion proof.
 - **[review-unslop](./review-unslop/SKILL.md)**: Cut AI tells from prose before it ships.
-- **[craft-manual](./craft-manual/SKILL.md)**: Generate a user manual from a running web app: content-cropped screenshots, selector annotations, HTML plus PDF build with QA gates.
-- **[craft-why](./craft-why/SKILL.md)**: Find why code is shaped this way with fan-out investigators and confidence tiers.
 
 ## Principles
 

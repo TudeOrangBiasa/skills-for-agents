@@ -13,7 +13,7 @@ Lock the window ("recent" is a real range, default the last 7 days), the topic w
 
 1. **Repo ground truth.** Git history and branches, the issue tracker (states, briefs, linked PRs), prior decision logs and run logs, ADRs. What shipped, what reverted, what is open.
 2. **Session traces.** Whatever transcript store the harness keeps for this workspace only; read topic-matching regions, never whole dumps, and never another workspace. No store means saying so and leaning harder on source 1.
-3. **Shared record.** The `craft-why` skill's posture applied to current state: what was tried and did not hold, what users keep reporting. Null results are findings.
+3. **Shared record.** The investigation why-trace posture applied to current state: what was tried and did not hold, what users keep reporting. Null results are findings.
 
 ## Verify live
 

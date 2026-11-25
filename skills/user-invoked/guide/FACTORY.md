@@ -50,10 +50,10 @@ flowchart TD
 
 This page states the shape; the detail lives at its source of truth, never copied here.
 
-- Loop (grill, spec, tickets, AFK, review, merge): the skill sections in [README.md](../../../README.md), and [stage-pipeline.md](../whips/playbooks/stage-pipeline.md) for grill to execute stages.
+- Loop (interview, collapse, tickets, AFK, review, merge): the skill sections in [README.md](../../../README.md), and [stage-pipeline.md](../whips/playbooks/stage-pipeline.md) for interview to execute stages.
 - Local name to upstream for every box: [upstream-map.md](../../../docs/upstream-map.md).
 - Principles behind sceptical review: [PRINCIPLES.md](../whips/PRINCIPLES.md) and the [principles](../../model-invoked/principles/SKILL.md) skill.
-- Triage label roles: [ship-triage](../ship-triage/SKILL.md).
+- Triage label roles: [whips triage](../whips/playbooks/triage.md).
 - Risk tiers and landing: [RISK.md](../whips/RISK.md) and [opening-a-pr.md](../whips/playbooks/opening-a-pr.md).
 
 ## Next step
