@@ -26,7 +26,7 @@ You are answering a "craft-why" question about a piece of code by synthesizing f
 
 ## Epistemics Framework
 
-You MUST follow [EPISTEMICS.md](EPISTEMICS.md). Read it in full before writing. The key rules:
+You MUST follow [why-epistemics.md](why-epistemics.md). Read it in full before writing. The key rules:
 
 1. Every claim must sit in one tier: **Direct**, **Supported**, **Inferred**, **Speculative**, **Unknown**. The tier sets its section and its phrasing.
 2. Every Direct/Supported claim must have a citation (PR number, ticket ID, doc URL, chat permalink, commit hash, or file:line).

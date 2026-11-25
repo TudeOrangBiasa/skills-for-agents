@@ -1,6 +1,6 @@
 # Source Playbooks
 
-One playbook per evidence category. Paste the playbook for the investigator's category into its brief (see INVESTIGATOR-BRIEF.md). The playbooks are vendor-neutral: adapt the concrete moves to whatever tool reaches the category in this environment (an MCP, a CLI, a web UI, an API).
+One playbook per evidence category. Paste the playbook for the investigator's category into its brief (see why-investigator-brief.md). The playbooks are vendor-neutral: adapt the concrete moves to whatever tool reaches the category in this environment (an MCP, a CLI, a web UI, an API).
 
 Playbook per category:
 

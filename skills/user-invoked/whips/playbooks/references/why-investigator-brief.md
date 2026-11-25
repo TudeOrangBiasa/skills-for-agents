@@ -1,6 +1,6 @@
 # Investigator Brief
 
-Build each investigator's brief from this template (one evidence source per investigator). Fill in the placeholders. Every brief also names its source (see SOURCES.md for the category playbook) and carries the code anchor plus the user's original question.
+Build each investigator's brief from this template (one evidence source per investigator). Fill in the placeholders. Every brief also names its source (see why-sources.md for the category playbook) and carries the code anchor plus the user's original question.
 
 ---
 
