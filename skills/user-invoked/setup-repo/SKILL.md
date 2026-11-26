@@ -205,3 +205,13 @@ For "other" issue trackers, write `docs/agents/issue-tracker.md` from scratch us
 ### 5. Done
 
 Tell the user the setup is complete: which skills will now read from these files, which meta docs were scaffolded (`DESIGN.md`, standards file, commit format), whether pre-commit tooling was installed, and which wake mechanism unattended runs use. Mention they can edit `docs/agents/*.md` and the meta docs directly later; re-running this skill is only necessary if they want to switch trackers, restyle, or restart from scratch.
+
+### Definition of done
+
+A setup run is complete only when all three proofs show in the closing reply:
+
+1. `git status --short` lists the new `docs/agents/*.md` files plus the `AGENTS.md` edit. Nothing promised left unwritten.
+2. The tracker shows the Section B vocabulary: `gh label list` (or the local-tracker equivalent) names the five roles plus the three risk labels, and the `## Agent skills` block greps present in `AGENTS.md`.
+3. The verifier command in `docs/agents/verifier.md` (solo) or the CI checks (team) run green on the setup commit or PR.
+
+A run that cannot show these is incomplete, never "complete and verified".
