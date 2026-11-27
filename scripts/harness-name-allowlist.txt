@@ -7,4 +7,6 @@ README.md:.*any agent that loads SKILL\.md folders \(for example .*\).*
 # Upstream attribution lines may name the pstack-claude port (the "claude" in
 # its name trips the deny regex; these lines are provenance, not a harness pin).
 docs/upstream-map.md:.*pstack-claude.*
-skills/user-invoked/whips/scripts/check-playbooks.mjs:.*pstack-claude.*
+skills/poteto-mode/scripts/check-playbooks.mjs:.*pstack-claude.*
+# README.md names the vendored port once in Credits plus TL;DR (provenance, not a pin).
+README.md:.*pstack-claude.*

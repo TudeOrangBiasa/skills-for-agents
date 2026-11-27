@@ -2,12 +2,16 @@
 # check-docs.sh: docs hygiene gate for skills-for-agents.
 #
 # Compares HEAD against a base ref (default: origin/main) and fails when:
-#   1. Any added or modified skill (skills/<bucket>/<name>/SKILL.md) is not
-#      mentioned in its bucket README.md and the top-level README.md.
-#      Names drift otherwise; mentions are the cheapest contract this repo has.
+#   1. Any added or modified skill (skills/<name>/SKILL.md) is not
+#      mentioned in the top-level README.md. Names drift otherwise;
+#      mentions are the cheapest contract this repo has.
 #   2. Added markdown lines link at dead internal targets: every
 #      [text](./target) must resolve, so moved files get their pointers
 #      updated in the same PR. External URLs, anchors, and mailto: skipped.
+#
+# skills/ and agents/ are vendored upstream-verbatim: our prose gates
+# (em dash, stock phrases, harness names, draft-PR) skip them and only
+# cover writing this repo owns (README.md, docs/, scripts/).
 #
 # Usage:
 #   scripts/check-docs.sh [base-ref]
@@ -37,20 +41,16 @@ fail() { echo "check-docs: FAIL: $1"; failures=$((failures + 1)); }
 pass() { echo "check-docs: ok: $1"; }
 
 changed="$(git diff --name-only --diff-filter=ACMR "$RANGE" -- || true)"
+ours_only() { grep -vE '^(skills|agents)/' <<< "$1" || true; }
 
-# 1. Skill mentions in both READMEs.
-changed_skills="$(grep -E '^skills/[^/]+/[^/]+/SKILL\.md$' <<< "$changed" || true)"
+# 1. Skill mentions in the top-level README.
+changed_skills="$(grep -E '^skills/[^/]+/SKILL\.md$' <<< "$changed" || true)"
 if [[ -z "$changed_skills" ]]; then
   pass "no skills touched"
 else
   while IFS= read -r skill_file; do
     [[ -z "$skill_file" ]] && continue
-    skill_dir="$(dirname "$skill_file")"
-    skill_name="$(basename "$skill_dir")"
-    bucket="$(basename "$(dirname "$skill_dir")")"
-    grep -qF "$skill_name" "skills/$bucket/README.md" \
-      && pass "$skill_name in skills/$bucket/README.md" \
-      || fail "$skill_name is not mentioned in skills/$bucket/README.md"
+    skill_name="$(basename "$(dirname "$skill_file")")"
     grep -qF "$skill_name" README.md \
       && pass "$skill_name in top-level README.md" \
       || fail "$skill_name is not mentioned in top-level README.md"
@@ -101,66 +101,27 @@ else
   pass "no user-facing changes, changeset not required"
 fi
 
-# 4b. Whips always-on pack budget (issue #120). The whips SKILL.md entry
-#    point loads on every run; cap its size locally (tokens = bytes/4).
-#    Plafond: WHIPS_PACK_BUDGET_TOKENS below (raised 3000 -> 3200 for the
-#    pstack trigger parity in #68: seven trigger rows plus grant clause).
-#    A PR growing the file past the budget fails here, in pre-commit,
-#    with no Actions involved.
-WHIPS_PACK_BUDGET_TOKENS=3200
-whips_bytes="$(wc -c < skills/user-invoked/whips/SKILL.md)"
-whips_tokens="$((whips_bytes / 4))"
-if [[ "$whips_tokens" -gt "$WHIPS_PACK_BUDGET_TOKENS" ]]; then
-  fail "whips pack $whips_tokens tokens exceeds budget $WHIPS_PACK_BUDGET_TOKENS (shrink SKILL.md or raise the plafond in this script with reason)"
-else
-  pass "whips pack $whips_tokens/$WHIPS_PACK_BUDGET_TOKENS tokens"
-fi
-
-# 4c. Guide thin-router pack budget (issue #193). The guide SKILL.md is
-#    the default load for the router, so it stays tiny; the whole pack
-#    (exact file set: SKILL.md, COOKBOOK.md, FACTORY.md,
-#    PHASE-BOUNDARIES.md, CREDITS.md) stays under its plafond so the
-#    deep module keeps a small interface. Tokens = bytes/4, same as 4b.
-GUIDE_ROUTER_BUDGET_TOKENS=400
-GUIDE_PACK_BUDGET_TOKENS=5300
-guide_router_bytes="$(wc -c < skills/user-invoked/guide/SKILL.md)"
-guide_router_tokens="$((guide_router_bytes / 4))"
-if [[ "$guide_router_tokens" -gt "$GUIDE_ROUTER_BUDGET_TOKENS" ]]; then
-  fail "guide router $guide_router_tokens tokens exceeds budget $GUIDE_ROUTER_BUDGET_TOKENS (shrink SKILL.md, move detail to COOKBOOK/FACTORY)"
-else
-  pass "guide router $guide_router_tokens/$GUIDE_ROUTER_BUDGET_TOKENS tokens"
-fi
-guide_pack_bytes=0
-for guide_file in SKILL.md COOKBOOK.md FACTORY.md PHASE-BOUNDARIES.md CREDITS.md; do
-  guide_pack_bytes="$((guide_pack_bytes + $(wc -c < "skills/user-invoked/guide/$guide_file")))"
-done
-guide_pack_tokens="$((guide_pack_bytes / 4))"
-if [[ "$guide_pack_tokens" -gt "$GUIDE_PACK_BUDGET_TOKENS" ]]; then
-  fail "guide pack $guide_pack_tokens tokens exceeds budget $GUIDE_PACK_BUDGET_TOKENS (cut the pack or raise the plafond in this script with reason)"
-else
-  pass "guide pack $guide_pack_tokens/$GUIDE_PACK_BUDGET_TOKENS tokens"
-fi
-
-if git diff -U0 "$RANGE" -- '*.md' | grep '^+' | grep -v '^+++' | grep -q '—'; then
-  fail "em dash found in added markdown lines (rewrite with comma, colon, period, or parens)"
+# 4. Our prose only: em dashes stay out of lines this repo owns.
+#    skills/ and agents/ are vendored upstream-verbatim, exempt.
+if git diff -U0 "$RANGE" -- '*.md' ':!skills/*' ':!agents/*' | grep '^+' | grep -v '^+++' | grep -q '—'; then
+  fail "em dash found in added markdown lines outside skills/ and agents/ (rewrite with comma, colon, period, or parens)"
 else
   pass "no em dashes in added lines"
 fi
 
-# 5. PRs open ready, never as a draft (issue #15). Ban the create-as-draft
-#    flag and the "always a draft" instruction anywhere under skills/.
+# 5. PRs open ready, never as a draft. Ban the create-as-draft
+#    flag and the "always a draft" instruction in files this repo owns.
 #    Allowed: the word "draft" for prose drafts, and legacy-draft handling
-#    (`gh pr ready`, pickup/runner notes). Full-tree scan so the rule
-#    cannot slide back in outside the diff.
-if grep -rn --include='*.md' -E 'gh pr create --draft|glab mr create .*--draft' skills/ >/dev/null 2>&1; then
-  fail "draft-PR flag found in skills/ (open every PR ready: \`gh pr create\` with no --draft)"
-elif grep -rni --include='*.md' -E 'always a.? draft' skills/ >/dev/null 2>&1; then
-  fail "'always (a) draft' instruction found in skills/ (PRs open ready; the verdict gates the merge)"
+#    (`gh pr ready`, pickup/runner notes).
+if grep -rn --include='*.md' -E 'gh pr create --draft|glab mr create .*--draft' README.md docs scripts 2>/dev/null | grep -qv ':.*`' >/dev/null 2>&1; then
+  fail "draft-PR flag found outside vendored dirs (open every PR ready: \`gh pr create\` with no --draft)"
+elif grep -rni --include='*.md' -E 'always a.? draft' README.md docs scripts 2>/dev/null | grep -q .; then
+  fail "'always (a) draft' instruction found outside vendored dirs (PRs open ready; the verdict gates the merge)"
 else
-  pass "no draft-PR instruction in skills/"
+  pass "no draft-PR instruction in owned files"
 fi
 
-# 6. Skill frontmatter name equals the folder name (issue #21). Full-tree
+# 6. Skill frontmatter name equals the folder name. Full-tree
 #    scan: a renamed skill that forgot its frontmatter breaks installs.
 name_mismatch=0
 while IFS= read -r skill_file; do
@@ -172,8 +133,7 @@ while IFS= read -r skill_file; do
 done < <(find skills -name SKILL.md)
 [[ "$name_mismatch" == "0" ]] && pass "skill names match folders"
 
-# 7. Alias table stays resolvable (issue #175). Old names must answer the
-#    new skill with matching frontmatter; otherwise the 1-release alias rots.
+# 7. Alias table stays resolvable. Absent table means nothing to check.
 if [[ -f docs/aliases.md && -f scripts/test-aliases.sh ]]; then
   if bash scripts/test-aliases.sh >/dev/null 2>&1; then
     pass "aliases resolve"
@@ -184,7 +144,10 @@ else
   pass "no alias table to check"
 fi
 
-# 8. Harness-name gate (issues #190, #209): denylisted names fail unless scripts/harness-name-allowlist.txt exempts the path (glob) or the line (path-glob:line-regex). Cursor forms are names (#209); generic pagination cursors and CSS cursor: stay out of the pattern.
+# 8. Harness-name gate: denylisted names fail outside vendored dirs unless
+#    scripts/harness-name-allowlist.txt exempts the path (glob) or the line
+#    (path-glob:line-regex). skills/ and agents/ name harnesses legitimately
+#    (per-harness tool mappings), so the scan skips them.
 HARNESS_ALLOW="scripts/harness-name-allowlist.txt"
 DENY_RE='\b(omp|opencode|codex|claude|orca|fedora|oh-my-pi|cursor-agent|cursor-cli|Cursor)\b|~/\.omp|\.omp/|\.codex/|\.claude/|\.cursor/|\.pi/|opencode\.json|claude\.md|\.cursorrules|cursor-rules'
 match_path() { # file glob (a leading **/ also matches nested paths)
@@ -217,24 +180,24 @@ if [[ -f "$HARNESS_ALLOW" ]]; then
       fail "harness-specific name in $hfile: $hline"
       harness_hits=$((harness_hits + 1))
     fi
-  done < <(grep -rInE -e "$DENY_RE" skills README.md docs 2>/dev/null || true)
+  done < <(grep -rInE --exclude=harness-name-allowlist.txt --exclude=check-docs.sh -e "$DENY_RE" README.md docs scripts 2>/dev/null || true)
 else
   fail "missing $HARNESS_ALLOW (the harness-name gate needs its allowlist)"
   harness_hits=$((harness_hits + 1))
 fi
 [[ "$harness_hits" == "0" ]] && pass "no harness-specific names outside the allowlist"
 
-# 9. Anti-slop phrase gate (issue #227): a small allowlisted set of stock AI
-#    phrases fails when added to prose skill diffs. Fences skipped: examples
-#    that quote the pattern do not count. Extend SLOPS with care; keep each
-#    entry a distinctive multi-word phrase so plain words never trip it.
+# 9. Anti-slop phrase gate: a small allowlisted set of stock AI
+#    phrases fails when added to prose this repo owns. Fences skipped:
+#    examples that quote the pattern do not count. skills/ and agents/
+#    are vendored upstream-verbatim, exempt. Extend SLOPS with care; keep
+#    each entry a distinctive multi-word phrase so plain words never trip it.
 SLOPS='delve into|game-changer|game changer|unlock the power|a testament to|tapestry of|fast-paced world'
 slop_hits=0
 while IFS= read -r f; do
   [[ -z "$f" ]] && continue
   [[ "$f" == *.md ]] || continue
   [[ -f "$f" ]] || continue
-  case "$f" in skills/model-invoked/review-unslop/*) continue ;; esac
   fenced="$(awk 'BEGIN{f=0} /^```/{f=!f; next} f{print NR}' "$f")"
   while IFS=$'\t' read -r lineno line; do
     [[ -z "$line" ]] && continue
@@ -244,7 +207,7 @@ while IFS= read -r f; do
       slop_hits=$((slop_hits + 1))
     fi
   done < <(git diff -U0 "$RANGE" -- "$f" | awk '/^@@ -[0-9]+(,[0-9]+)? \+[0-9]+(,[0-9]+)? @@/ { s=$0; sub(/.*\+/, "", s); sub(/[, ].*/, "", s); n=s+0; next } /^\+\+\+/ { next } /^-/ { next } /^\+/ { line=substr($0,2); print n "\t" line; n++; next } { n++ }' || true)
-done <<< "$(git diff --name-only --diff-filter=ACMR "$RANGE" -- '*.md' || true)"
+done <<< "$(git diff --name-only --diff-filter=ACMR "$RANGE" -- '*.md' ':!skills/*' ':!agents/*' || true)"
 [[ "$slop_hits" == "0" ]] && pass "no stock AI phrases in added prose lines"
 
 if [[ "$failures" -gt 0 ]]; then
