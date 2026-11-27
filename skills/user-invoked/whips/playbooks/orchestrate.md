@@ -41,3 +41,7 @@ Stuck means no push and no trail row past the unit TIMEBOX, or an error loop wit
 Batch to the human only: irreversible actions, genuine product calls no experiment settles, contradicted standing orders, dead ends surviving replans. Everything else (rebase mechanics, retries, flakes, review triage, keep-going) acts and logs under the full-autonomy grant. Deviations from pstack, all deliberate: no `orch` CLI (log.sh plus tracker mirror instead), verification is the mode verifier plus self-proof (not CI-only plus independent swarm), landing follows the risk tier (not operator-only shipping).
 
 **Reply:** at checkpoints and close: predicate plus count, tracks and landings, frontier (PR list plus SHAs), verdict summary, abandons with reasons, gates awaiting the human (the only asks), trail path. Numbers from the records, not narrative, with PR links.
+
+## Delegation discipline
+
+Each worker kickoff opens with its standing orders verbatim; directives decay across resumes, and a dropped one costs a human turn. Never resume-chain: a fix round, follow-up, or retry goes to a fresh worker with the original brief plus the prior report and branch, and the abandoned worker is stopped first. A second opinion reruns the same brief on a different model family. A review gate with no independent reviewer stays closed: record the missing reviewer, keep merge-ready and shipping shut, and report which reviews ran and which are missing. Never count your own review, passing tests, or CI as the independent verdict.

@@ -4,3 +4,7 @@
 **/CREDITS.md
 # README.md install story uses the install-block example list (names as examples only), not a harness pin (issue #210).
 README.md:.*any agent that loads SKILL\.md folders \(for example .*\).*
+# Upstream attribution lines may name the pstack-claude port (the "claude" in
+# its name trips the deny regex; these lines are provenance, not a harness pin).
+docs/upstream-map.md:.*pstack-claude.*
+skills/user-invoked/whips/scripts/check-playbooks.mjs:.*pstack-claude.*

@@ -129,3 +129,7 @@ Old local names redirect for one release, then the stubs are deleted. See [alias
 | `wizard` | `craft-wizard` |
 | `worklog` | `plan-worklog` |
 | `writing-for-agents` | `craft-agent-docs` |
+
+## Pulled from pstack-claude (2026-11-27, pin `1ab6b82`)
+
+Selective pull, never a blob copy: pack budgets and the whips-first trim forbid vendoring. Pulled: the project-playbook mechanism (`whips/playbooks/project-playbooks.md` plus `whips/scripts/check-playbooks.mjs`, checking logic upstream-verbatim, only paths and help text localized) and the subagent delegation discipline (appended to `whips/playbooks/orchestrate.md`). Not pulled: harness-specific tool maps (fifteen-harness bloat, OMP-first here), model role tables (harness model ids, never hardcoded here), gitleaks CI (under evaluation; the secrets scan already lands in the whips `Gates:` line).

@@ -119,6 +119,7 @@ Each row names the situation, the skill or playbook, and the entry line. The rou
 8. New risky area needs a standing check: `/create-formal-verification`; green code changes underneath it: `/maintain-formal-verification`.
 9. Merge conflicts on a landing PR: `ship-merge-fix`; PR body shape: `ship-pr`.
 10. Report asks for numbers: explain what limits each number before trusting it.
+11. Repo needs its own playbook variant: author `.agents/playbooks/<name>.md` per [project-playbooks.md](../whips/playbooks/project-playbooks.md), then run the checker before applying it.
 
 ## FAQ
 
