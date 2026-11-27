@@ -8,21 +8,18 @@ disable-model-invocation: true
 
 You don't remember every skill, so ask. Default load is this file only: open [COOKBOOK.md](COOKBOOK.md) only for a recipe, [FACTORY.md](FACTORY.md) only for the big picture, [PHASE-BOUNDARIES.md](PHASE-BOUNDARIES.md) only at a phase boundary.
 
-## Start here
+## Triggers
 
-- Idea to build: the main-flow recipe in [COOKBOOK.md](COOKBOOK.md).
-- Backlog piling up: `/whips` intake.
-- Hard bug: the whips `bug` playbook, then `/whips` refactor for the seam.
-- Foggy idea: `plan-interview`, or `/whips` drive-through.
-- Long runs: [PHASE-BOUNDARIES.md](PHASE-BOUNDARIES.md) (continue/clear/note/subagent/compact).
-- Setup first: `/setup-repo`.
-
-## On-ramps
-- **`/report-issue`** files a ticket; **`/whips`** ripens it and builds it.
-- **`/whips`** takes the hard bugs with a tight feedback loop first, via its `bug` playbook.
-- **`plan-interview`** sharpens foggy work into decisions and slices them into tracer bullets.
-
-- Every skill, one-line blurb each: skill sections in [README.md](../../../README.md).
-- Upstream split: pstack owns automation and shipping, Matt owns planning ([upstream-map.md](../../../docs/upstream-map.md)).
-- Stages: [stage-pipeline.md](../whips/playbooks/stage-pipeline.md). Landing and risk: [opening-a-pr.md](../whips/playbooks/opening-a-pr.md) and [RISK.md](../whips/RISK.md).
-- Advanced: [COOKBOOK.md](COOKBOOK.md).
+1. Foggy idea or scope to slice: `plan-interview`.
+2. Backlog ticket to build: `/whips` intake.
+3. Hard bug: the whips `bug` playbook, then `/whips` refactor.
+4. Code crossing a function boundary: `craft-architect`.
+5. Parallel runners: the whips `fan-out` playbook.
+6. Long or unattended run: `craft-trail`.
+7. Prose, docs, PR or commit text: `review-prose` on top of `review-unslop`.
+8. Measured number: explain what limits it before trusting it.
+9. Setup first: `/setup-repo`. Full catalog plus recipes: [COOKBOOK.md](COOKBOOK.md).
+10. Every skill, one-line blurb each: skill sections in [README.md](../../../README.md).
+11. Upstream split: pstack owns automation and shipping, Matt owns planning ([upstream-map.md](../../../docs/upstream-map.md)).
+12. Stages: [stage-pipeline.md](../whips/playbooks/stage-pipeline.md). Landing and risk: [opening-a-pr.md](../whips/playbooks/opening-a-pr.md) and [RISK.md](../whips/RISK.md).
+13. Advanced: [COOKBOOK.md](COOKBOOK.md).

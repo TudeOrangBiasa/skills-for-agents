@@ -105,6 +105,21 @@ Done means: a falsifiable predicate written before the run, checked on the real 
 
 These ship but sit outside the COOKBOOK and FACTORY main path; reach for them only when the task names them. Formal proof: `/create-formal-verification`, `/maintain-formal-verification`. Skill authoring: `/craft-agent-docs` via the authoring playbook. Optional repo layout: the whips `ts-modules` playbook. Learning gate: `/learn-diff-gate` when you must prove you understand a change.
 
+## Trigger catalog
+
+Each row names the situation, the skill or playbook, and the entry line. The router in [SKILL.md](SKILL.md) holds the short list; this catalog holds the rest.
+
+1. Prose smells of AI filler: `review-unslop`, then `review-prose` for the rewrite.
+2. Comment-only cleanup on a PR: `review-nocomment` via `/whips`.
+3. Scope or seam unclear before building: `craft-architect`.
+4. Adversarial second look wanted: the whips `review` playbook.
+5. Work must survive a wipe: `craft-trail` decision trail plus `/learn-catchup`.
+6. A lesson keeps repeating: `/learn-reflect` (edits the skill or the docs, never appends advice).
+7. Past decision forgotten: `/learn-recall`, terms in `GLOSSARY.md`.
+8. New risky area needs a standing check: `/create-formal-verification`; green code changes underneath it: `/maintain-formal-verification`.
+9. Merge conflicts on a landing PR: `ship-merge-fix`; PR body shape: `ship-pr`.
+10. Report asks for numbers: explain what limits each number before trusting it.
+
 ## FAQ
 
 For the full catalog of skills, see the skill sections in [README.md](../../../README.md). Each answer below is one pointer; the owning skill holds the detail.

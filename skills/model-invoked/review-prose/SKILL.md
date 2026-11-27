@@ -23,3 +23,16 @@ Talk to the reader as "you", present tense, actors named, instructions as comman
 ## Repo specifics
 
 PR descriptions and commit messages get every layer except Diataxis; a PR body stays a sub-minute briefing with evidence linked, never pasted. Product UI strings follow product copy guidelines, not this skill. Indent code with tabs, use real paths, keep every count or tree claim true at the landing commit with its regen command.
+
+
+## Mode content
+
+Tutorial: every step produces a visible result, and you say what the reader sees. How-to: action only, forks allowed, named by the task. Reference: mirror the structure of the thing described. Explanation: one bounded why with context, history, constraints, and alternatives; opinion allowed here only.
+
+## Sentence extras
+
+Split any sentence past ~25 words, not only instructions. Never use "this" or "which" to point at a whole clause. No "(s)". Say what a named pattern means on first use. Link with words that say where the link goes. One h1 per page, no skipped levels. Introduce each list with a complete sentence and keep items parallel.
+
+## PR bodies
+
+Every layer except Diataxis applies. A PR body is a sub-minute briefing: link swarm logs, SHA lists, and metric tables, never paste them.
